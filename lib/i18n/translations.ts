@@ -22,6 +22,9 @@ export const translations = {
     homeFooter: 'Lab tool',
     homeScrumMasterCTA: 'Ik ben Scrum Master',
     homeScrumMasterSubtext: 'Start in 30 seconden',
+    homeAlreadyAccount: 'Al een account?',
+    homeAdminLogin: 'Admin login',
+    homeLabAccess: 'Lab toegang',
 
     // Login
     loginWelcome: 'Welkom in het lab',
@@ -168,6 +171,9 @@ export const translations = {
     homeFooter: 'Lab tool',
     homeScrumMasterCTA: "I'm a Scrum Master",
     homeScrumMasterSubtext: 'Start in 30 seconds',
+    homeAlreadyAccount: 'Already have an account?',
+    homeAdminLogin: 'Admin login',
+    homeLabAccess: 'Lab access',
 
     // Login
     loginWelcome: 'Welcome to the lab',

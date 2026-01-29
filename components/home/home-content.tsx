@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/lib/i18n/context'
 import { LanguageToggle } from '@/components/ui/language-toggle'
@@ -55,7 +56,15 @@ export function HomeContent() {
           <span className="text-xl">🐔</span>
           <span className="text-sm font-medium text-stone-400">{t('pinkPollos')}</span>
         </div>
-        <LanguageToggle />
+        <div className="flex items-center gap-4">
+          <Link
+            href="/admin/login"
+            className="text-xs text-stone-400 hover:text-cyan-600 transition-colors"
+          >
+            {t('homeAdminLogin')}
+          </Link>
+          <LanguageToggle />
+        </div>
       </header>
 
       {/* Main content */}
@@ -67,10 +76,10 @@ export function HomeContent() {
             {t('labTool')}
           </div>
 
-          {/* Lab flask icon - Heisenberg style */}
-          <div className="text-6xl mb-8">
+          {/* Lab flask icon - Heisenberg style - links to super admin */}
+          <Link href="/super-admin/login" className="block text-6xl mb-8 hover:scale-110 transition-transform" title="Lab access">
             🧪
-          </div>
+          </Link>
 
           {/* Title */}
           <h1 className="text-5xl font-bold mb-4 tracking-tight text-stone-900">
@@ -161,16 +170,32 @@ export function HomeContent() {
                 <p className="text-sm text-red-500 mt-2">{error}</p>
               )}
               <p className="text-xs text-stone-400 mt-3">{t('loginNoPassword')}</p>
+              <button
+                type="button"
+                onClick={() => setShowLogin(false)}
+                className="text-xs text-stone-400 hover:text-stone-600 mt-2"
+              >
+                ← {t('cancel')}
+              </button>
             </form>
           ) : (
-            // CTA Button
-            <button
-              onClick={() => setShowLogin(true)}
-              className="inline-flex flex-col items-center gap-1 px-8 py-4 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors mb-6"
-            >
-              <span className="font-medium">{t('homeScrumMasterCTA')}</span>
-              <span className="text-xs text-stone-400">{t('homeScrumMasterSubtext')}</span>
-            </button>
+            // CTA Buttons
+            <div className="space-y-4 mb-6">
+              <button
+                onClick={() => setShowLogin(true)}
+                className="inline-flex flex-col items-center gap-1 px-8 py-4 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors"
+              >
+                <span className="font-medium">{t('homeScrumMasterCTA')}</span>
+                <span className="text-xs text-stone-400">{t('homeScrumMasterSubtext')}</span>
+              </button>
+
+              <div className="text-xs text-stone-400">
+                {t('homeAlreadyAccount')}{' '}
+                <Link href="/admin/login" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                  {t('homeAdminLogin')}
+                </Link>
+              </div>
+            </div>
           )}
 
           <p className="text-xs text-stone-400">
