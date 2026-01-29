@@ -12,9 +12,15 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS admin_users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email TEXT UNIQUE NOT NULL,
+  role TEXT NOT NULL DEFAULT 'scrum_master' CHECK (role IN ('super_admin', 'scrum_master')),
+  password_hash TEXT,
+  last_login_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Index for role-based queries
+CREATE INDEX IF NOT EXISTS idx_admin_users_role ON admin_users(role);
 
 -- Teams
 CREATE TABLE IF NOT EXISTS teams (
@@ -22,9 +28,13 @@ CREATE TABLE IF NOT EXISTS teams (
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
+  owner_id UUID REFERENCES admin_users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Index for team ownership queries
+CREATE INDEX IF NOT EXISTS idx_teams_owner_id ON teams(owner_id);
 
 -- Invite links (token_hash stored, never raw token)
 CREATE TABLE IF NOT EXISTS invite_links (
@@ -89,18 +99,65 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Helper function to check if user is super admin
+CREATE OR REPLACE FUNCTION is_super_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM admin_users
+    WHERE email = auth.jwt() ->> 'email'
+    AND role = 'super_admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Helper function to get current admin user ID
+CREATE OR REPLACE FUNCTION get_admin_user_id()
+RETURNS UUID AS $$
+BEGIN
+  RETURN (
+    SELECT id FROM admin_users
+    WHERE email = auth.jwt() ->> 'email'
+    LIMIT 1
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Admin users policies
-CREATE POLICY "Admins can view admin_users"
+-- Super admin can see all, others only themselves
+CREATE POLICY "View admin_users"
   ON admin_users FOR SELECT
   TO authenticated
-  USING (is_admin());
+  USING (
+    is_super_admin()
+    OR email = auth.jwt() ->> 'email'
+  );
+
+-- Super admin can delete non-super admins
+CREATE POLICY "Super admin can delete admin_users"
+  ON admin_users FOR DELETE
+  TO authenticated
+  USING (is_super_admin() AND role != 'super_admin');
+
+-- Allow insert for auto-registration (via service role)
+CREATE POLICY "Service can insert admin_users"
+  ON admin_users FOR INSERT
+  TO authenticated
+  WITH CHECK (TRUE);
 
 -- Teams policies
-CREATE POLICY "Admins can do everything with teams"
+-- Owners see their own teams, super admin sees all
+CREATE POLICY "Owners can manage their teams"
   ON teams FOR ALL
   TO authenticated
-  USING (is_admin())
-  WITH CHECK (is_admin());
+  USING (
+    is_super_admin()
+    OR owner_id = get_admin_user_id()
+  )
+  WITH CHECK (
+    is_super_admin()
+    OR owner_id = get_admin_user_id()
+  );
 
 CREATE POLICY "Public can read teams by slug"
   ON teams FOR SELECT
@@ -108,11 +165,26 @@ CREATE POLICY "Public can read teams by slug"
   USING (TRUE);
 
 -- Invite links policies
-CREATE POLICY "Admins can manage invite_links"
+-- Filter by team ownership
+CREATE POLICY "Admins can manage their invite_links"
   ON invite_links FOR ALL
   TO authenticated
-  USING (is_admin())
-  WITH CHECK (is_admin());
+  USING (
+    is_super_admin()
+    OR EXISTS (
+      SELECT 1 FROM teams
+      WHERE teams.id = invite_links.team_id
+      AND teams.owner_id = get_admin_user_id()
+    )
+  )
+  WITH CHECK (
+    is_super_admin()
+    OR EXISTS (
+      SELECT 1 FROM teams
+      WHERE teams.id = invite_links.team_id
+      AND teams.owner_id = get_admin_user_id()
+    )
+  );
 
 CREATE POLICY "Public can read active invite_links"
   ON invite_links FOR SELECT
@@ -120,10 +192,18 @@ CREATE POLICY "Public can read active invite_links"
   USING (is_active = TRUE AND (expires_at IS NULL OR expires_at > NOW()));
 
 -- Participants policies
-CREATE POLICY "Admins can view all participants"
+-- Filter by team ownership
+CREATE POLICY "Admins can view their participants"
   ON participants FOR SELECT
   TO authenticated
-  USING (is_admin());
+  USING (
+    is_super_admin()
+    OR EXISTS (
+      SELECT 1 FROM teams
+      WHERE teams.id = participants.team_id
+      AND teams.owner_id = get_admin_user_id()
+    )
+  );
 
 CREATE POLICY "Public can insert participants via RPC"
   ON participants FOR INSERT
@@ -136,10 +216,18 @@ CREATE POLICY "Public can read own participant"
   USING (TRUE);
 
 -- Mood entries policies
-CREATE POLICY "Admins can view all mood_entries"
+-- Filter by team ownership
+CREATE POLICY "Admins can view their mood_entries"
   ON mood_entries FOR SELECT
   TO authenticated
-  USING (is_admin());
+  USING (
+    is_super_admin()
+    OR EXISTS (
+      SELECT 1 FROM teams
+      WHERE teams.id = mood_entries.team_id
+      AND teams.owner_id = get_admin_user_id()
+    )
+  );
 
 CREATE POLICY "Public can insert mood_entries via RPC"
   ON mood_entries FOR INSERT
@@ -362,3 +450,65 @@ GRANT EXECUTE ON FUNCTION submit_mood_checkin TO anon;
 GRANT EXECUTE ON FUNCTION get_team_mood_stats TO anon;
 GRANT EXECUTE ON FUNCTION get_participant_streak TO anon;
 GRANT EXECUTE ON FUNCTION get_team_trend TO anon;
+
+-- ============================================
+-- MIGRATION: Multi-tenant support
+-- Run this section for existing deployments
+-- ============================================
+
+-- Add new columns if they don't exist (for migrations)
+DO $$
+BEGIN
+  -- Add role column to admin_users
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'admin_users' AND column_name = 'role'
+  ) THEN
+    ALTER TABLE admin_users ADD COLUMN role TEXT NOT NULL DEFAULT 'scrum_master' CHECK (role IN ('super_admin', 'scrum_master'));
+  END IF;
+
+  -- Add password_hash column to admin_users
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'admin_users' AND column_name = 'password_hash'
+  ) THEN
+    ALTER TABLE admin_users ADD COLUMN password_hash TEXT;
+  END IF;
+
+  -- Add last_login_at column to admin_users
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'admin_users' AND column_name = 'last_login_at'
+  ) THEN
+    ALTER TABLE admin_users ADD COLUMN last_login_at TIMESTAMPTZ;
+  END IF;
+
+  -- Add owner_id column to teams
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'teams' AND column_name = 'owner_id'
+  ) THEN
+    ALTER TABLE teams ADD COLUMN owner_id UUID REFERENCES admin_users(id) ON DELETE CASCADE;
+  END IF;
+END $$;
+
+-- Create indexes if they don't exist
+CREATE INDEX IF NOT EXISTS idx_admin_users_role ON admin_users(role);
+CREATE INDEX IF NOT EXISTS idx_teams_owner_id ON teams(owner_id);
+
+-- ============================================
+-- SEED: Super Admin
+-- Password: 1234 (bcrypt hash)
+-- ============================================
+
+-- Insert or update super admin
+-- Note: The password hash below is bcrypt hash of "1234"
+INSERT INTO admin_users (email, role, password_hash)
+VALUES (
+  'dennis@pinkpollos.com',
+  'super_admin',
+  '$2b$10$KIfUG2PHs0YrEDyWsHUN1O2OVVfdRxjMCBdpuetuvkAAlGewbikcC'
+)
+ON CONFLICT (email) DO UPDATE SET
+  role = 'super_admin',
+  password_hash = '$2b$10$KIfUG2PHs0YrEDyWsHUN1O2OVVfdRxjMCBdpuetuvkAAlGewbikcC';

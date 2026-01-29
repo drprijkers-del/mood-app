@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -16,21 +16,41 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login?error=auth_failed', request.url))
     }
 
-    // Check if user is admin
+    // Get user
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (user) {
-      const { data: adminUser } = await supabase
+    if (user?.email) {
+      // Use admin client to bypass RLS for checking/creating user
+      const adminSupabase = await createAdminClient()
+
+      // Check if user exists in admin_users
+      const { data: existingAdmin } = await adminSupabase
         .from('admin_users')
-        .select('id')
+        .select('id, role')
         .eq('email', user.email)
         .single()
 
-      if (!adminUser) {
-        // Not an admin - sign them out and redirect with error
-        await supabase.auth.signOut()
-        return NextResponse.redirect(new URL('/admin/login?error=unauthorized', request.url))
+      if (!existingAdmin) {
+        // Auto-create new scrum master
+        const { error: insertError } = await adminSupabase
+          .from('admin_users')
+          .insert({
+            email: user.email,
+            role: 'scrum_master',
+          })
+
+        if (insertError) {
+          console.error('Error creating admin user:', insertError)
+          await supabase.auth.signOut()
+          return NextResponse.redirect(new URL('/admin/login?error=registration_failed', request.url))
+        }
       }
+
+      // Update last login
+      await adminSupabase
+        .from('admin_users')
+        .update({ last_login_at: new Date().toISOString() })
+        .eq('email', user.email)
     }
   }
 

@@ -4,6 +4,28 @@ import { updateSession } from '@/lib/supabase/middleware'
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
 
+  // Handle super-admin routes - require super admin session
+  if (pathname.startsWith('/super-admin') && !pathname.startsWith('/super-admin/login')) {
+    const sessionCookie = request.cookies.get('super_admin_session')?.value
+
+    if (!sessionCookie) {
+      return NextResponse.redirect(new URL('/super-admin/login', request.url))
+    }
+
+    try {
+      const session = JSON.parse(sessionCookie)
+      if (session.exp < Date.now()) {
+        const response = NextResponse.redirect(new URL('/super-admin/login', request.url))
+        response.cookies.delete('super_admin_session')
+        return response
+      }
+    } catch {
+      return NextResponse.redirect(new URL('/super-admin/login', request.url))
+    }
+
+    return NextResponse.next()
+  }
+
   // Handle admin routes - require authentication
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const { user, supabaseResponse } = await updateSession(request)

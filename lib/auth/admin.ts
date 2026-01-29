@@ -1,7 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-export async function requireAdmin() {
+export interface AdminUser {
+  id: string
+  email: string
+  role: 'super_admin' | 'scrum_master'
+}
+
+export async function requireAdmin(): Promise<AdminUser> {
   const supabase = await createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -10,10 +16,10 @@ export async function requireAdmin() {
     redirect('/admin/login')
   }
 
-  // Check if user is in admin_users table
+  // Check if user is in admin_users table and get their info
   const { data: adminUser } = await supabase
     .from('admin_users')
-    .select('id')
+    .select('id, email, role')
     .eq('email', user.email)
     .single()
 
@@ -21,10 +27,10 @@ export async function requireAdmin() {
     redirect('/admin/login?error=unauthorized')
   }
 
-  return user
+  return adminUser as AdminUser
 }
 
-export async function getAdminUser() {
+export async function getAdminUser(): Promise<AdminUser | null> {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,9 +39,19 @@ export async function getAdminUser() {
 
   const { data: adminUser } = await supabase
     .from('admin_users')
-    .select('*')
+    .select('id, email, role')
     .eq('email', user.email)
     .single()
 
-  return adminUser ? { ...user, isAdmin: true } : null
+  return adminUser as AdminUser | null
+}
+
+export async function getCurrentAdminId(): Promise<string | null> {
+  const adminUser = await getAdminUser()
+  return adminUser?.id || null
+}
+
+export async function isSuperAdmin(): Promise<boolean> {
+  const adminUser = await getAdminUser()
+  return adminUser?.role === 'super_admin'
 }

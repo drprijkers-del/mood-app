@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient, createAdminClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/auth/admin'
+import { requireAdmin, AdminUser } from '@/lib/auth/admin'
 import { generateSlug } from '@/lib/utils'
 import { hashToken, generateToken } from '@/lib/tenant/context'
 import { revalidatePath } from 'next/cache'
@@ -11,6 +11,7 @@ export interface Team {
   name: string
   slug: string
   description: string | null
+  owner_id: string | null
   created_at: string
   updated_at: string
 }
@@ -24,14 +25,37 @@ export interface TeamWithStats extends Team {
   }
 }
 
+// Helper to verify team ownership
+async function verifyTeamOwnership(teamId: string, adminUser: AdminUser): Promise<boolean> {
+  // Super admin can access all teams
+  if (adminUser.role === 'super_admin') return true
+
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('teams')
+    .select('owner_id')
+    .eq('id', teamId)
+    .single()
+
+  return data?.owner_id === adminUser.id
+}
+
 export async function getTeams(): Promise<TeamWithStats[]> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
 
-  const { data: teams, error } = await supabase
+  // Build query - filter by owner unless super admin
+  let query = supabase
     .from('teams')
     .select('*')
     .order('created_at', { ascending: false })
+
+  // If not super_admin, filter by owner_id
+  if (adminUser.role !== 'super_admin') {
+    query = query.eq('owner_id', adminUser.id)
+  }
+
+  const { data: teams, error } = await query
 
   if (error) throw error
 
@@ -69,7 +93,7 @@ export async function getTeams(): Promise<TeamWithStats[]> {
 }
 
 export async function getTeam(id: string): Promise<TeamWithStats | null> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
 
   const { data: team, error } = await supabase
@@ -79,6 +103,11 @@ export async function getTeam(id: string): Promise<TeamWithStats | null> {
     .single()
 
   if (error || !team) return null
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(id, adminUser))) {
+    return null
+  }
 
   const { count: participantCount } = await supabase
     .from('participants')
@@ -107,7 +136,7 @@ export async function getTeam(id: string): Promise<TeamWithStats | null> {
 }
 
 export async function createTeam(formData: FormData): Promise<{ success: boolean; teamId?: string; error?: string }> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
 
   const name = formData.get('name') as string
@@ -130,10 +159,15 @@ export async function createTeam(formData: FormData): Promise<{ success: boolean
     return { success: false, error: 'A team with this name already exists' }
   }
 
-  // Create team
+  // Create team with owner_id
   const { data: team, error } = await supabase
     .from('teams')
-    .insert({ name: name.trim(), slug, description: description?.trim() || null })
+    .insert({
+      name: name.trim(),
+      slug,
+      description: description?.trim() || null,
+      owner_id: adminUser.id,
+    })
     .select()
     .single()
 
@@ -158,8 +192,13 @@ export async function updateTeam(
   id: string,
   formData: FormData
 ): Promise<{ success: boolean; error?: string }> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(id, adminUser))) {
+    return { success: false, error: 'Access denied' }
+  }
 
   const name = formData.get('name') as string
   const description = formData.get('description') as string | null
@@ -188,8 +227,13 @@ export async function updateTeam(
 }
 
 export async function deleteTeam(id: string): Promise<{ success: boolean; error?: string }> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(id, adminUser))) {
+    return { success: false, error: 'Access denied' }
+  }
 
   const { error } = await supabase
     .from('teams')
@@ -206,8 +250,13 @@ export async function deleteTeam(id: string): Promise<{ success: boolean; error?
 }
 
 export async function resetTeam(id: string): Promise<{ success: boolean; error?: string }> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(id, adminUser))) {
+    return { success: false, error: 'Access denied' }
+  }
 
   // Delete all mood entries for this team
   const { error: moodError } = await supabase
@@ -236,8 +285,13 @@ export async function resetTeam(id: string): Promise<{ success: boolean; error?:
 }
 
 export async function regenerateInviteLink(teamId: string): Promise<{ success: boolean; token?: string; error?: string }> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(teamId, adminUser))) {
+    return { success: false, error: 'Access denied' }
+  }
 
   // Deactivate old links
   await supabase
@@ -263,8 +317,13 @@ export async function regenerateInviteLink(teamId: string): Promise<{ success: b
 }
 
 export async function getShareLink(teamId: string): Promise<{ url: string; token: string } | null> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(teamId, adminUser))) {
+    return null
+  }
 
   // Get team slug
   const { data: team } = await supabase
@@ -302,8 +361,13 @@ export async function getTeamMoodHistory(teamId: string, days: number = 7): Prom
   average: number
   count: number
 }[]> {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
   const supabase = await createClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(teamId, adminUser))) {
+    return []
+  }
 
   const { data } = await supabase
     .rpc('get_team_trend', { p_team_id: teamId })
