@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/lib/i18n/context'
 import type { TeamMetrics, PulseInsight } from '@/domain/metrics/types'
@@ -17,170 +18,245 @@ interface PulseMetricsProps {
   insights: PulseInsight[]
 }
 
+type TimeView = 'live' | 'day' | 'week'
+
 export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
   const { language } = useLanguage()
+  const [activeView, setActiveView] = useState<TimeView>('week')
 
   const labels = {
     nl: {
-      weekPulse: 'Week Pulse',
-      today: 'Vandaag',
-      yesterday: 'Gisteren',
-      weekChange: 'Δ Week',
-      participation: 'Deelname',
+      // Time views
+      liveNow: 'Live',
+      endOfDay: 'Gisteren',
+      thisWeek: 'Deze week',
+      // Context
+      vsYesterday: 'vs gisteren',
+      vsLastWeek: 'vs vorige week',
+      // Participation
+      participation: 'Deelname vandaag',
       of: 'van',
-      entries: 'check-ins',
-      insights: 'Signalen',
-      noData: 'Onvoldoende data',
-      noDataDetail: 'Minimaal 3 check-ins nodig voor betrouwbare metrics.',
+      checkedIn: 'ingecheckt',
+      // States
+      noData: 'Nog geen data',
+      noDataDetail: 'Wacht op eerste check-ins...',
+      notEnoughData: 'Onvoldoende data',
+      notEnoughDetail: 'Minimaal 3 check-ins voor betrouwbare metrics.',
+      // Insights
+      signals: 'Signalen',
+      // Momentum
+      momentum: 'Momentum',
+      days: 'dagen',
+      rising: 'stijgend',
+      declining: 'dalend',
+      stable: 'stabiel',
     },
     en: {
-      weekPulse: 'Week Pulse',
-      today: 'Today',
-      yesterday: 'Yesterday',
-      weekChange: 'Δ Week',
-      participation: 'Participation',
+      // Time views
+      liveNow: 'Live',
+      endOfDay: 'Yesterday',
+      thisWeek: 'This week',
+      // Context
+      vsYesterday: 'vs yesterday',
+      vsLastWeek: 'vs last week',
+      // Participation
+      participation: 'Participation today',
       of: 'of',
-      entries: 'check-ins',
-      insights: 'Signals',
-      noData: 'Insufficient data',
-      noDataDetail: 'Minimum 3 check-ins required for reliable metrics.',
+      checkedIn: 'checked in',
+      // States
+      noData: 'No data yet',
+      noDataDetail: 'Waiting for first check-ins...',
+      notEnoughData: 'Insufficient data',
+      notEnoughDetail: 'Minimum 3 check-ins for reliable metrics.',
+      // Insights
+      signals: 'Signals',
+      // Momentum
+      momentum: 'Momentum',
+      days: 'days',
+      rising: 'rising',
+      declining: 'declining',
+      stable: 'stable',
     },
   }
 
   const t = labels[language]
 
-  // Not enough data
-  if (!metrics.hasEnoughData) {
+  // No data at all
+  if (metrics.participation.teamSize === 0) {
     return (
       <Card>
-        <CardContent className="py-8 text-center">
-          <div className="text-4xl mb-4 opacity-50">📊</div>
-          <h3 className="font-semibold text-stone-700 mb-2">{t.noData}</h3>
-          <p className="text-sm text-stone-500">{t.noDataDetail}</p>
-          <div className="mt-4 text-sm text-stone-400">
-            {metrics.participation.today} {t.of} {metrics.participation.teamSize} {t.entries}
-          </div>
+        <CardContent className="py-12 text-center">
+          <div className="text-5xl mb-4 opacity-30">⚗️</div>
+          <h3 className="font-semibold text-stone-600 mb-2">{t.noData}</h3>
+          <p className="text-sm text-stone-400">{t.noDataDetail}</p>
         </CardContent>
       </Card>
     )
   }
 
+  // Not enough data for reliable metrics
+  if (!metrics.hasEnoughData) {
+    return (
+      <Card>
+        <CardContent className="py-8 text-center">
+          <div className="text-4xl mb-4 opacity-40">📊</div>
+          <h3 className="font-semibold text-stone-600 mb-2">{t.notEnoughData}</h3>
+          <p className="text-sm text-stone-400 mb-4">{t.notEnoughDetail}</p>
+          <ParticipationBar metrics={metrics} t={t} />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Get the active metric based on view
+  const getActiveMetric = () => {
+    switch (activeView) {
+      case 'live':
+        return {
+          metric: metrics.livePulse,
+          label: t.liveNow,
+          context: t.vsYesterday,
+          isLive: true,
+        }
+      case 'day':
+        return {
+          metric: metrics.dayPulse,
+          label: t.endOfDay,
+          context: null,
+          isLive: false,
+        }
+      case 'week':
+        return {
+          metric: metrics.weekPulse,
+          label: t.thisWeek,
+          context: t.vsLastWeek,
+          isLive: false,
+        }
+    }
+  }
+
+  const active = getActiveMetric()
+
   return (
     <div className="space-y-4">
-      {/* Main metric: Week Pulse */}
-      <Card className="overflow-hidden">
-        <CardContent className="py-6">
-          <div className="text-center">
-            <p className="text-xs text-stone-400 uppercase tracking-wide mb-2">{t.weekPulse}</p>
+      {/* Time view selector */}
+      <div className="flex gap-1 p-1 bg-stone-100 rounded-xl">
+        <TimeButton
+          active={activeView === 'live'}
+          onClick={() => setActiveView('live')}
+          hasData={metrics.livePulse.value !== null}
+          isLive
+        >
+          {t.liveNow}
+        </TimeButton>
+        <TimeButton
+          active={activeView === 'day'}
+          onClick={() => setActiveView('day')}
+          hasData={metrics.dayPulse.value !== null}
+        >
+          {t.endOfDay}
+        </TimeButton>
+        <TimeButton
+          active={activeView === 'week'}
+          onClick={() => setActiveView('week')}
+          hasData={metrics.weekPulse.value !== null}
+        >
+          {t.thisWeek}
+        </TimeButton>
+      </div>
 
-            {/* Zone display */}
-            <div className={`inline-block px-4 py-2 rounded-xl mb-2 ${getZoneColor(metrics.weekPulse.zone)}`}>
-              <span className="text-lg font-semibold">
-                {getZoneLabel(metrics.weekPulse.zone, language)}
+      {/* Primary metric card - single focus */}
+      <Card className="overflow-hidden">
+        <CardContent className="py-8">
+          <div className="text-center">
+            {/* Time label */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              {active.isLive && (
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+                </span>
+              )}
+              <span className="text-sm font-medium text-stone-500 uppercase tracking-wide">
+                {active.label}
               </span>
             </div>
 
-            {/* Trend indicator */}
-            <div className={`flex items-center justify-center gap-1 ${getTrendColor(metrics.weekPulse.trend)}`}>
-              <span className="text-xl">{getTrendArrow(metrics.weekPulse.trend)}</span>
-              {metrics.weekPulse.delta !== 0 && (
-                <span className="text-sm">
-                  {metrics.weekPulse.delta > 0 ? '+' : ''}{metrics.weekPulse.delta.toFixed(1)}
-                </span>
-              )}
-            </div>
-
-            {/* Confidence */}
-            <p className="text-xs text-stone-400 mt-2">
-              {getConfidenceLabel(metrics.weekPulse.confidence, language)}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Secondary metrics grid */}
-      <div className="grid grid-cols-3 gap-3">
-        {/* Today */}
-        <Card>
-          <CardContent className="py-4 text-center">
-            <p className="text-xs text-stone-400 mb-1">{t.today}</p>
-            {metrics.livePulse.value !== null ? (
+            {active.metric.value !== null ? (
               <>
-                <div className="text-2xl font-bold text-stone-900">
-                  {metrics.livePulse.value.toFixed(1)}
+                {/* Zone badge - primary focus */}
+                <div className={`inline-block px-6 py-3 rounded-2xl mb-4 ${getZoneColor(active.metric.zone)}`}>
+                  <span className="text-xl font-bold">
+                    {getZoneLabel(active.metric.zone, language)}
+                  </span>
                 </div>
-                <div className={`text-sm ${getTrendColor(metrics.livePulse.trend)}`}>
-                  {getTrendArrow(metrics.livePulse.trend)}
+
+                {/* Trend - prominent */}
+                <div className={`flex items-center justify-center gap-2 mb-2 ${getTrendColor(active.metric.trend)}`}>
+                  <span className="text-3xl font-bold">{getTrendArrow(active.metric.trend)}</span>
+                  {active.metric.delta !== 0 && (
+                    <span className="text-lg font-medium">
+                      {active.metric.delta > 0 ? '+' : ''}{active.metric.delta.toFixed(1)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Context */}
+                {active.context && (
+                  <p className="text-xs text-stone-400">{active.context}</p>
+                )}
+
+                {/* Confidence indicator */}
+                <div className="mt-4 pt-4 border-t border-stone-100">
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    active.metric.confidence === 'high'
+                      ? 'bg-cyan-50 text-cyan-600'
+                      : active.metric.confidence === 'moderate'
+                        ? 'bg-stone-100 text-stone-500'
+                        : 'bg-amber-50 text-amber-600'
+                  }`}>
+                    {getConfidenceLabel(active.metric.confidence, language)}
+                  </span>
                 </div>
               </>
             ) : (
-              <div className="text-lg text-stone-300">—</div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Yesterday */}
-        <Card>
-          <CardContent className="py-4 text-center">
-            <p className="text-xs text-stone-400 mb-1">{t.yesterday}</p>
-            {metrics.dayPulse.value !== null ? (
-              <div className="text-2xl font-bold text-stone-900">
-                {metrics.dayPulse.value.toFixed(1)}
+              <div className="py-4">
+                <span className="text-2xl text-stone-300">—</span>
+                <p className="text-sm text-stone-400 mt-2">{t.noData}</p>
               </div>
-            ) : (
-              <div className="text-lg text-stone-300">—</div>
             )}
-          </CardContent>
-        </Card>
-
-        {/* Week delta */}
-        <Card>
-          <CardContent className="py-4 text-center">
-            <p className="text-xs text-stone-400 mb-1">{t.weekChange}</p>
-            {metrics.weekPulse.value !== null && metrics.previousWeekPulse.value !== null ? (
-              <div className={`text-2xl font-bold ${getTrendColor(metrics.weekPulse.trend)}`}>
-                {(metrics.weekPulse.value - metrics.previousWeekPulse.value) > 0 ? '+' : ''}
-                {(metrics.weekPulse.value - metrics.previousWeekPulse.value).toFixed(1)}
-              </div>
-            ) : (
-              <div className="text-lg text-stone-300">—</div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Participation bar */}
-      <Card>
-        <CardContent className="py-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-stone-600">{t.participation}</span>
-            <span className="text-sm font-medium text-stone-900">
-              {metrics.participation.today} {t.of} {metrics.participation.teamSize}
-            </span>
           </div>
-          <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all ${
-                metrics.participation.rate >= 60
-                  ? 'bg-cyan-500'
-                  : metrics.participation.rate >= 30
-                    ? 'bg-amber-400'
-                    : 'bg-stone-300'
-              }`}
-              style={{ width: `${Math.min(metrics.participation.rate, 100)}%` }}
-            />
-          </div>
-          <p className="text-xs text-stone-400 mt-1">
-            {formatParticipationRate(metrics.participation.today, metrics.participation.teamSize)}
-          </p>
         </CardContent>
       </Card>
+
+      {/* Momentum indicator */}
+      {metrics.momentum.daysTrending > 0 && (
+        <Card>
+          <CardContent className="py-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-stone-500">{t.momentum}</span>
+              <div className={`flex items-center gap-2 ${getTrendColor(metrics.momentum.direction)}`}>
+                <span className="text-lg">{getTrendArrow(metrics.momentum.direction)}</span>
+                <span className="text-sm font-medium">
+                  {metrics.momentum.daysTrending} {t.days} {
+                    metrics.momentum.direction === 'rising' ? t.rising :
+                    metrics.momentum.direction === 'declining' ? t.declining : t.stable
+                  }
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Participation */}
+      <ParticipationBar metrics={metrics} t={t} />
 
       {/* Insights */}
       {insights.length > 0 && (
         <Card>
           <CardContent className="py-4">
-            <h3 className="text-sm font-medium text-stone-700 mb-3">{t.insights}</h3>
+            <h3 className="text-sm font-medium text-stone-700 mb-3">{t.signals}</h3>
             <div className="space-y-3">
               {insights.map((insight) => (
                 <InsightCard key={insight.id} insight={insight} language={language} />
@@ -193,8 +269,91 @@ export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
   )
 }
 
+// Time view button
+function TimeButton({
+  children,
+  active,
+  onClick,
+  hasData,
+  isLive,
+}: {
+  children: React.ReactNode
+  active: boolean
+  onClick: () => void
+  hasData: boolean
+  isLive?: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all min-h-11
+        ${active
+          ? 'bg-white text-stone-900 shadow-sm'
+          : hasData
+            ? 'text-stone-600 hover:text-stone-900'
+            : 'text-stone-300 cursor-not-allowed'
+        }
+        ${isLive && hasData ? 'flex items-center justify-center gap-1.5' : ''}
+      `}
+      disabled={!hasData}
+    >
+      {isLive && hasData && (
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500" />
+        </span>
+      )}
+      {children}
+    </button>
+  )
+}
+
+// Participation progress bar
+function ParticipationBar({
+  metrics,
+  t,
+}: {
+  metrics: TeamMetrics
+  t: Record<string, string>
+}) {
+  return (
+    <Card>
+      <CardContent className="py-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm text-stone-500">{t.participation}</span>
+          <span className="text-sm font-medium text-stone-700">
+            {metrics.participation.today} {t.of} {metrics.participation.teamSize} {t.checkedIn}
+          </span>
+        </div>
+        <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${
+              metrics.participation.rate >= 60
+                ? 'bg-cyan-500'
+                : metrics.participation.rate >= 30
+                  ? 'bg-amber-400'
+                  : 'bg-stone-300'
+            }`}
+            style={{ width: `${Math.min(metrics.participation.rate, 100)}%` }}
+          />
+        </div>
+        <div className="flex justify-between mt-1">
+          <span className="text-xs text-stone-400">
+            {formatParticipationRate(metrics.participation.today, metrics.participation.teamSize)}
+          </span>
+          {metrics.participation.rate < 30 && (
+            <span className="text-xs text-amber-500">Limited data</span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Insight card
 function InsightCard({ insight, language }: { insight: PulseInsight; language: 'nl' | 'en' }) {
-  const severityColors = {
+  const severityStyles = {
     info: 'border-stone-200 bg-stone-50',
     attention: 'border-amber-200 bg-amber-50',
     warning: 'border-red-200 bg-red-50',
@@ -209,9 +368,9 @@ function InsightCard({ insight, language }: { insight: PulseInsight; language: '
   const checkLabel = language === 'nl' ? 'Wat je zou kunnen checken' : 'What you could check'
 
   return (
-    <div className={`rounded-xl border p-3 ${severityColors[insight.severity]}`}>
+    <div className={`rounded-xl border p-3 ${severityStyles[insight.severity]}`}>
       <div className="flex items-start gap-2">
-        <span className="text-sm">{severityIcons[insight.severity]}</span>
+        <span className="text-sm" aria-hidden="true">{severityIcons[insight.severity]}</span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-stone-800">{insight.message}</p>
           {insight.detail && (
@@ -219,7 +378,7 @@ function InsightCard({ insight, language }: { insight: PulseInsight; language: '
           )}
           {insight.suggestions && insight.suggestions.length > 0 && (
             <details className="mt-2">
-              <summary className="text-xs text-cyan-600 cursor-pointer hover:text-cyan-700">
+              <summary className="text-xs text-cyan-600 cursor-pointer hover:text-cyan-700 min-h-11 flex items-center">
                 {checkLabel}
               </summary>
               <ul className="mt-2 text-xs text-stone-600 space-y-1 pl-4">
