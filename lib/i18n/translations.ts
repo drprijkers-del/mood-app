@@ -43,7 +43,7 @@ export const translations = {
     loginAdminAccess: 'Admin',
 
     // Team signal input
-    checkinQuestion: "Hoe gaat het",
+    checkinQuestion: "Wat is je purity level",
     checkinToday: 'vandaag',
     checkinName: 'Alias (optioneel)',
     checkinComment: 'Context (optioneel)',
@@ -59,8 +59,8 @@ export const translations = {
     moodGreat: '5',
 
     // Success
-    successTitle: 'Ontvangen',
-    successRecorded: 'Je signaal is geregistreerd',
+    successTitle: 'Sample binnen',
+    successRecorded: 'Genoteerd in het lab',
     successStreak: 'dagen op rij',
     successStreakSingular: 'dag actief',
     successKeepGoing: 'Blijf koken!',
@@ -78,7 +78,7 @@ export const translations = {
     alreadyCheckedToday: 'signalen vandaag',
 
     // Coaching tips
-    coachingTipTitle: 'Tip van de coach',
+    coachingTipTitle: 'Lab advies',
     coachingTipLow: 'Lage score? Bespreek het in de retro of neem je Scrum Master even apart.',
     coachingTipContext: 'Voeg context toe aan je signaal. Dit helpt je team te begrijpen wat er speelt.',
     coachingTipRetro: 'Neem dit mee naar de retro. Jouw stem telt.',
@@ -200,7 +200,7 @@ export const translations = {
     loginAdminAccess: 'Admin',
 
     // Team signal input
-    checkinQuestion: "How's it going",
+    checkinQuestion: "What's your purity level",
     checkinToday: 'today',
     checkinName: 'Alias (optional)',
     checkinComment: 'Context (optional)',
@@ -216,8 +216,8 @@ export const translations = {
     moodGreat: '5',
 
     // Success
-    successTitle: 'Received',
-    successRecorded: 'Your signal is recorded',
+    successTitle: 'Sample received',
+    successRecorded: 'Logged in the lab',
     successStreak: 'day streak',
     successStreakSingular: 'day active',
     successKeepGoing: 'Keep cooking!',
@@ -235,7 +235,7 @@ export const translations = {
     alreadyCheckedToday: 'signals today',
 
     // Coaching tips
-    coachingTipTitle: 'Coach tip',
+    coachingTipTitle: 'Lab tip',
     coachingTipLow: 'Low score? Discuss it in the retro or have a quick chat with your Scrum Master.',
     coachingTipContext: 'Add context to your signal. It helps your team understand what\'s going on.',
     coachingTipRetro: 'Bring this to the retro. Your voice matters.',

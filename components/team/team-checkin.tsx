@@ -84,10 +84,54 @@ export function TeamCheckin({ teamName }: TeamCheckinProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 relative overflow-hidden">
-      {/* Easter egg: subtle fly */}
-      <div className="absolute bottom-20 left-10 text-xs opacity-10">
+      {/* Easter egg: The Fly - Breaking Bad S03E10 */}
+      <div
+        className="absolute top-1/2 text-lg opacity-25 pointer-events-none z-50"
+        style={{
+          animation: 'flyAcross 25s linear infinite',
+        }}
+      >
         🪰
       </div>
+      <style jsx>{`
+        @keyframes flyAcross {
+          0% {
+            left: -20px;
+            transform: translateY(0px) rotate(0deg);
+          }
+          10% {
+            transform: translateY(-30px) rotate(15deg);
+          }
+          20% {
+            transform: translateY(20px) rotate(-10deg);
+          }
+          30% {
+            transform: translateY(-15px) rotate(5deg);
+          }
+          40% {
+            transform: translateY(25px) rotate(-15deg);
+          }
+          50% {
+            transform: translateY(-10px) rotate(10deg);
+          }
+          60% {
+            transform: translateY(30px) rotate(-5deg);
+          }
+          70% {
+            transform: translateY(-20px) rotate(15deg);
+          }
+          80% {
+            transform: translateY(15px) rotate(-10deg);
+          }
+          90% {
+            transform: translateY(-25px) rotate(5deg);
+          }
+          100% {
+            left: calc(100% + 20px);
+            transform: translateY(0px) rotate(0deg);
+          }
+        }
+      `}</style>
 
       {/* Header */}
       <header className="p-6 relative z-10">

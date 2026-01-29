@@ -86,16 +86,16 @@ export function LoginForm() {
         <CardContent className="pt-6 text-center">
           <div className="text-6xl mb-4">📬</div>
           <h2 className="text-xl font-semibold mb-2">{t('loginCheckInbox')}</h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-stone-500 mb-6">
             {t('loginEmailSent')}<br />
-            <span className="font-medium text-gray-900">{email}</span>
+            <span className="font-medium text-stone-900">{email}</span>
           </p>
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-sm text-stone-400 mb-4">
             {t('loginClickLink')}
           </p>
           <button
             onClick={() => setEmailSent(false)}
-            className="text-sm text-pink-600 hover:text-pink-700"
+            className="text-sm text-cyan-600 hover:text-cyan-700"
           >
             {t('loginOtherEmail')}
           </button>
@@ -108,8 +108,8 @@ export function LoginForm() {
     <Card>
       <CardContent className="pt-6">
         <div className="text-center mb-6">
-          <h2 className="text-xl font-semibold mb-1">{t('loginWelcome')}</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-xl font-semibold text-stone-900 mb-1">{t('loginWelcome')}</h2>
+          <p className="text-sm text-stone-500">
             {t('loginSubtitle')}
           </p>
         </div>
