@@ -184,9 +184,6 @@ export function TeamCheckin({ teamName }: TeamCheckinProps) {
                 `}
               >
                 {signal.value}
-                {selectedSignal === signal.value && (
-                  <span className="absolute inset-0 rounded-xl animate-ping opacity-20 bg-cyan-400" style={{ animationDuration: '2s' }} />
-                )}
               </button>
             ))}
           </div>

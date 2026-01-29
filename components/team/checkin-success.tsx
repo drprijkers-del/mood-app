@@ -76,46 +76,8 @@ export function CheckinSuccess({ mood, streak, teamStats, teamName }: CheckinSuc
   const isEpicStreak = streak >= 30
   const isMilestone = streak === 7 || streak === 14 || streak === 30
 
-  // Generate crystal positions for confetti effect
-  const crystals = mood === 5 ? Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    left: `${5 + (i * 8)}%`,
-    delay: `${i * 0.3}s`,
-    duration: `${2 + (i % 3)}s`,
-  })) : []
-
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 relative overflow-hidden">
-      {/* Crystal rain for 99.1% purity (mood 5) */}
-      {mood === 5 && crystals.map((crystal) => (
-        <div
-          key={crystal.id}
-          className="absolute text-2xl pointer-events-none z-40"
-          style={{
-            left: crystal.left,
-            top: '-40px',
-            animation: `crystalFall ${crystal.duration} ease-in ${crystal.delay} infinite`,
-          }}
-        >
-          💎
-        </div>
-      ))}
-
-      {/* Celebration burst for mood 4+ */}
-      {mood >= 4 && (
-        <div className="absolute inset-0 pointer-events-none z-30">
-          <div className="absolute top-1/4 left-1/4 text-3xl animate-ping" style={{ animationDuration: '2s' }}>✨</div>
-          <div className="absolute top-1/3 right-1/4 text-2xl animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>⚗️</div>
-          <div className="absolute bottom-1/3 left-1/3 text-2xl animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }}>🧪</div>
-          {mood === 5 && (
-            <>
-              <div className="absolute top-1/2 right-1/3 text-3xl animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }}>🏆</div>
-              <div className="absolute bottom-1/4 right-1/5 text-2xl animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.8s' }}>💎</div>
-            </>
-          )}
-        </div>
-      )}
-
       {/* Easter egg: The Fly - Breaking Bad S03E10 */}
       <div
         className="absolute top-1/2 text-lg opacity-25 pointer-events-none z-50"
@@ -163,20 +125,10 @@ export function CheckinSuccess({ mood, streak, teamStats, teamName }: CheckinSuc
             transform: translateY(0px) rotate(0deg);
           }
         }
-        @keyframes crystalFall {
-          0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0.3;
-          }
-        }
       `}</style>
 
       {/* Easter egg: RV driving away */}
-      <div className="absolute bottom-10 -right-10 text-4xl opacity-30 animate-pulse">
+      <div className="absolute bottom-10 -right-10 text-4xl opacity-30">
         🚐💨
       </div>
 
@@ -195,7 +147,7 @@ export function CheckinSuccess({ mood, streak, teamStats, teamName }: CheckinSuc
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-8 relative z-10">
         <div className="text-center max-w-md">
           {/* Success - lab beaker with color based on mood */}
-          <div className={`text-6xl mb-6 ${mood >= 4 ? 'animate-bounce' : ''}`} style={{ animationDuration: '2s' }}>
+          <div className="text-6xl mb-6">
             {mood === 5 ? '🏆' : mood >= 4 ? '✨' : '🧪'}
           </div>
 
@@ -234,15 +186,15 @@ export function CheckinSuccess({ mood, streak, teamStats, teamName }: CheckinSuc
                     : isGoodStreak
                       ? 'bg-gradient-to-br from-stone-600 to-stone-700 text-white'
                       : 'bg-stone-100'
-            } ${isMilestone ? 'animate-pulse ring-4 ring-white/50' : ''}`}>
+            } ${isMilestone ? 'ring-4 ring-white/50' : ''}`}>
               {/* Milestone badge */}
               {isMilestone && (
-                <div className="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-bounce">
+                <div className="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
                   🎉 MILESTONE!
                 </div>
               )}
               <div className="flex items-center justify-center gap-2 mb-1">
-                <span className={`text-2xl ${streak > 2 ? 'animate-pulse' : ''}`}>
+                <span className="text-2xl">
                   {isEpicStreak ? '🧙‍♂️' : isLegendaryStreak ? '👨‍🔬' : isGreatStreak ? '🔥' : isGoodStreak ? '⚗️' : streak > 1 ? '✨' : '🌱'}
                 </span>
                 <span className={`text-3xl font-bold ${isGoodStreak ? 'text-white' : 'text-stone-900'}`}>

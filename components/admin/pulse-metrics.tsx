@@ -172,10 +172,7 @@ export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
             {/* Time label */}
             <div className="flex items-center justify-center gap-2 mb-4">
               {active.isLive && (
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
-                </span>
+                <span className="inline-flex rounded-full h-2 w-2 bg-cyan-500" />
               )}
               <span className="text-sm font-medium text-stone-500 uppercase tracking-wide">
                 {active.label}
@@ -299,10 +296,7 @@ function TimeButton({
       disabled={!hasData}
     >
       {isLive && hasData && (
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500" />
-        </span>
+        <span className="inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500" />
       )}
       {children}
     </button>
