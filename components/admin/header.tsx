@@ -31,6 +31,13 @@ export function AdminHeader() {
           </Link>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/feedback/backlog"
+              className="text-sm text-stone-500 hover:text-stone-700 px-2 py-1"
+              target="_blank"
+            >
+              Backlog
+            </Link>
             <LanguageToggle />
             <Button variant="ghost" size="sm" onClick={handleLogout} aria-label="Log out of admin panel">
               {t('adminLogout')}
