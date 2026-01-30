@@ -128,7 +128,7 @@ export function TeamDetailContent({ team }: TeamDetailContentProps) {
 
               {/* Actions */}
               <div className="flex gap-3">
-                <Link href={`/pulse/admin/teams/${team.id}`} className="flex-1">
+                <Link href={`/teams/${team.id}/pulse`} className="flex-1">
                   <Button variant="secondary" className="w-full">
                     {t('teamsGoToPulse')}
                   </Button>
@@ -190,7 +190,7 @@ export function TeamDetailContent({ team }: TeamDetailContentProps) {
 
               {/* Actions */}
               <div className="flex gap-3">
-                <Link href={`/delta/teams/${team.id}`} className="flex-1">
+                <Link href={`/teams/${team.id}/delta`} className="flex-1">
                   <Button variant="secondary" className="w-full">
                     {t('teamsGoToDelta')}
                   </Button>

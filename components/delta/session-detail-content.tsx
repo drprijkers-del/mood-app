@@ -16,9 +16,10 @@ interface SessionDetailContentProps {
   session: DeltaSessionWithStats
   synthesis: SynthesisResult | null
   shareLink: string | null
+  backPath?: string // Optional: defaults to /delta/teams/[team_id]
 }
 
-export function SessionDetailContent({ session, synthesis, shareLink }: SessionDetailContentProps) {
+export function SessionDetailContent({ session, synthesis, shareLink, backPath }: SessionDetailContentProps) {
   const router = useRouter()
   const t = useTranslation()
   const angleInfo = getAngleInfo(session.angle)
@@ -70,10 +71,12 @@ export function SessionDetailContent({ session, synthesis, shareLink }: SessionD
     setDeleting(true)
     const result = await deleteSession(session.id)
     if (result.success) {
-      router.push(`/delta/teams/${session.team_id}`)
+      router.push(backPath || `/delta/teams/${session.team_id}`)
     }
     setDeleting(false)
   }
+
+  const resolvedBackPath = backPath || `/delta/teams/${session.team_id}`
 
   return (
     <>
@@ -81,14 +84,14 @@ export function SessionDetailContent({ session, synthesis, shareLink }: SessionD
       <main className="max-w-3xl mx-auto px-4 pt-8 pb-24">
         {/* Back link */}
         <Link
-          href={`/delta/teams/${session.team_id}`}
-        className="inline-flex items-center text-stone-500 hover:text-stone-700 mb-6"
-      >
-        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to {session.team_name || 'team'}
-      </Link>
+          href={resolvedBackPath}
+          className="inline-flex items-center text-stone-500 hover:text-stone-700 mb-6"
+        >
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to {session.team_name || 'team'}
+        </Link>
 
       {/* Session header */}
       <div className="mb-8">

@@ -2,17 +2,57 @@
   "redirects": [
     {
       "source": "/admin/login",
-      "destination": "/pulse/admin/login",
+      "destination": "/login",
       "permanent": true
     },
     {
       "source": "/admin/teams",
-      "destination": "/pulse/admin/teams",
+      "destination": "/teams",
       "permanent": true
     },
     {
-      "source": "/admin/teams/:path*",
-      "destination": "/pulse/admin/teams/:path*",
+      "source": "/admin/teams/:id",
+      "destination": "/teams/:id/pulse",
+      "permanent": true
+    },
+    {
+      "source": "/pulse/admin/login",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/pulse/admin/teams",
+      "destination": "/teams",
+      "permanent": true
+    },
+    {
+      "source": "/pulse/admin/teams/new",
+      "destination": "/teams/new",
+      "permanent": true
+    },
+    {
+      "source": "/pulse/admin/teams/:id",
+      "destination": "/teams/:id/pulse",
+      "permanent": true
+    },
+    {
+      "source": "/delta/teams",
+      "destination": "/teams",
+      "permanent": true
+    },
+    {
+      "source": "/delta/teams/:id",
+      "destination": "/teams/:id/delta",
+      "permanent": true
+    },
+    {
+      "source": "/delta/teams/:id/new",
+      "destination": "/teams/:id/delta/new",
+      "permanent": true
+    },
+    {
+      "source": "/delta/session/:id",
+      "destination": "/session/:id",
       "permanent": true
     },
     {
