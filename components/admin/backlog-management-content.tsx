@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import {
   BacklogItem,
   ReleaseNote,
+  ProductType,
   BacklogCategory,
   BacklogStatus,
   BacklogDecision,
@@ -152,6 +153,16 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
     return <span className={`px-2 py-0.5 rounded text-xs font-medium ${s.color}`}>{s.label}</span>
   }
 
+  function getProductBadge(product: ProductType) {
+    const config: Record<ProductType, { label: string; color: string }> = {
+      delta: { label: 'Delta', color: 'bg-cyan-900 text-cyan-300' },
+      pulse: { label: 'Pulse', color: 'bg-purple-900 text-purple-300' },
+      shared: { label: 'Shared', color: 'bg-stone-700 text-stone-300' },
+    }
+    const p = config[product]
+    return <span className={`px-2 py-0.5 rounded text-xs font-medium ${p.color}`}>{p.label}</span>
+  }
+
   return (
     <div className="min-h-screen bg-stone-900 text-white">
       {/* Header */}
@@ -219,7 +230,19 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
                   {editingBacklog ? 'Edit item' : 'New backlog item'}
                 </h2>
                 <form onSubmit={handleBacklogSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-stone-300 mb-1">Product</label>
+                      <select
+                        name="product"
+                        defaultValue={editingBacklog?.product || 'pulse'}
+                        className="w-full px-3 py-2 rounded-lg border border-stone-600 bg-stone-700 text-white"
+                      >
+                        <option value="pulse">Pulse</option>
+                        <option value="delta">Delta</option>
+                        <option value="shared">Shared</option>
+                      </select>
+                    </div>
                     <div>
                       <label className="block text-sm font-medium text-stone-300 mb-1">Category</label>
                       <select
@@ -348,6 +371,7 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap mb-1">
+                                {getProductBadge(item.product)}
                                 {getCategoryBadge(item.category)}
                                 {getStatusBadge(item.status, item.decision)}
                               </div>
@@ -427,6 +451,7 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
+                          {getProductBadge(note.product)}
                           <span className="text-xs font-mono text-cyan-400">v{note.version}</span>
                           <span className="text-xs text-stone-500">
                             {new Date(note.released_at).toLocaleDateString('en-US')}
@@ -543,7 +568,19 @@ function ReleaseNoteForm({ editingRelease, loading, onSubmit, onCancel }: Releas
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-stone-300 mb-1">Product</label>
+          <select
+            name="product"
+            defaultValue={editingRelease?.product || 'pulse'}
+            className="w-full px-3 py-2 rounded-lg border border-stone-600 bg-stone-700 text-white"
+          >
+            <option value="pulse">Pulse</option>
+            <option value="delta">Delta</option>
+            <option value="shared">Shared</option>
+          </select>
+        </div>
         <div>
           <label className="block text-sm font-medium text-stone-300 mb-1">Version</label>
           <input

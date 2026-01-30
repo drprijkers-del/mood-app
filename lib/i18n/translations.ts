@@ -159,6 +159,10 @@ export const translations = {
     statsParticipants: 'Lab medewerkers',
     statsCheckinsToday: 'Samples vandaag',
     statsMoodScale: 'Purity schaal',
+
+    // Backlog
+    backlogCTA: 'Backlog & Feedback',
+    backlogCTAMobile: 'Feedback',
   },
 
   en: {
@@ -321,6 +325,10 @@ export const translations = {
     statsParticipants: 'Lab members',
     statsCheckinsToday: 'Samples today',
     statsMoodScale: 'Purity scale',
+
+    // Backlog
+    backlogCTA: 'Backlog & Feedback',
+    backlogCTAMobile: 'Feedback',
   },
 } as const
 

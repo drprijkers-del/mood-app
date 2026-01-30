@@ -529,6 +529,8 @@ ON CONFLICT (email) DO UPDATE SET
 -- Backlog items table
 CREATE TABLE IF NOT EXISTS backlog_items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  -- Product (where this item originated)
+  product TEXT NOT NULL DEFAULT 'pulse' CHECK (product IN ('delta', 'pulse', 'shared')),
   -- Categorization
   category TEXT NOT NULL DEFAULT 'features' CHECK (category IN ('ux', 'statements', 'analytics', 'integration', 'features')),
   status TEXT NOT NULL DEFAULT 'review' CHECK (status IN ('review', 'exploring', 'decided')),
@@ -556,6 +558,8 @@ CREATE TABLE IF NOT EXISTS backlog_items (
 -- Release notes table
 CREATE TABLE IF NOT EXISTS release_notes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  -- Product
+  product TEXT NOT NULL DEFAULT 'pulse' CHECK (product IN ('delta', 'pulse', 'shared')),
   version TEXT NOT NULL,
   -- Multilingual content
   title_nl TEXT NOT NULL,
@@ -572,7 +576,9 @@ CREATE TABLE IF NOT EXISTS release_notes (
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_backlog_items_status ON backlog_items(status);
 CREATE INDEX IF NOT EXISTS idx_backlog_items_category ON backlog_items(category);
+CREATE INDEX IF NOT EXISTS idx_backlog_items_product ON backlog_items(product);
 CREATE INDEX IF NOT EXISTS idx_release_notes_released_at ON release_notes(released_at DESC);
+CREATE INDEX IF NOT EXISTS idx_release_notes_product ON release_notes(product);
 
 -- Enable RLS
 ALTER TABLE backlog_items ENABLE ROW LEVEL SECURITY;

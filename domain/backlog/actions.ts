@@ -4,12 +4,14 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 // Types matching database schema
+export type ProductType = 'delta' | 'pulse' | 'shared'
 export type BacklogCategory = 'ux' | 'statements' | 'analytics' | 'integration' | 'features'
 export type BacklogStatus = 'review' | 'exploring' | 'decided'
 export type BacklogDecision = 'building' | 'not_doing'
 
 export interface BacklogItem {
   id: string
+  product: ProductType
   category: BacklogCategory
   status: BacklogStatus
   decision: BacklogDecision | null
@@ -29,6 +31,7 @@ export interface BacklogItem {
 
 export interface ReleaseNote {
   id: string
+  product: ProductType
   version: string
   title_nl: string
   title_en: string
@@ -96,6 +99,7 @@ export async function createBacklogItem(formData: FormData): Promise<{ success: 
   const ourTakeEn = formData.get('our_take_en') as string | null
 
   const item = {
+    product: (formData.get('product') as ProductType) || 'pulse',
     category: formData.get('category') as BacklogCategory,
     status,
     decision: status === 'decided' ? (formData.get('decision') as BacklogDecision) : null,
@@ -137,6 +141,7 @@ export async function updateBacklogItem(id: string, formData: FormData): Promise
   const ourTakeEn = formData.get('our_take_en') as string | null
 
   const updates = {
+    product: (formData.get('product') as ProductType) || 'pulse',
     category: formData.get('category') as BacklogCategory,
     status,
     decision: status === 'decided' ? (formData.get('decision') as BacklogDecision) : null,
@@ -248,6 +253,7 @@ export async function createReleaseNote(formData: FormData): Promise<{ success: 
   }
 
   const note = {
+    product: (formData.get('product') as ProductType) || 'pulse',
     version: formData.get('version') as string,
     title_nl: formData.get('title_en') as string, // English only
     title_en: formData.get('title_en') as string,
@@ -290,6 +296,7 @@ export async function updateReleaseNote(id: string, formData: FormData): Promise
   }
 
   const updates = {
+    product: (formData.get('product') as ProductType) || 'pulse',
     version: formData.get('version') as string,
     title_nl: formData.get('title_en') as string,
     title_en: formData.get('title_en') as string,

@@ -48,6 +48,15 @@ export function BacklogDisplay({ items, releases }: BacklogDisplayProps) {
     return colors[category] || 'bg-stone-100 text-stone-700'
   }
 
+  const getProductBadge = (product: string) => {
+    const config: Record<string, { label: string; color: string }> = {
+      delta: { label: 'Delta', color: 'bg-cyan-50 text-cyan-600 border-cyan-200' },
+      pulse: { label: 'Pulse', color: 'bg-purple-50 text-purple-600 border-purple-200' },
+      shared: { label: 'Shared', color: 'bg-stone-50 text-stone-600 border-stone-200' },
+    }
+    return config[product] || config.shared
+  }
+
   const renderItems = (itemList: BacklogItem[]) => {
     if (itemList.length === 0) {
       return (
@@ -61,28 +70,36 @@ export function BacklogDisplay({ items, releases }: BacklogDisplayProps) {
 
     return (
       <div className="space-y-3">
-        {itemList.map((item) => (
-          <Card key={item.id}>
-            <CardContent className="py-4">
-              <div className="flex items-start gap-3">
-                <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
-                  {getCategoryLabel(item.category)}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-stone-900">{item.title_en}</h3>
-                  {item.source_en && (
-                    <p className="text-sm text-stone-500 mt-1">{item.source_en}</p>
-                  )}
-                  {item.our_take_en && (
-                    <p className="text-sm text-stone-600 mt-2 italic">
-                      &ldquo;{item.our_take_en}&rdquo;
-                    </p>
-                  )}
+        {itemList.map((item) => {
+          const productBadge = getProductBadge(item.product)
+          return (
+            <Card key={item.id}>
+              <CardContent className="py-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <span className={`text-xs px-2 py-0.5 rounded border ${productBadge.color}`}>
+                      {productBadge.label}
+                    </span>
+                    <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
+                      {getCategoryLabel(item.category)}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-stone-900">{item.title_en}</h3>
+                    {item.source_en && (
+                      <p className="text-sm text-stone-500 mt-1">{item.source_en}</p>
+                    )}
+                    {item.our_take_en && (
+                      <p className="text-sm text-stone-600 mt-2 italic">
+                        &ldquo;{item.our_take_en}&rdquo;
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
     )
   }
@@ -100,38 +117,44 @@ export function BacklogDisplay({ items, releases }: BacklogDisplayProps) {
 
     return (
       <div className="space-y-4">
-        {releases.map((release) => (
-          <Card key={release.id}>
-            <CardContent className="py-4">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-xs font-mono bg-stone-100 text-stone-600 px-2 py-1 rounded">
-                  v{release.version}
-                </span>
-                <span className="text-sm text-stone-400">
-                  {new Date(release.released_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </span>
-              </div>
-              <h3 className="font-medium text-stone-900">{release.title_en}</h3>
-              {release.description_en && (
-                <p className="text-sm text-stone-500 mt-1">{release.description_en}</p>
-              )}
-              {release.changes && release.changes.length > 0 && (
-                <ul className="mt-3 space-y-1">
-                  {release.changes.map((change, i) => (
-                    <li key={i} className="text-sm text-stone-600 flex items-start gap-2">
-                      <span className="text-emerald-500 mt-0.5">+</span>
-                      {change.en}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+        {releases.map((release) => {
+          const productBadge = getProductBadge(release.product)
+          return (
+            <Card key={release.id}>
+              <CardContent className="py-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`text-xs px-2 py-0.5 rounded border ${productBadge.color}`}>
+                    {productBadge.label}
+                  </span>
+                  <span className="text-xs font-mono bg-stone-100 text-stone-600 px-2 py-1 rounded">
+                    v{release.version}
+                  </span>
+                  <span className="text-sm text-stone-400">
+                    {new Date(release.released_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>
+                </div>
+                <h3 className="font-medium text-stone-900">{release.title_en}</h3>
+                {release.description_en && (
+                  <p className="text-sm text-stone-500 mt-1">{release.description_en}</p>
+                )}
+                {release.changes && release.changes.length > 0 && (
+                  <ul className="mt-3 space-y-1">
+                    {release.changes.map((change, i) => (
+                      <li key={i} className="text-sm text-stone-600 flex items-start gap-2">
+                        <span className="text-emerald-500 mt-0.5">+</span>
+                        {change.en}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
     )
   }
