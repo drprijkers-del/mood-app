@@ -35,7 +35,7 @@ export function TeamActions({ team }: TeamActionsProps) {
     setLoading(false)
 
     if (result.success) {
-      router.push('/admin/teams')
+      router.push('/pulse/admin/teams')
     }
   }
 

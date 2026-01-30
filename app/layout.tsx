@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { LanguageProvider } from "@/lib/i18n/context";
-import { BacklogLink } from "@/components/ui/backlog-link";
-import { DeltaLink } from "@/components/ui/delta-link";
 import "./globals.css";
 
 const geist = Geist({
@@ -11,8 +9,8 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Pulse | Pink Pollos Lab",
-  description: "Team signals in one click - A Pink Pollos Lab tool",
+  title: "The Lab | Pink Pollos",
+  description: "Tools for teams that build - Pulse & Delta",
 };
 
 export default function RootLayout({
@@ -25,8 +23,6 @@ export default function RootLayout({
       <body className={`${geist.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
         <LanguageProvider>
           {children}
-          <BacklogLink />
-          <DeltaLink />
         </LanguageProvider>
       </body>
     </html>

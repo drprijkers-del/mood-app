@@ -26,8 +26,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Handle admin routes - require authentication
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+  // Handle Pulse admin routes - require authentication
+  if (pathname.startsWith('/pulse/admin') && !pathname.startsWith('/pulse/admin/login')) {
     // First check for password session cookie
     const passwordSession = request.cookies.get('admin_password_session')?.value
     if (passwordSession) {
@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
     const { user, supabaseResponse } = await updateSession(request)
 
     if (!user) {
-      const loginUrl = new URL('/admin/login', request.url)
+      const loginUrl = new URL('/pulse/admin/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
@@ -54,12 +54,61 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse
   }
 
-  // Handle team invite links with token
-  if (pathname.startsWith('/t/') && searchParams.has('k')) {
-    // Let the page handle token validation and cookie setting
-    // Then redirect to clean URL
+  // Handle Delta routes - require authentication (except participation /d/)
+  if (pathname.startsWith('/delta') && !pathname.startsWith('/d/')) {
+    // First check for password session cookie
+    const passwordSession = request.cookies.get('admin_password_session')?.value
+    if (passwordSession) {
+      try {
+        const session = JSON.parse(passwordSession)
+        if (session.exp > Date.now()) {
+          return NextResponse.next()
+        }
+      } catch {
+        // Invalid session, continue to check Supabase session
+      }
+    }
+
+    // Check Supabase session
     const { user, supabaseResponse } = await updateSession(request)
+
+    if (!user) {
+      const loginUrl = new URL('/pulse/admin/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
     return supabaseResponse
+  }
+
+  // Handle team invite links with token (Pulse)
+  if (pathname.startsWith('/pulse/t/') && searchParams.has('k')) {
+    const { supabaseResponse } = await updateSession(request)
+    return supabaseResponse
+  }
+
+  // Handle Delta participation links
+  if (pathname.startsWith('/d/')) {
+    const { supabaseResponse } = await updateSession(request)
+    return supabaseResponse
+  }
+
+  // Legacy redirects for old routes
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/')) {
+    return NextResponse.redirect(new URL('/pulse/admin/teams', request.url))
+  }
+  if (pathname === '/admin/teams') {
+    return NextResponse.redirect(new URL('/pulse/admin/teams', request.url))
+  }
+  if (pathname === '/admin/login') {
+    return NextResponse.redirect(new URL('/pulse/admin/login', request.url))
+  }
+  if (pathname.startsWith('/t/')) {
+    const newPath = pathname.replace('/t/', '/pulse/t/')
+    return NextResponse.redirect(new URL(newPath + request.nextUrl.search, request.url))
+  }
+  if (pathname === '/feedback/backlog') {
+    return NextResponse.redirect(new URL('/backlog', request.url))
   }
 
   // Default: update session for all other routes

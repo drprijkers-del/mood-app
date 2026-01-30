@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     if (authError || !authData.properties?.hashed_token) {
       // Fallback: Create custom session cookie like super-admin
-      const response = NextResponse.json({ success: true, redirect: '/admin/teams' })
+      const response = NextResponse.json({ success: true, redirect: '/' })
 
       const sessionData = {
         userId: adminUser.id,
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     // If we got here, use the magic link token to create session
     // This is complex, so let's use the simpler cookie approach
-    const response = NextResponse.json({ success: true, redirect: '/admin/teams' })
+    const response = NextResponse.json({ success: true, redirect: '/' })
 
     const sessionData = {
       userId: adminUser.id,

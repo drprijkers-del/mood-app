@@ -1,0 +1,29 @@
+{
+  "redirects": [
+    {
+      "source": "/admin/login",
+      "destination": "/pulse/admin/login",
+      "permanent": true
+    },
+    {
+      "source": "/admin/teams",
+      "destination": "/pulse/admin/teams",
+      "permanent": true
+    },
+    {
+      "source": "/admin/teams/:path*",
+      "destination": "/pulse/admin/teams/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/t/:path*",
+      "destination": "/pulse/t/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/feedback/backlog",
+      "destination": "/backlog",
+      "permanent": true
+    }
+  ]
+}

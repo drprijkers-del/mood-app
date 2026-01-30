@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Auth callback error:', error)
-      return NextResponse.redirect(new URL('/admin/login?error=auth_failed', request.url))
+      return NextResponse.redirect(new URL('/pulse/admin/login?error=auth_failed', request.url))
     }
 
     // Get user
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         if (insertError) {
           console.error('Error creating admin user:', insertError)
           await supabase.auth.signOut()
-          return NextResponse.redirect(new URL('/admin/login?error=registration_failed', request.url))
+          return NextResponse.redirect(new URL('/pulse/admin/login?error=registration_failed', request.url))
         }
       }
 
@@ -54,6 +54,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Redirect to teams page on success
-  return NextResponse.redirect(new URL('/admin/teams', request.url))
+  // Redirect to home page (tool picker) on success
+  return NextResponse.redirect(new URL('/', request.url))
 }

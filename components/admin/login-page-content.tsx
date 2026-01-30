@@ -14,8 +14,8 @@ export function LoginPageContent() {
       {/* Header */}
       <header className="p-6 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl">⚗️</span>
-          <span className="text-sm text-stone-400">{t('pulse')}</span>
+          <span className="text-xl">🧪</span>
+          <span className="text-sm font-medium text-stone-700">The Lab</span>
         </Link>
         <LanguageToggle />
       </header>
@@ -25,8 +25,8 @@ export function LoginPageContent() {
         <div className="w-full max-w-sm">
           {/* Logo / Title */}
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🎯</div>
-            <h1 className="text-2xl font-bold gradient-text mb-1">{t('pulse')}</h1>
+            <div className="text-5xl mb-4">🧪</div>
+            <h1 className="text-2xl font-bold text-stone-900 mb-1">The Lab</h1>
             <p className="text-sm text-stone-400">{t('loginAdminAccess')}</p>
           </div>
 

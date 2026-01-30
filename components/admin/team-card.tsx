@@ -7,13 +7,18 @@ import { useTranslation } from '@/lib/i18n/context'
 
 interface TeamCardProps {
   team: TeamWithStats
+  appType?: 'pulse' | 'delta'
 }
 
-export function TeamCard({ team }: TeamCardProps) {
+export function TeamCard({ team, appType = 'pulse' }: TeamCardProps) {
   const t = useTranslation()
 
+  const href = appType === 'delta'
+    ? `/delta/teams/${team.id}`
+    : `/pulse/admin/teams/${team.id}`
+
   return (
-    <Link href={`/admin/teams/${team.id}`} aria-label={`View team ${team.name}`}>
+    <Link href={href} aria-label={`View team ${team.name}`}>
       <Card className="card-hover cursor-pointer">
         <CardContent className="py-4">
           <div className="flex items-center gap-3 sm:gap-4">

@@ -10,10 +10,18 @@ import { useTranslation } from '@/lib/i18n/context'
 
 interface TeamsListContentProps {
   teams: TeamWithStats[]
+  appType?: 'pulse' | 'delta'
 }
 
-export function TeamsListContent({ teams }: TeamsListContentProps) {
+export function TeamsListContent({ teams, appType = 'pulse' }: TeamsListContentProps) {
   const t = useTranslation()
+
+  const newTeamHref = appType === 'delta'
+    ? '/delta/teams/new'
+    : '/pulse/admin/teams/new'
+
+  const title = appType === 'delta' ? 'Delta Teams' : t('adminTeams')
+  const subtitle = appType === 'delta' ? 'Team coaching interventies' : t('adminTeamsSubtitle')
 
   return (
     <div>
@@ -23,10 +31,10 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t('adminTeams')}</h1>
-            <p className="text-gray-500">{t('adminTeamsSubtitle')}</p>
+            <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+            <p className="text-gray-500">{subtitle}</p>
           </div>
-          <Link href="/admin/teams/new">
+          <Link href={newTeamHref}>
             <Button className="w-full sm:w-auto">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -40,10 +48,10 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
         {teams.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <div className="text-6xl mb-4">🎯</div>
+              <div className="text-6xl mb-4">{appType === 'delta' ? 'Δ' : '🎯'}</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">{t('adminNoTeams')}</h3>
               <p className="text-gray-500 mb-6">{t('adminNoTeamsMessage')}</p>
-              <Link href="/admin/teams/new">
+              <Link href={newTeamHref}>
                 <Button>{t('adminFirstTeam')}</Button>
               </Link>
             </CardContent>
@@ -51,7 +59,7 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
         ) : (
           <div className="grid gap-4">
             {teams.map((team) => (
-              <TeamCard key={team.id} team={team} />
+              <TeamCard key={team.id} team={team} appType={appType} />
             ))}
           </div>
         )}

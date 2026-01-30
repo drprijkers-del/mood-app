@@ -30,7 +30,7 @@ export default function NewTeamPage() {
       return
     }
 
-    router.push(`/admin/teams/${result.teamId}`)
+    router.push(`/pulse/admin/teams/${result.teamId}`)
   }
 
   return (
@@ -40,7 +40,7 @@ export default function NewTeamPage() {
       <main className="max-w-2xl mx-auto px-4 py-8">
         {/* Back link */}
         <Link
-          href="/admin/teams"
+          href="/pulse/admin/teams"
           className="inline-flex items-center text-gray-500 hover:text-gray-700 mb-6"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +94,7 @@ export default function NewTeamPage() {
               />
 
               <div className="flex gap-3 pt-4">
-                <Link href="/admin/teams" className="flex-1">
+                <Link href="/pulse/admin/teams" className="flex-1">
                   <Button type="button" variant="secondary" className="w-full">
                     {t('cancel')}
                   </Button>

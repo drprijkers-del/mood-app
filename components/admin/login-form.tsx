@@ -71,7 +71,7 @@ export function LoginForm() {
         return
       }
 
-      router.push(data.redirect || '/admin/teams')
+      router.push(data.redirect || '/')
       router.refresh()
     } catch {
       setError('An error occurred')

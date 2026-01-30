@@ -42,15 +42,15 @@ async function verifyTeamOwnership(teamId: string, adminUser: AdminUser): Promis
   return data?.owner_id === adminUser.id
 }
 
-export async function getTeams(): Promise<TeamWithStats[]> {
+export async function getTeams(appType: 'pulse' | 'delta' = 'pulse'): Promise<TeamWithStats[]> {
   const adminUser = await requireAdmin()
   const supabase = await createClient()
 
-  // Build query - only show Pulse teams, filter by owner unless super admin
+  // Build query - filter by app_type and owner unless super admin
   let query = supabase
     .from('teams')
     .select('*')
-    .eq('app_type', 'pulse')
+    .eq('app_type', appType)
     .order('created_at', { ascending: false })
 
   // If not super_admin, filter by owner_id
@@ -201,7 +201,7 @@ export async function createTeam(formData: FormData): Promise<{ success: boolean
     .from('invite_links')
     .insert({ team_id: team.id, token_hash: tokenHash })
 
-  revalidatePath('/admin/teams')
+  revalidatePath('/pulse/admin/teams')
 
   return { success: true, teamId: team.id }
 }
@@ -246,8 +246,8 @@ export async function updateTeam(
     return { success: false, error: error.message }
   }
 
-  revalidatePath('/admin/teams')
-  revalidatePath(`/admin/teams/${id}`)
+  revalidatePath('/pulse/admin/teams')
+  revalidatePath(`/pulse/admin/teams/${id}`)
 
   return { success: true }
 }
@@ -270,7 +270,7 @@ export async function deleteTeam(id: string): Promise<{ success: boolean; error?
     return { success: false, error: error.message }
   }
 
-  revalidatePath('/admin/teams')
+  revalidatePath('/pulse/admin/teams')
 
   return { success: true }
 }
@@ -304,8 +304,8 @@ export async function resetTeam(id: string): Promise<{ success: boolean; error?:
     return { success: false, error: participantError.message }
   }
 
-  revalidatePath('/admin/teams')
-  revalidatePath(`/admin/teams/${id}`)
+  revalidatePath('/pulse/admin/teams')
+  revalidatePath(`/pulse/admin/teams/${id}`)
 
   return { success: true }
 }
@@ -337,7 +337,7 @@ export async function regenerateInviteLink(teamId: string): Promise<{ success: b
     return { success: false, error: error.message }
   }
 
-  revalidatePath(`/admin/teams/${teamId}`)
+  revalidatePath(`/pulse/admin/teams/${teamId}`)
 
   return { success: true, token }
 }
@@ -377,7 +377,7 @@ export async function getShareLink(teamId: string): Promise<{ url: string; token
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
   return {
-    url: `${baseUrl}/t/${team.slug}?k=${token}`,
+    url: `${baseUrl}/pulse/t/${team.slug}?k=${token}`,
     token,
   }
 }

@@ -42,7 +42,7 @@ export async function requireAdmin(): Promise<AdminUser> {
   const { data: { user }, error } = await supabase.auth.getUser()
 
   if (error || !user) {
-    redirect('/admin/login')
+    redirect('/pulse/admin/login')
   }
 
   // Check if user is in admin_users table and get their info
@@ -53,7 +53,7 @@ export async function requireAdmin(): Promise<AdminUser> {
     .single()
 
   if (!adminUser) {
-    redirect('/admin/login?error=unauthorized')
+    redirect('/pulse/admin/login?error=unauthorized')
   }
 
   return adminUser as AdminUser
