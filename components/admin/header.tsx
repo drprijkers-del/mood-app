@@ -41,7 +41,7 @@ export function AdminHeader() {
               </Link>
 
               {/* Navigation */}
-              <div className="hidden sm:flex items-center gap-1">
+              <div className="flex items-center gap-1">
                 <Link
                   href="/teams"
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
