@@ -229,19 +229,44 @@ export async function getTeamsUnified(filter?: 'all' | 'pulse' | 'delta' | 'need
         }
       }
 
-      // Delta stats
+      // Delta stats (use admin client to bypass RLS on delta tables)
       let deltaStats = null
       if (hasDelta) {
-        const { data: sessions } = await supabase
+        const adminSupabase = await createAdminClient()
+        const { data: sessions } = await adminSupabase
           .from('delta_sessions')
-          .select('id, status, overall_score, created_at')
+          .select('id, status, created_at')
           .eq('team_id', team.id)
 
         const activeSessions = sessions?.filter(s => s.status === 'active').length || 0
         const closedSessions = sessions?.filter(s => s.status === 'closed') || []
-        const avgScore = closedSessions.length > 0
-          ? closedSessions.reduce((sum, s) => sum + (s.overall_score || 0), 0) / closedSessions.length
-          : null
+
+        // Calculate average score from responses for closed sessions
+        let avgScore: number | null = null
+        if (closedSessions.length > 0) {
+          const closedIds = closedSessions.map(s => s.id)
+          const { data: responses } = await adminSupabase
+            .from('delta_responses')
+            .select('answers')
+            .in('session_id', closedIds)
+
+          if (responses && responses.length > 0) {
+            let totalScore = 0
+            let scoreCount = 0
+            for (const r of responses) {
+              const answers = r.answers as Record<string, number>
+              for (const score of Object.values(answers)) {
+                if (typeof score === 'number' && score >= 1 && score <= 5) {
+                  totalScore += score
+                  scoreCount++
+                }
+              }
+            }
+            if (scoreCount > 0) {
+              avgScore = totalScore / scoreCount
+            }
+          }
+        }
 
         const lastSession = sessions?.sort((a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -409,19 +434,44 @@ export async function getTeamUnified(id: string): Promise<UnifiedTeam | null> {
     }
   }
 
-  // Delta stats
+  // Delta stats (use admin client to bypass RLS on delta tables)
   let deltaStats = null
   if (hasDelta) {
-    const { data: sessions } = await supabase
+    const adminSupabase = await createAdminClient()
+    const { data: sessions } = await adminSupabase
       .from('delta_sessions')
-      .select('id, status, overall_score, created_at')
+      .select('id, status, created_at')
       .eq('team_id', team.id)
 
     const activeSessions = sessions?.filter(s => s.status === 'active').length || 0
     const closedSessions = sessions?.filter(s => s.status === 'closed') || []
-    const avgScore = closedSessions.length > 0
-      ? closedSessions.reduce((sum, s) => sum + (s.overall_score || 0), 0) / closedSessions.length
-      : null
+
+    // Calculate average score from responses for closed sessions
+    let avgScore: number | null = null
+    if (closedSessions.length > 0) {
+      const closedIds = closedSessions.map(s => s.id)
+      const { data: responses } = await adminSupabase
+        .from('delta_responses')
+        .select('answers')
+        .in('session_id', closedIds)
+
+      if (responses && responses.length > 0) {
+        let totalScore = 0
+        let scoreCount = 0
+        for (const r of responses) {
+          const answers = r.answers as Record<string, number>
+          for (const score of Object.values(answers)) {
+            if (typeof score === 'number' && score >= 1 && score <= 5) {
+              totalScore += score
+              scoreCount++
+            }
+          }
+        }
+        if (scoreCount > 0) {
+          avgScore = totalScore / scoreCount
+        }
+      }
+    }
 
     const lastSession = sessions?.sort((a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -469,7 +519,7 @@ export async function getTeamTools(teamId: string): Promise<('pulse' | 'delta')[
 // Enable a tool for a team
 export async function enableTool(teamId: string, tool: 'pulse' | 'delta'): Promise<{ success: boolean; error?: string }> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   if (!(await verifyTeamOwnership(teamId, adminUser))) {
     return { success: false, error: 'Access denied' }
@@ -483,6 +533,27 @@ export async function enableTool(teamId: string, tool: 'pulse' | 'delta'): Promi
     return { success: false, error: error.message }
   }
 
+  // For Pulse: ensure an invite link exists
+  if (tool === 'pulse') {
+    // Check if active invite link exists
+    const { data: existingLink } = await supabase
+      .from('invite_links')
+      .select('id')
+      .eq('team_id', teamId)
+      .eq('is_active', true)
+      .single()
+
+    // Create one if it doesn't exist
+    if (!existingLink) {
+      const token = generateToken()
+      const tokenHash = hashToken(token)
+
+      await supabase
+        .from('invite_links')
+        .insert({ team_id: teamId, token_hash: tokenHash })
+    }
+  }
+
   revalidatePath('/teams')
   revalidatePath(`/teams/${teamId}`)
 
@@ -492,7 +563,7 @@ export async function enableTool(teamId: string, tool: 'pulse' | 'delta'): Promi
 // Disable a tool for a team
 export async function disableTool(teamId: string, tool: 'pulse' | 'delta'): Promise<{ success: boolean; error?: string }> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   if (!(await verifyTeamOwnership(teamId, adminUser))) {
     return { success: false, error: 'Access denied' }
@@ -580,7 +651,6 @@ export async function createTeam(formData: FormData): Promise<{ success: boolean
 
   revalidatePath('/teams')
   revalidatePath('/pulse/admin/teams')
-  revalidatePath('/delta/teams')
 
   return { success: true, teamId: team.id }
 }
@@ -629,8 +699,6 @@ export async function updateTeam(
   revalidatePath(`/teams/${id}`)
   revalidatePath('/pulse/admin/teams')
   revalidatePath(`/pulse/admin/teams/${id}`)
-  revalidatePath('/delta/teams')
-  revalidatePath(`/delta/teams/${id}`)
 
   return { success: true }
 }
@@ -655,7 +723,6 @@ export async function deleteTeam(id: string): Promise<{ success: boolean; error?
 
   revalidatePath('/teams')
   revalidatePath('/pulse/admin/teams')
-  revalidatePath('/delta/teams')
 
   return { success: true }
 }

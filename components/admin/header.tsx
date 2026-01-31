@@ -28,9 +28,9 @@ export function AdminHeader() {
         <div className="flex items-center justify-between h-16">
           {/* Logo and brand */}
           <div className="flex items-center gap-6">
-            <Link href="/teams" className="flex items-center gap-2" aria-label="The Lab - Teams">
+            <Link href="/teams" className="flex items-center gap-2" aria-label="Team Lab - Teams">
               <span className="text-2xl" aria-hidden="true">🧪</span>
-              <span className="font-bold text-lg text-stone-900">The Lab</span>
+              <span className="font-bold text-lg text-stone-900">Team Lab</span>
             </Link>
 
             {/* Simple navigation - just Teams */}

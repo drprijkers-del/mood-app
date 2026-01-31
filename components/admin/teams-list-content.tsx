@@ -17,7 +17,7 @@ export function TeamsListContent({ teams, appType = 'pulse' }: TeamsListContentP
   const t = useTranslation()
 
   const newTeamHref = appType === 'delta'
-    ? '/delta/teams/new'
+    ? '/teams/new'
     : '/pulse/admin/teams/new'
 
   const title = appType === 'delta' ? 'Delta Teams' : t('adminTeams')

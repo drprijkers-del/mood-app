@@ -12,7 +12,7 @@ export const translations = {
     create: 'Aanmaken',
 
     // The Lab landing page
-    labTitle: 'The Lab',
+    labTitle: 'Team Lab',
     labSubtitle: 'Tools voor teams die bouwen',
     labFeature1: 'Geen gedoe',
     labFeature2: 'Direct inzicht',
@@ -377,7 +377,7 @@ export const translations = {
     create: 'Create',
 
     // The Lab landing page
-    labTitle: 'The Lab',
+    labTitle: 'Team Lab',
     labSubtitle: 'Tools for teams that build',
     labFeature1: 'No friction',
     labFeature2: 'Instant insight',

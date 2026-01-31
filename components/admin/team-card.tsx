@@ -14,7 +14,7 @@ export function TeamCard({ team, appType = 'pulse' }: TeamCardProps) {
   const t = useTranslation()
 
   const href = appType === 'delta'
-    ? `/delta/teams/${team.id}`
+    ? `/teams/${team.id}`
     : `/pulse/admin/teams/${team.id}`
 
   return (

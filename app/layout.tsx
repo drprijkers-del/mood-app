@@ -9,7 +9,7 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "The Lab | Pink Pollos",
+  title: "Team Lab | Pink Pollos",
   description: "Tools for teams that build - Pulse & Delta",
 };
 

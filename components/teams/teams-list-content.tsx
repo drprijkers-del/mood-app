@@ -10,7 +10,7 @@ interface TeamsListContentProps {
   teams: UnifiedTeam[]
 }
 
-type FilterType = 'all' | 'pulse' | 'delta' | 'needs_attention'
+type FilterType = 'all' | 'needs_attention'
 
 export function TeamsListContent({ teams }: TeamsListContentProps) {
   const t = useTranslation()
@@ -18,16 +18,12 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
 
   const filteredTeams = teams.filter(team => {
     if (filter === 'all') return true
-    if (filter === 'pulse') return team.tools_enabled.includes('pulse')
-    if (filter === 'delta') return team.tools_enabled.includes('delta')
     if (filter === 'needs_attention') return team.needs_attention
     return true
   })
 
   const filterButtons: { key: FilterType; label: string }[] = [
     { key: 'all', label: t('teamsFilterAll') },
-    { key: 'pulse', label: t('teamsFilterPulse') },
-    { key: 'delta', label: t('teamsFilterDelta') },
     { key: 'needs_attention', label: t('teamsFilterAttention') },
   ]
 
@@ -142,9 +138,40 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                   </div>
                 </div>
 
-                {/* Last activity */}
-                <div className="text-right text-sm text-stone-400 shrink-0">
-                  <div>{formatDate(team.last_updated)}</div>
+                {/* Score circles + Last activity */}
+                <div className="flex items-center gap-3 shrink-0">
+                  {/* Pulse score circle */}
+                  {team.pulse?.average_score && (
+                    <div className="flex flex-col items-center">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${
+                        team.pulse.average_score >= 4 ? 'bg-green-500' :
+                        team.pulse.average_score >= 3 ? 'bg-cyan-500' :
+                        team.pulse.average_score >= 2 ? 'bg-amber-500' :
+                        'bg-red-500'
+                      }`}>
+                        {team.pulse.average_score}
+                      </div>
+                      <span className="text-xs text-pink-500 mt-1">Pulse</span>
+                    </div>
+                  )}
+                  {/* Delta score circle */}
+                  {team.delta?.average_score && (
+                    <div className="flex flex-col items-center">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${
+                        team.delta.average_score >= 4 ? 'bg-green-500' :
+                        team.delta.average_score >= 3 ? 'bg-cyan-500' :
+                        team.delta.average_score >= 2 ? 'bg-amber-500' :
+                        'bg-red-500'
+                      }`}>
+                        {team.delta.average_score}
+                      </div>
+                      <span className="text-xs text-cyan-500 mt-1">Delta</span>
+                    </div>
+                  )}
+                  {/* Last activity */}
+                  <div className="text-right text-sm text-stone-400 ml-2">
+                    <div>{formatDate(team.last_updated)}</div>
+                  </div>
                 </div>
               </div>
             </Link>

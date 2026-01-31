@@ -24,7 +24,7 @@ import { getStatements, getStatementById } from './statements'
 async function verifySessionOwnership(sessionId: string, adminUser: AdminUser): Promise<boolean> {
   if (adminUser.role === 'super_admin') return true
 
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   const { data } = await supabase
     .from('delta_sessions')
     .select('team_id, teams!inner(owner_id)')
@@ -39,7 +39,7 @@ async function verifySessionOwnership(sessionId: string, adminUser: AdminUser): 
  */
 export async function getTeamSessions(teamId: string): Promise<DeltaSessionWithStats[]> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   // Verify team ownership
   const { data: team } = await supabase
@@ -128,7 +128,7 @@ export interface TeamStats {
  */
 export async function getTeamStats(teamId: string): Promise<TeamStats> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   // Verify team ownership
   const { data: team } = await supabase
@@ -302,7 +302,7 @@ export async function getTeamStats(teamId: string): Promise<TeamStats> {
  */
 export async function getSession(sessionId: string): Promise<DeltaSessionWithStats | null> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { data: session, error } = await supabase
     .from('delta_sessions')
@@ -381,7 +381,6 @@ export async function createSession(
     return { success: false, error: error.message }
   }
 
-  revalidatePath(`/delta/teams/${teamId}`)
   revalidatePath(`/teams/${teamId}`)
 
   return { success: true, sessionId: session.id }
@@ -398,7 +397,7 @@ export async function closeSession(
   followupDate: string
 ): Promise<{ success: boolean; error?: string }> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   // Verify ownership
   if (!(await verifySessionOwnership(sessionId, adminUser))) {
@@ -432,7 +431,7 @@ export async function closeSession(
  */
 export async function deleteSession(sessionId: string): Promise<{ success: boolean; error?: string }> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   // Get session to find team_id for revalidation
   const { data: session } = await supabase
@@ -460,7 +459,6 @@ export async function deleteSession(sessionId: string): Promise<{ success: boole
     return { success: false, error: error.message }
   }
 
-  revalidatePath(`/delta/teams/${session.team_id}`)
   revalidatePath(`/teams/${session.team_id}`)
 
   return { success: true }
@@ -811,7 +809,7 @@ function generateExperiment(tension: StatementScore): string {
  */
 export async function getSessionShareLink(sessionId: string): Promise<string | null> {
   const adminUser = await requireAdmin()
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   // Verify ownership
   if (!(await verifySessionOwnership(sessionId, adminUser))) {

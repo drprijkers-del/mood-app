@@ -14,7 +14,7 @@ interface DeltaTeamContentProps {
   team: TeamWithStats
   sessions: DeltaSessionWithStats[]
   stats: TeamStats
-  basePath: string // e.g., "/teams/123" or "/delta/teams/123"
+  basePath: string // e.g., "/teams/123"
 }
 
 export function DeltaTeamContent({ team, sessions, stats, basePath }: DeltaTeamContentProps) {

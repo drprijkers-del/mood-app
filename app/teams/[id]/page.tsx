@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTeamUnified } from '@/domain/teams/actions'
+import { getTeamMetrics, getTeamInsights } from '@/domain/metrics/actions'
+import { getTeamSessions } from '@/domain/delta/actions'
 import { requireAdmin } from '@/lib/auth/admin'
 import { AdminHeader } from '@/components/admin/header'
 import { TeamDetailContent } from '@/components/teams/team-detail-content'
-import { getTranslations } from '@/lib/i18n/server'
+import { getTranslations, getLanguage } from '@/lib/i18n/server'
 
 interface TeamPageProps {
   params: Promise<{ id: string }>
@@ -13,7 +15,13 @@ interface TeamPageProps {
 export default async function TeamPage({ params }: TeamPageProps) {
   await requireAdmin()
   const { id } = await params
-  const team = await getTeamUnified(id)
+  const language = await getLanguage()
+  const [team, pulseMetrics, pulseInsights, deltaSessions] = await Promise.all([
+    getTeamUnified(id),
+    getTeamMetrics(id),
+    getTeamInsights(id, language),
+    getTeamSessions(id),
+  ])
   const t = await getTranslations()
 
   if (!team) {
@@ -35,7 +43,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
           {t.adminBack}
         </Link>
 
-        <TeamDetailContent team={team} />
+        <TeamDetailContent team={team} pulseMetrics={pulseMetrics} pulseInsights={pulseInsights} deltaSessions={deltaSessions} />
       </main>
     </>
   )

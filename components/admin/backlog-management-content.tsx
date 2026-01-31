@@ -177,7 +177,7 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
             <span className="font-bold text-lg">Backlog & Release Notes</span>
           </div>
           <Link
-            href="/feedback/backlog"
+            href="/backlog"
             target="_blank"
             className="text-sm text-cyan-400 hover:text-cyan-300"
           >

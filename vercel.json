@@ -12,7 +12,7 @@
     },
     {
       "source": "/admin/teams/:id",
-      "destination": "/teams/:id/pulse",
+      "destination": "/teams/:id",
       "permanent": true
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "source": "/pulse/admin/teams/:id",
-      "destination": "/teams/:id/pulse",
+      "destination": "/teams/:id",
       "permanent": true
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "source": "/delta/teams/:id",
-      "destination": "/teams/:id/delta",
+      "destination": "/teams/:id",
       "permanent": true
     },
     {

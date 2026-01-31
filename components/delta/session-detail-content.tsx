@@ -16,7 +16,7 @@ interface SessionDetailContentProps {
   session: DeltaSessionWithStats
   synthesis: SynthesisResult | null
   shareLink: string | null
-  backPath?: string // Optional: defaults to /delta/teams/[team_id]
+  backPath?: string // Optional: defaults to /teams/[team_id]
 }
 
 export function SessionDetailContent({ session, synthesis, shareLink, backPath }: SessionDetailContentProps) {
@@ -71,12 +71,12 @@ export function SessionDetailContent({ session, synthesis, shareLink, backPath }
     setDeleting(true)
     const result = await deleteSession(session.id)
     if (result.success) {
-      router.push(backPath || `/delta/teams/${session.team_id}`)
+      router.push(backPath || `/teams/${session.team_id}?tab=delta`)
     }
     setDeleting(false)
   }
 
-  const resolvedBackPath = backPath || `/delta/teams/${session.team_id}`
+  const resolvedBackPath = backPath || `/teams/${session.team_id}?tab=delta`
 
   return (
     <>
