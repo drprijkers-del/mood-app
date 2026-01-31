@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useTranslation, TranslationFunction } from '@/lib/i18n/context'
 import { PulseMetrics } from '@/components/admin/pulse-metrics'
 import { ShareLinkSection } from '@/components/admin/share-link-section'
+import { GettingStartedChecklist } from '@/components/teams/getting-started-checklist'
 import type { TeamMetrics, PulseInsight } from '@/domain/metrics/types'
 import type { DeltaSessionWithStats } from '@/domain/delta/types'
 
@@ -133,6 +134,15 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
           <p className="text-stone-600 dark:text-stone-400">{team.description}</p>
         )}
       </div>
+
+      {/* Getting Started Checklist */}
+      <GettingStartedChecklist
+        teamId={team.id}
+        teamSlug={team.slug}
+        hasPulseEntries={(team.pulse?.participant_count || 0) > 0}
+        hasDeltaSessions={(team.delta?.total_sessions || 0) > 0}
+        hasClosedSessions={(team.delta?.closed_sessions || 0) > 0}
+      />
 
       {/* Tabs */}
       <div className="border-b border-stone-200 dark:border-stone-700 overflow-x-auto">

@@ -459,6 +459,26 @@ export const translations = {
     moduleLeadershipDesc: 'Leiderschapsmetingen en ontwikkeling',
     modulePortfolio: 'Portfolio',
     modulePortfolioDesc: 'Portfolio management tips en sessies',
+
+    // Onboarding checklist
+    onboardingTitle: 'Aan de slag',
+    onboardingSubtitle: 'Voltooi deze stappen om te starten',
+    onboardingComplete: 'voltooid',
+    onboardingStep1: 'Deel Pulse link met je team',
+    onboardingStep1Hint: 'Kopieer de link en deel via Slack of Teams',
+    onboardingStep2: 'Start je eerste Delta sessie',
+    onboardingStep2Hint: 'Kies een invalshoek en verzamel feedback',
+    onboardingStep3: 'Bekijk team inzichten',
+    onboardingStep3Hint: 'Sluit een sessie af om resultaten te zien',
+    onboardingTestLink: 'Test link',
+    onboardingStartSession: 'Start sessie',
+
+    // Empty state
+    emptyStatePulseDesc: 'Dagelijkse team signalen',
+    emptyStateDeltaDesc: 'Coaching interventies',
+    emptyStateInsightsTitle: 'Inzichten',
+    emptyStateInsightsDesc: 'Data-driven besluiten',
+    emptyStateTime: 'Klaar in 30 seconden',
   },
 
   en: {
@@ -921,6 +941,26 @@ export const translations = {
     moduleLeadershipDesc: 'Leadership measurements and development',
     modulePortfolio: 'Portfolio',
     modulePortfolioDesc: 'Portfolio management tips and sessions',
+
+    // Onboarding checklist
+    onboardingTitle: 'Getting Started',
+    onboardingSubtitle: 'Complete these steps to get started',
+    onboardingComplete: 'completed',
+    onboardingStep1: 'Share Pulse link with your team',
+    onboardingStep1Hint: 'Copy the link and share via Slack or Teams',
+    onboardingStep2: 'Start your first Delta session',
+    onboardingStep2Hint: 'Pick an angle and collect feedback',
+    onboardingStep3: 'Review team insights',
+    onboardingStep3Hint: 'Close a session to see results',
+    onboardingTestLink: 'Test link',
+    onboardingStartSession: 'Start session',
+
+    // Empty state
+    emptyStatePulseDesc: 'Daily team signals',
+    emptyStateDeltaDesc: 'Coaching interventions',
+    emptyStateInsightsTitle: 'Insights',
+    emptyStateInsightsDesc: 'Data-driven decisions',
+    emptyStateTime: 'Ready in 30 seconds',
   },
 } as const
 
