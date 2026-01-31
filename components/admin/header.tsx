@@ -91,7 +91,7 @@ export function AdminHeader() {
             </div>
             <div className="flex gap-3">
               <Button
-                variant="outline"
+                variant="secondary"
                 className="flex-1"
                 onClick={() => setShowExpertModal(false)}
               >
