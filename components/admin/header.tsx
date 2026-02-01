@@ -18,7 +18,7 @@ interface AdminHeaderProps {
   allTeams?: Team[]
 }
 
-type NavMode = 'vibe' | 'ceremonies' | 'feedback' | 'coach'
+type NavMode = 'vibe' | 'ceremonies' | 'feedback' | 'coach' | 'modules' | 'settings'
 
 // Inner component that uses useSearchParams
 function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
@@ -36,7 +36,7 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
 
   // Determine active mode from URL
   const currentTab = searchParams.get('tab') as NavMode | null
-  const activeMode: NavMode | null = currentTab && ['vibe', 'ceremonies', 'feedback', 'coach'].includes(currentTab)
+  const activeMode: NavMode | null = currentTab && ['vibe', 'ceremonies', 'feedback', 'coach', 'modules', 'settings'].includes(currentTab)
     ? currentTab as NavMode
     : null
 
@@ -92,6 +92,8 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
     { key: 'ceremonies', label: t('teamsDetailCeremonies') },
     { key: 'feedback', label: t('feedbackTitle') },
     { key: 'coach', label: t('coachQuestionsTab') },
+    { key: 'modules', label: t('teamsDetailModules') },
+    { key: 'settings', label: t('teamsDetailSettings') },
   ]
 
   return (
