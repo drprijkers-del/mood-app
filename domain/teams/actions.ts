@@ -56,6 +56,8 @@ export interface UnifiedTeam extends Team {
     average_score: number | null
     trend: 'up' | 'down' | 'stable' | null
     last_session_date: string | null
+    level: 'shu' | 'ha' | 'ri'
+    level_updated_at: string | null
   } | null
 
   // Computed
@@ -242,6 +244,8 @@ async function computeCeremoniesStatsFallback(teamId: string): Promise<NonNullab
     average_score: avgScore ? Math.round(avgScore * 10) / 10 : null,
     trend: deltaTrend,
     last_session_date: lastSession?.created_at || null,
+    level: 'shu' as const,  // Will be fetched from team data
+    level_updated_at: null,
   }
 }
 
@@ -328,6 +332,8 @@ export async function getTeamsUnified(filter?: 'all' | 'vibe' | 'ceremonies' | '
             average_score: avgScore ? Math.round(avgScore * 10) / 10 : null,
             trend: calculateTrend(avgScore, prevAvgScore),
             last_session_date: (team.delta_last_session_at as string) || null,
+            level: ((team as Record<string, unknown>).ceremony_level as 'shu' | 'ha' | 'ri') || 'shu',
+            level_updated_at: ((team as Record<string, unknown>).ceremony_level_updated_at as string) || null,
           }
         } else {
           // Fallback: compute on the fly (slow)
@@ -478,6 +484,8 @@ export async function getTeamUnified(id: string): Promise<UnifiedTeam | null> {
         average_score: avgScore ? Math.round(avgScore * 10) / 10 : null,
         trend: calculateTrend(avgScore, prevAvgScore),
         last_session_date: (team.delta_last_session_at as string) || null,
+        level: ((team as Record<string, unknown>).ceremony_level as 'shu' | 'ha' | 'ri') || 'shu',
+        level_updated_at: ((team as Record<string, unknown>).ceremony_level_updated_at as string) || null,
       }
     } else {
       // Fallback: compute on the fly (slow)

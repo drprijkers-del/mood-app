@@ -13,8 +13,9 @@ import { OverallSignal } from '@/components/teams/overall-signal'
 import { SessionCompare } from '@/components/ceremonies/session-compare'
 import { CoachQuestions } from '@/components/teams/coach-questions'
 import { FeedbackTool } from '@/components/teams/feedback-tool'
+import { CeremonyLevelDisplay } from '@/components/ceremonies/ceremony-level'
 import type { TeamMetrics, VibeInsight } from '@/domain/metrics/types'
-import type { CeremonySessionWithStats } from '@/domain/ceremonies/types'
+import type { CeremonySessionWithStats, CeremonyLevel } from '@/domain/ceremonies/types'
 
 interface TeamDetailContentProps {
   team: UnifiedTeam
@@ -295,6 +296,14 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
         <div className="space-y-6">
           {team.ceremonies ? (
             <>
+              {/* Shu-Ha-Ri Level Display */}
+              {team.ceremonies.level && (
+                <CeremonyLevelDisplay
+                  level={team.ceremonies.level as CeremonyLevel}
+                  compact={false}
+                />
+              )}
+
               {/* Header with New Session button */}
               <div className="flex flex-col gap-4">
                 {/* Stats row */}

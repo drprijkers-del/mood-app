@@ -150,3 +150,182 @@ export const ANGLES: AngleInfo[] = [
 export function getAngleInfo(angle: CeremonyAngle): AngleInfo {
   return ANGLES.find(a => a.id === angle) || ANGLES[0]
 }
+
+// ============================================
+// SHU-HA-RI LEVELS
+// ============================================
+
+// Ceremony progression levels (守破離)
+export type CeremonyLevel = 'shu' | 'ha' | 'ri'
+
+// Risk states (advisory only, no regression)
+export type CeremonyRiskState = 'none' | 'slipping' | 'low_participation' | 'stale'
+
+// Level metadata with Japanese characters
+export interface LevelInfo {
+  id: CeremonyLevel
+  kanji: string
+  label: string
+  subtitle: string
+  description: string
+  questionDepth: string
+}
+
+// Level configuration
+export const CEREMONY_LEVELS: LevelInfo[] = [
+  {
+    id: 'shu',
+    kanji: '守',
+    label: 'Shu',
+    subtitle: 'Learn the basics',
+    description: 'Follow the structure. Build the habit. Trust the process.',
+    questionDepth: 'Basics'
+  },
+  {
+    id: 'ha',
+    kanji: '破',
+    label: 'Ha',
+    subtitle: 'Adapt intentionally',
+    description: 'Question the rules. Experiment safely. Find what works for your team.',
+    questionDepth: 'Adaptive'
+  },
+  {
+    id: 'ri',
+    kanji: '離',
+    label: 'Ri',
+    subtitle: 'Mastery & own approach',
+    description: 'Transcend the framework. Create your own process. Lead by example.',
+    questionDepth: 'Mastery'
+  }
+]
+
+// Helper to get level info
+export function getLevelInfo(level: CeremonyLevel): LevelInfo {
+  return CEREMONY_LEVELS.find(l => l.id === level) || CEREMONY_LEVELS[0]
+}
+
+// Unlock requirements for UI display
+export interface UnlockRequirement {
+  key: string
+  label: string
+  met: boolean
+  current?: number | string
+  required?: number | string
+}
+
+// Progress toward next level
+export interface LevelProgress {
+  sessions_30d: number
+  sessions_45d: number
+  sessions_total: number
+  followups_count: number
+  unique_angles: number
+  last_2_avg_score: number | null
+  last_3_avg_score: number | null
+  last_2_participation: number | null
+  last_3_participation: number | null
+  days_since_last_session: number | null
+  can_unlock_ha: boolean
+  can_unlock_ri: boolean
+}
+
+// Risk information
+export interface LevelRisk {
+  state: CeremonyRiskState
+  reason: string | null
+}
+
+// Full level evaluation result
+export interface LevelEvaluation {
+  level: CeremonyLevel
+  previous_level: CeremonyLevel
+  level_changed: boolean
+  risk: LevelRisk
+  progress: LevelProgress
+}
+
+// Get unlock requirements for display
+export function getUnlockRequirements(
+  currentLevel: CeremonyLevel,
+  progress: LevelProgress
+): UnlockRequirement[] {
+  if (currentLevel === 'shu') {
+    // Requirements for Shu -> Ha
+    return [
+      {
+        key: 'sessions',
+        label: '3 sessions in 30 days',
+        met: progress.sessions_30d >= 3,
+        current: progress.sessions_30d,
+        required: 3
+      },
+      {
+        key: 'score',
+        label: 'Avg score ≥ 3.2',
+        met: (progress.last_2_avg_score || 0) >= 3.2,
+        current: progress.last_2_avg_score?.toFixed(1) || '—',
+        required: '3.2'
+      },
+      {
+        key: 'participation',
+        label: 'Participation ≥ 60%',
+        met: (progress.last_2_participation || 0) >= 0.60,
+        current: progress.last_2_participation
+          ? `${Math.round(progress.last_2_participation * 100)}%`
+          : '—',
+        required: '60%'
+      }
+    ]
+  } else if (currentLevel === 'ha') {
+    // Requirements for Ha -> Ri
+    return [
+      {
+        key: 'total_sessions',
+        label: '6 total sessions',
+        met: progress.sessions_total >= 6,
+        current: progress.sessions_total,
+        required: 6
+      },
+      {
+        key: 'diversity',
+        label: '3 different ceremony types',
+        met: progress.unique_angles >= 3,
+        current: progress.unique_angles,
+        required: 3
+      },
+      {
+        key: 'followups',
+        label: '4 sessions with follow-up',
+        met: progress.followups_count >= 4,
+        current: progress.followups_count,
+        required: 4
+      },
+      {
+        key: 'recency',
+        label: '3 sessions in 45 days',
+        met: progress.sessions_45d >= 3,
+        current: progress.sessions_45d,
+        required: 3
+      },
+      {
+        key: 'score',
+        label: 'Avg score ≥ 3.5',
+        met: (progress.last_3_avg_score || 0) >= 3.5,
+        current: progress.last_3_avg_score?.toFixed(1) || '—',
+        required: '3.5'
+      },
+      {
+        key: 'participation',
+        label: 'Participation ≥ 70%',
+        met: (progress.last_3_participation || 0) >= 0.70,
+        current: progress.last_3_participation
+          ? `${Math.round(progress.last_3_participation * 100)}%`
+          : '—',
+        required: '70%'
+      }
+    ]
+  }
+
+  // Ri level - no more requirements
+  return []
+}

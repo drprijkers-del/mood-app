@@ -364,6 +364,12 @@ export const translations = {
     settingsExplanation: 'Beheer de instellingen van dit team. Activeer of deactiveer tools, exporteer data en pas teaminstellingen aan.',
     modulesExplanation: 'Ontdek aanvullende modules om de samenwerking van je team naar een hoger niveau te tillen. Premium functionaliteit voor geavanceerde teams.',
 
+    // Shu-Ha-Ri Levels
+    levelProgressTitle: 'Voortgang naar volgend niveau',
+    levelMaxReached: 'Hoogste niveau bereikt — blijf het goede werk volhouden!',
+    levelRiskGeneric: 'Aandacht nodig',
+    levelExplainer: 'Niveaus zijn gebaseerd op praktijk en stabiliteit. Ze helpen om diepere vragen vrij te spelen — niet om teams te rangschikken.',
+
     teamsViewTeam: 'Bekijk team',
     teamsCreateTitle: 'Nieuw team',
     teamsCreateSubtitle: 'Maak een team aan voor Vibe en Ceremonies',
@@ -883,6 +889,12 @@ export const translations = {
     coachExplanation: 'Generate coaching questions based on your team\'s current signals. Use these questions to facilitate deeper conversations and gain insights.',
     settingsExplanation: 'Manage settings for this team. Enable or disable tools, export data, and adjust team configurations.',
     modulesExplanation: 'Discover additional modules to take your team\'s collaboration to the next level. Premium functionality for advanced teams.',
+
+    // Shu-Ha-Ri Level System
+    levelProgressTitle: 'Progress to next level',
+    levelMaxReached: 'Maximum level reached — keep up the great work!',
+    levelRiskGeneric: 'Needs attention',
+    levelExplainer: 'Levels are based on practice and stability. They help unlock deeper questions — not to rank teams.',
 
     teamsViewTeam: 'View team',
     teamsCreateTitle: 'New team',
