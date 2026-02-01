@@ -18,7 +18,6 @@ export default async function ParticipationPage({ params }: ParticipationPagePro
   return (
     <ParticipationContent
       sessionId={validation.session.id}
-      sessionCode={sessionCode}
       teamName={validation.session.team_name}
       angle={validation.session.angle}
       title={validation.session.title}

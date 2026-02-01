@@ -64,12 +64,12 @@ export const translations = {
     checkinAnonymous: 'Volledig anoniem',
     checkinPrivacy: 'Je antwoorden worden nooit gedeeld met HR of management.',
 
-    // Signal levels (neutral, no emotional labels)
-    moodVeryBad: '1',
-    moodBad: '2',
-    moodOkay: '3',
-    moodGood: '4',
-    moodGreat: '5',
+    // Signal levels (semantic labels)
+    moodVeryBad: 'Zwaar',
+    moodBad: 'Mwah',
+    moodOkay: 'Stabiel',
+    moodGood: 'Goed',
+    moodGreat: 'Top',
 
     // Success
     successTitle: 'Bedankt!',
@@ -235,6 +235,9 @@ export const translations = {
     responseRecorded: 'Je reactie is opgeslagen.',
     alreadyResponded: 'Al gereageerd',
     alreadyRespondedMessage: 'Je hebt al gereageerd op deze sessie.',
+    sessionClosed: 'Sessie afgerond',
+    teamScore: 'Team score',
+    thankYouParticipation: 'Bedankt voor je deelname',
 
     // Delta - Session detail
     shareWithTeam: 'Deel met je team',
@@ -564,12 +567,12 @@ export const translations = {
     checkinAnonymous: 'Fully anonymous',
     checkinPrivacy: 'Your responses are never shared with HR or management.',
 
-    // Signal levels (neutral, no emotional labels)
-    moodVeryBad: '1',
-    moodBad: '2',
-    moodOkay: '3',
-    moodGood: '4',
-    moodGreat: '5',
+    // Signal levels (semantic labels)
+    moodVeryBad: 'Rough',
+    moodBad: 'Meh',
+    moodOkay: 'Steady',
+    moodGood: 'Good',
+    moodGreat: 'Great',
 
     // Success
     successTitle: 'Thanks!',
@@ -735,6 +738,9 @@ export const translations = {
     responseRecorded: 'Your response is recorded.',
     alreadyResponded: 'Already Responded',
     alreadyRespondedMessage: 'You have already responded to this session.',
+    sessionClosed: 'Session Complete',
+    teamScore: 'Team score',
+    thankYouParticipation: 'Thank you for participating',
 
     // Delta - Session detail
     shareWithTeam: 'Share with your team',

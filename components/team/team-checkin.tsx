@@ -21,13 +21,13 @@ export function TeamCheckin({ teamName }: TeamCheckinProps) {
   const [result, setResult] = useState<CheckinResult | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  // Signal scale: 1-5 with purity levels (Heisenberg style)
+  // Signal scale: 1-5 with semantic labels
   const SIGNAL_SCALE = [
-    { value: 1, color: 'bg-cyan-300', label: '50%' },
-    { value: 2, color: 'bg-cyan-400', label: '70%' },
-    { value: 3, color: 'bg-cyan-500', label: '85%' },
-    { value: 4, color: 'bg-cyan-600', label: '96%' },
-    { value: 5, color: 'bg-cyan-700', label: '99.1%' },
+    { value: 1, color: 'bg-cyan-300', labelKey: 'moodVeryBad' as const },
+    { value: 2, color: 'bg-cyan-400', labelKey: 'moodBad' as const },
+    { value: 3, color: 'bg-cyan-500', labelKey: 'moodOkay' as const },
+    { value: 4, color: 'bg-cyan-600', labelKey: 'moodGood' as const },
+    { value: 5, color: 'bg-cyan-700', labelKey: 'moodGreat' as const },
   ]
 
   async function handleSubmit() {
@@ -126,7 +126,7 @@ export function TeamCheckin({ teamName }: TeamCheckinProps) {
                 onClick={() => setSelectedSignal(signal.value)}
                 role="radio"
                 aria-checked={selectedSignal === signal.value}
-                aria-label={`Mood level ${signal.value}, ${signal.label} purity`}
+                aria-label={`Mood level ${signal.value}, ${t(signal.labelKey)}`}
                 className={`
                   relative w-14 h-14 md:w-16 md:h-16
                   rounded-xl
@@ -144,11 +144,11 @@ export function TeamCheckin({ teamName }: TeamCheckinProps) {
             ))}
           </div>
 
-          {/* Purity label - Easter egg */}
+          {/* Semantic label hint */}
           <div className="text-center mb-10 h-5">
             {selectedSignal && (
-              <span className="text-xs text-cyan-500 font-mono">
-                {SIGNAL_SCALE.find(s => s.value === selectedSignal)?.label} pure
+              <span className="text-xs text-stone-400 dark:text-stone-500">
+                {t(SIGNAL_SCALE.find(s => s.value === selectedSignal)?.labelKey || 'moodOkay')}
               </span>
             )}
           </div>

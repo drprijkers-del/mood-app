@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { submitResponse, hasResponded } from '@/domain/delta/actions'
+import { submitResponse, hasResponded, getPublicSessionOutcome, PublicSessionOutcome } from '@/domain/delta/actions'
 import { getStatements } from '@/domain/delta/statements'
 import { DeltaAngle, getAngleInfo, ResponseAnswers, Statement } from '@/domain/delta/types'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,17 +11,15 @@ import { v4 as uuidv4 } from 'uuid'
 
 interface ParticipationContentProps {
   sessionId: string
-  sessionCode: string
   teamName: string
   angle: DeltaAngle
   title: string | null
 }
 
-type ViewState = 'loading' | 'intro' | 'statements' | 'submitting' | 'done' | 'already_responded'
+type ViewState = 'loading' | 'intro' | 'statements' | 'submitting' | 'done' | 'already_responded' | 'closed_results'
 
 export function ParticipationContent({
   sessionId,
-  sessionCode,
   teamName,
   angle,
   title,
@@ -32,6 +30,7 @@ export function ParticipationContent({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<ResponseAnswers>({})
   const [deviceId, setDeviceId] = useState<string>('')
+  const [sessionOutcome, setSessionOutcome] = useState<PublicSessionOutcome | null>(null)
 
   const angleInfo = getAngleInfo(angle)
 
@@ -49,7 +48,14 @@ export function ParticipationContent({
       // Check if already responded
       const alreadyDone = await hasResponded(sessionId, storedDeviceId)
       if (alreadyDone) {
-        setViewState('already_responded')
+        // Check if session is closed and has results to show
+        const outcome = await getPublicSessionOutcome(sessionId)
+        if (outcome?.closed && outcome.focus_area) {
+          setSessionOutcome(outcome)
+          setViewState('closed_results')
+        } else {
+          setViewState('already_responded')
+        }
         return
       }
 
@@ -121,6 +127,73 @@ export function ParticipationContent({
             <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2">{t('alreadyResponded')}</h1>
             <p className="text-stone-500 dark:text-stone-400">
               {t('alreadyRespondedMessage')}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Closed session with results
+  if (viewState === 'closed_results' && sessionOutcome) {
+    return (
+      <div className="min-h-screen bg-stone-900 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardContent className="py-8">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center">
+                <span className="text-2xl">Δ</span>
+              </div>
+              <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-1">
+                {t('sessionClosed')}
+              </h1>
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                {teamName} · {title || angleInfo.label}
+              </p>
+            </div>
+
+            {/* Team score */}
+            {sessionOutcome.overall_score && (
+              <div className="bg-stone-50 dark:bg-stone-700 rounded-xl p-4 mb-4 text-center">
+                <div className="text-3xl font-bold text-stone-900 dark:text-stone-100 mb-1">
+                  {sessionOutcome.overall_score.toFixed(1)}
+                </div>
+                <div className="text-xs text-stone-500 dark:text-stone-400">
+                  {t('teamScore')} · {sessionOutcome.response_count} {t('responses')}
+                </div>
+              </div>
+            )}
+
+            {/* Focus area */}
+            {sessionOutcome.focus_area && (
+              <div className="mb-4">
+                <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-2">
+                  {t('focusArea')}
+                </div>
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3">
+                  <p className="text-stone-900 dark:text-stone-100 font-medium">
+                    {sessionOutcome.focus_area}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Experiment */}
+            {sessionOutcome.experiment && (
+              <div>
+                <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-2">
+                  {t('experiment')}
+                </div>
+                <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-xl p-3">
+                  <p className="text-stone-900 dark:text-stone-100 text-sm">
+                    {sessionOutcome.experiment}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <p className="text-center text-xs text-stone-400 dark:text-stone-500 mt-6">
+              {t('thankYouParticipation')}
             </p>
           </CardContent>
         </Card>

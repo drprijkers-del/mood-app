@@ -549,6 +549,74 @@ export async function hasResponded(sessionId: string, deviceId: string): Promise
   return !!data
 }
 
+/**
+ * Get session outcome for team members (public, only for closed sessions)
+ */
+export interface PublicSessionOutcome {
+  status: 'active' | 'closed'
+  closed: boolean
+  focus_area: string | null
+  experiment: string | null
+  overall_score: number | null
+  response_count: number
+}
+
+export async function getPublicSessionOutcome(sessionId: string): Promise<PublicSessionOutcome | null> {
+  const supabase = await createClient()
+
+  // Get session info (public read access for outcome)
+  const { data: session } = await supabase
+    .from('delta_sessions')
+    .select('status, focus_area, experiment, angle')
+    .eq('id', sessionId)
+    .single()
+
+  if (!session) return null
+
+  // Get response count
+  const { count } = await supabase
+    .from('delta_responses')
+    .select('*', { count: 'exact', head: true })
+    .eq('session_id', sessionId)
+
+  const responseCount = count || 0
+
+  // Calculate overall score if we have 3+ responses
+  let overallScore: number | null = null
+  if (responseCount >= 3) {
+    const { data: responses } = await supabase.rpc('get_delta_responses', {
+      p_session_id: sessionId,
+    })
+
+    if (responses && responses.length >= 3) {
+      let totalScore = 0
+      let scoreCount = 0
+
+      for (const response of responses as { answers: Record<string, number> }[]) {
+        for (const score of Object.values(response.answers)) {
+          if (typeof score === 'number' && score >= 1 && score <= 5) {
+            totalScore += score
+            scoreCount++
+          }
+        }
+      }
+
+      if (scoreCount > 0) {
+        overallScore = Math.round((totalScore / scoreCount) * 10) / 10
+      }
+    }
+  }
+
+  return {
+    status: session.status,
+    closed: session.status === 'closed',
+    focus_area: session.focus_area,
+    experiment: session.experiment,
+    overall_score: overallScore,
+    response_count: responseCount,
+  }
+}
+
 // ============================================
 // SYNTHESIS
 // ============================================
