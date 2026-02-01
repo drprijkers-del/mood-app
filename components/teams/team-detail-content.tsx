@@ -16,6 +16,7 @@ import { FeedbackTool } from '@/components/teams/feedback-tool'
 import { CeremonyLevelDisplay } from '@/components/ceremonies/ceremony-level'
 import type { TeamMetrics, VibeInsight } from '@/domain/metrics/types'
 import type { CeremonySessionWithStats, CeremonyLevel } from '@/domain/ceremonies/types'
+import { CEREMONY_LEVELS, getAnglesGroupedByLevel, isAngleUnlocked } from '@/domain/ceremonies/types'
 
 interface TeamDetailContentProps {
   team: UnifiedTeam
@@ -335,29 +336,119 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                     </>
                   )}
                 </div>
-                {/* Action buttons */}
-                <div className="flex flex-wrap gap-2">
-                  <Link href={`/teams/${team.id}/ceremonies/new`}>
-                    <Button className="w-full sm:w-auto">
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      {t('newSession')}
-                    </Button>
-                  </Link>
-                  {(team.ceremonies?.closed_sessions || 0) >= 2 && (
-                    <Button
-                      variant="secondary"
-                      onClick={() => setShowCompare(true)}
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                      {t('ceremoniesCompare')}
-                    </Button>
-                  )}
-                </div>
+                {/* Compare button */}
+                {(team.ceremonies?.closed_sessions || 0) >= 2 && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowCompare(true)}
+                    className="w-full sm:w-auto"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    {t('ceremoniesCompare')}
+                  </Button>
+                )}
               </div>
+
+              {/* Session Types by Level */}
+              {(() => {
+                const teamLevel = (team.ceremonies?.level as CeremonyLevel) || 'shu'
+                const anglesGrouped = getAnglesGroupedByLevel()
+                const levelOrder: CeremonyLevel[] = ['shu', 'ha', 'ri']
+                const currentLevelIndex = levelOrder.indexOf(teamLevel)
+
+                const levelColors = {
+                  shu: {
+                    bg: 'bg-amber-100 dark:bg-amber-900/30',
+                    border: 'border-amber-300 dark:border-amber-700',
+                    text: 'text-amber-700 dark:text-amber-400',
+                    accent: 'bg-amber-500 hover:bg-amber-600',
+                  },
+                  ha: {
+                    bg: 'bg-cyan-100 dark:bg-cyan-900/30',
+                    border: 'border-cyan-300 dark:border-cyan-700',
+                    text: 'text-cyan-700 dark:text-cyan-400',
+                    accent: 'bg-cyan-500 hover:bg-cyan-600',
+                  },
+                  ri: {
+                    bg: 'bg-purple-100 dark:bg-purple-900/30',
+                    border: 'border-purple-300 dark:border-purple-700',
+                    text: 'text-purple-700 dark:text-purple-400',
+                    accent: 'bg-purple-500 hover:bg-purple-600',
+                  },
+                }
+
+                const getAngleLabel = (angleId: string) => {
+                  const labelMap: Record<string, string> = {
+                    scrum: t('angleScrum'),
+                    flow: t('angleFlow'),
+                    ownership: t('angleOwnership'),
+                    collaboration: t('angleCollaboration'),
+                    technical_excellence: t('angleTechnicalExcellence'),
+                    refinement: t('angleRefinement'),
+                    planning: t('anglePlanning'),
+                    retro: t('angleRetro'),
+                    demo: t('angleDemo'),
+                  }
+                  return labelMap[angleId] || angleId
+                }
+
+                return (
+                  <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-700">
+                      <h3 className="font-semibold text-stone-900 dark:text-stone-100">{t('startNewSession')}</h3>
+                    </div>
+                    <div className="p-4 space-y-4">
+                      {levelOrder.map((level, levelIndex) => {
+                        const levelInfo = CEREMONY_LEVELS.find(l => l.id === level)!
+                        const angles = anglesGrouped[level]
+                        const isLevelUnlocked = levelIndex <= currentLevelIndex
+                        const colors = levelColors[level]
+
+                        return (
+                          <div key={level}>
+                            {/* Level Header */}
+                            <div className={`flex items-center gap-2 mb-2 ${!isLevelUnlocked ? 'opacity-50' : ''}`}>
+                              <span className={`text-lg font-bold ${colors.text}`}>{levelInfo.kanji}</span>
+                              <span className={`font-medium ${colors.text}`}>{levelInfo.label}</span>
+                              {!isLevelUnlocked && (
+                                <span className="text-xs text-stone-400 dark:text-stone-500 ml-1">🔒</span>
+                              )}
+                            </div>
+
+                            {/* Angle buttons */}
+                            <div className="flex flex-wrap gap-2">
+                              {angles.map(angle => {
+                                const isUnlocked = isAngleUnlocked(angle.id, teamLevel)
+
+                                return isUnlocked ? (
+                                  <Link
+                                    key={angle.id}
+                                    href={`/teams/${team.id}/ceremonies/new?angle=${angle.id}`}
+                                  >
+                                    <button className={`px-3 py-2 rounded-lg text-white text-sm font-medium transition-colors ${colors.accent}`}>
+                                      {getAngleLabel(angle.id)}
+                                    </button>
+                                  </Link>
+                                ) : (
+                                  <button
+                                    key={angle.id}
+                                    disabled
+                                    className="px-3 py-2 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-400 dark:text-stone-500 text-sm font-medium cursor-not-allowed"
+                                  >
+                                    🔒 {getAngleLabel(angle.id)}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* Sessions list */}
               {ceremoniesSessions.length > 0 && (

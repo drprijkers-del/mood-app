@@ -58,13 +58,31 @@ export function CeremonyLevelDisplay({
   const currentLevelIndex = CEREMONY_LEVELS.findIndex(l => l.id === level)
   const isMaxLevel = level === 'ri'
 
+  // Static requirements for each level (shown when no progress data)
+  const staticRequirements = {
+    shu: [
+      { key: 'sessions', label: '3+ sessions in 30 days', required: 3 },
+      { key: 'score', label: 'Average score ≥ 3.2', required: 3.2 },
+      { key: 'participation', label: 'Participation ≥ 60%', required: 60 },
+    ],
+    ha: [
+      { key: 'total_sessions', label: '6+ total sessions', required: 6 },
+      { key: 'angles', label: '3+ different session types', required: 3 },
+      { key: 'score', label: 'Average score ≥ 3.5', required: 3.5 },
+      { key: 'participation', label: 'Participation ≥ 70%', required: 70 },
+    ],
+    ri: [], // Max level
+  }
+
   // Get unlock requirements for next level
   const requirements = progress ? getUnlockRequirements(level, progress) : []
+  const hasProgressData = requirements.length > 0
+  const displayRequirements = hasProgressData ? requirements : staticRequirements[level].map(r => ({ ...r, met: false, current: 0 }))
   const metRequirements = requirements.filter(r => r.met).length
-  const totalRequirements = requirements.length
-  const progressPercent = totalRequirements > 0
+  const totalRequirements = hasProgressData ? requirements.length : staticRequirements[level].length
+  const progressPercent = totalRequirements > 0 && hasProgressData
     ? Math.round((metRequirements / totalRequirements) * 100)
-    : 100
+    : 0
 
   const colors = levelColors[level]
 
@@ -207,7 +225,7 @@ export function CeremonyLevelDisplay({
 
           {/* Requirements checklist */}
           <div className="space-y-2">
-            {requirements.map((req) => (
+            {displayRequirements.map((req) => (
               <div
                 key={req.key}
                 className={`flex items-center justify-between p-2.5 rounded-lg ${
