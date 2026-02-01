@@ -1,9 +1,9 @@
 import type {
   ConfidenceLevel,
   TrendDirection,
-  PulseZone,
-  PulseMetric,
-  DailyPulse,
+  VibeZone,
+  VibeMetric,
+  DailyVibe,
   DayState,
   WeekState,
   DataMaturity,
@@ -37,7 +37,7 @@ const TREND_THRESHOLD = 0.3
 /**
  * Convert numeric value to zone
  */
-export function valueToZone(value: number | null): PulseZone | null {
+export function valueToZone(value: number | null): VibeZone | null {
   if (value === null) return null
 
   if (value <= ZONE_THRESHOLDS.under_pressure.max) return 'under_pressure'
@@ -49,7 +49,7 @@ export function valueToZone(value: number | null): PulseZone | null {
 /**
  * Get zone display label
  */
-export function getZoneLabel(zone: PulseZone | null, lang: 'nl' | 'en' = 'en'): string {
+export function getZoneLabel(zone: VibeZone | null, lang: 'nl' | 'en' = 'en'): string {
   if (!zone) return lang === 'nl' ? 'Geen data' : 'No data'
 
   const labels = {
@@ -73,7 +73,7 @@ export function getZoneLabel(zone: PulseZone | null, lang: 'nl' | 'en' = 'en'): 
 /**
  * Get zone color class for styling
  */
-export function getZoneColor(zone: PulseZone | null): string {
+export function getZoneColor(zone: VibeZone | null): string {
   switch (zone) {
     case 'under_pressure':
       return 'text-amber-600 bg-amber-50'
@@ -144,7 +144,7 @@ export function getTrendColor(trend: TrendDirection): string {
 /**
  * Calculate average from daily data
  */
-export function calculateAverage(data: DailyPulse[]): number | null {
+export function calculateAverage(data: DailyVibe[]): number | null {
   if (data.length === 0) return null
 
   const totalWeighted = data.reduce((sum, d) => sum + d.average * d.count, 0)
@@ -155,13 +155,13 @@ export function calculateAverage(data: DailyPulse[]): number | null {
 }
 
 /**
- * Build a PulseMetric from raw data
+ * Build a VibeMetric from raw data
  */
-export function buildPulseMetric(
-  currentData: DailyPulse[],
-  previousData: DailyPulse[],
+export function buildVibeMetric(
+  currentData: DailyVibe[],
+  previousData: DailyVibe[],
   participantCount: number
-): PulseMetric {
+): VibeMetric {
   const currentAvg = calculateAverage(currentData)
   const previousAvg = calculateAverage(previousData)
   const entryCount = currentData.reduce((sum, d) => sum + d.count, 0)
@@ -185,7 +185,7 @@ export function buildPulseMetric(
  * Calculate momentum from historical data
  */
 export function calculateMomentum(
-  dailyData: DailyPulse[]
+  dailyData: DailyVibe[]
 ): { direction: TrendDirection; velocity: 'slow' | 'moderate' | 'fast'; daysTrending: number } {
   if (dailyData.length < 2) {
     return { direction: 'stable', velocity: 'slow', daysTrending: 0 }

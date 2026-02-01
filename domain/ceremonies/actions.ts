@@ -4,9 +4,9 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAdmin, AdminUser } from '@/lib/auth/admin'
 import { revalidatePath } from 'next/cache'
 import {
-  DeltaSession,
-  DeltaSessionWithStats,
-  DeltaAngle,
+  CeremonySession,
+  CeremonySessionWithStats,
+  CeremonyAngle,
   ResponseAnswers,
   SynthesisResult,
   StatementScore,
@@ -37,7 +37,7 @@ async function verifySessionOwnership(sessionId: string, adminUser: AdminUser): 
 /**
  * Get all sessions for a team
  */
-export async function getTeamSessions(teamId: string): Promise<DeltaSessionWithStats[]> {
+export async function getTeamSessions(teamId: string): Promise<CeremonySessionWithStats[]> {
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
@@ -61,7 +61,7 @@ export async function getTeamSessions(teamId: string): Promise<DeltaSessionWithS
   if (error || !sessions) return []
 
   // Get response counts and scores for each session
-  const sessionsWithStats: DeltaSessionWithStats[] = await Promise.all(
+  const sessionsWithStats: CeremonySessionWithStats[] = await Promise.all(
     sessions.map(async (session) => {
       const { count } = await supabase
         .from('delta_responses')
@@ -100,7 +100,7 @@ export async function getTeamSessions(teamId: string): Promise<DeltaSessionWithS
         ...session,
         response_count: responseCount,
         overall_score: overallScore,
-      } as DeltaSessionWithStats
+      } as CeremonySessionWithStats
     })
   )
 
@@ -300,7 +300,7 @@ export async function getTeamStats(teamId: string): Promise<TeamStats> {
 /**
  * Get a single session by ID
  */
-export async function getSession(sessionId: string): Promise<DeltaSessionWithStats | null> {
+export async function getSession(sessionId: string): Promise<CeremonySessionWithStats | null> {
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
@@ -327,7 +327,7 @@ export async function getSession(sessionId: string): Promise<DeltaSessionWithSta
     ...session,
     response_count: count || 0,
     team_name: (session as { teams?: { name: string } }).teams?.name,
-  } as DeltaSessionWithStats
+  } as CeremonySessionWithStats
 }
 
 /**
@@ -335,7 +335,7 @@ export async function getSession(sessionId: string): Promise<DeltaSessionWithSta
  */
 export async function createSession(
   teamId: string,
-  angle: DeltaAngle,
+  angle: CeremonyAngle,
   title?: string
 ): Promise<{ success: boolean; sessionId?: string; error?: string }> {
   const adminUser = await requireAdmin()
@@ -476,7 +476,7 @@ export async function validateSessionCode(sessionCode: string): Promise<{
   session?: {
     id: string
     team_name: string
-    angle: DeltaAngle
+    angle: CeremonyAngle
     title: string | null
   }
 }> {
@@ -496,7 +496,7 @@ export async function validateSessionCode(sessionCode: string): Promise<{
     session: {
       id: row.session_id,
       team_name: row.team_name,
-      angle: row.angle as DeltaAngle,
+      angle: row.angle as CeremonyAngle,
       title: row.title,
     },
   }
@@ -652,7 +652,7 @@ export async function synthesizeSession(sessionId: string): Promise<SynthesisRes
   }
 
   // Get statements for this angle
-  const statements = getStatements(session.angle as DeltaAngle)
+  const statements = getStatements(session.angle as CeremonyAngle)
 
   // Track all scores for overall calculation
   let allScoresSum = 0

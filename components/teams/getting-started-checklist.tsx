@@ -8,7 +8,7 @@ interface GettingStartedChecklistProps {
   teamId: string
   teamSlug: string
   hasPulseEntries: boolean
-  hasDeltaSessions: boolean
+  hasCeremonySessions: boolean
   hasClosedSessions: boolean
 }
 
@@ -16,7 +16,7 @@ export function GettingStartedChecklist({
   teamId,
   teamSlug,
   hasPulseEntries,
-  hasDeltaSessions,
+  hasCeremonySessions,
   hasClosedSessions,
 }: GettingStartedChecklistProps) {
   const t = useTranslation()
@@ -37,8 +37,8 @@ export function GettingStartedChecklist({
 
   // Calculate completion
   const steps = [
-    { id: 'pulse', done: hasPulseEntries },
-    { id: 'delta', done: hasDeltaSessions },
+    { id: 'vibe', done: hasPulseEntries },
+    { id: 'ceremonies', done: hasCeremonySessions },
     { id: 'insights', done: hasClosedSessions },
   ]
   const completedCount = steps.filter(s => s.done).length
@@ -131,16 +131,16 @@ export function GettingStartedChecklist({
 
         {/* Step 2: Run Delta session */}
         <div className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-          hasDeltaSessions
+          hasCeremonySessions
             ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
             : 'bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700'
         }`}>
           <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-            hasDeltaSessions
+            hasCeremonySessions
               ? 'bg-green-500 text-white'
               : 'bg-stone-200 dark:bg-stone-600 text-stone-500 dark:text-stone-400'
           }`}>
-            {hasDeltaSessions ? (
+            {hasCeremonySessions ? (
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
@@ -149,16 +149,16 @@ export function GettingStartedChecklist({
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-sm font-medium ${hasDeltaSessions ? 'text-green-700 dark:text-green-400' : 'text-stone-700 dark:text-stone-300'}`}>
+            <p className={`text-sm font-medium ${hasCeremonySessions ? 'text-green-700 dark:text-green-400' : 'text-stone-700 dark:text-stone-300'}`}>
               {t('onboardingStep2')}
             </p>
-            {!hasDeltaSessions && (
+            {!hasCeremonySessions && (
               <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
                 {t('onboardingStep2Hint')}
               </p>
             )}
           </div>
-          {!hasDeltaSessions && (
+          {!hasCeremonySessions && (
             <Link
               href={`/teams/${teamId}/delta/new`}
               className="px-4 py-2.5 text-xs font-medium bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors shrink-0 min-h-11 flex items-center"

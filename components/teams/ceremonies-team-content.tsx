@@ -4,20 +4,20 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { TeamWithStats } from '@/domain/teams/actions'
-import { DeltaSessionWithStats, getAngleInfo } from '@/domain/delta/types'
-import { TeamStats } from '@/domain/delta/actions'
+import { CeremonySessionWithStats, getAngleInfo } from '@/domain/ceremonies/types'
+import { TeamStats } from '@/domain/ceremonies/actions'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useTranslation, useLanguage, TranslationFunction } from '@/lib/i18n/context'
 
-interface DeltaTeamContentProps {
+interface CeremoniesTeamContentProps {
   team: TeamWithStats
-  sessions: DeltaSessionWithStats[]
+  sessions: CeremonySessionWithStats[]
   stats: TeamStats
   basePath: string // e.g., "/teams/123"
 }
 
-export function DeltaTeamContent({ team, sessions, stats, basePath }: DeltaTeamContentProps) {
+export function CeremoniesTeamContent({ team, sessions, stats, basePath }: CeremoniesTeamContentProps) {
   const t = useTranslation()
   const { language } = useLanguage()
   const dateLocale = language === 'nl' ? 'nl-NL' : 'en-US'
@@ -184,8 +184,8 @@ export function DeltaTeamContent({ team, sessions, stats, basePath }: DeltaTeamC
         <CardContent className="py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{t('startDeltaSession')}</h2>
-              <p className="text-sm text-stone-600 dark:text-stone-400">{t('startDeltaSessionSubtitle')}</p>
+              <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{t('startCeremonySession')}</h2>
+              <p className="text-sm text-stone-600 dark:text-stone-400">{t('startCeremonySessionSubtitle')}</p>
             </div>
             <Link href={newSessionPath}>
               <Button>
@@ -245,7 +245,7 @@ export function DeltaTeamContent({ team, sessions, stats, basePath }: DeltaTeamC
   )
 }
 
-function getCoachInsight(session: DeltaSessionWithStats, t: TranslationFunction): string | null {
+function getCoachInsight(session: CeremonySessionWithStats, t: TranslationFunction): string | null {
   if (session.status === 'active') {
     if (session.response_count < 3) return t('insightWaitingForResults')
     return null
@@ -276,7 +276,7 @@ function getCoachInsight(session: DeltaSessionWithStats, t: TranslationFunction)
   return t('insightFocusSlicing')
 }
 
-function SessionCard({ session, t, sessionBasePath }: { session: DeltaSessionWithStats; t: TranslationFunction; sessionBasePath: string }) {
+function SessionCard({ session, t, sessionBasePath }: { session: CeremonySessionWithStats; t: TranslationFunction; sessionBasePath: string }) {
   const angleInfo = getAngleInfo(session.angle)
   const isActive = session.status === 'active'
   const isClosed = session.status === 'closed'

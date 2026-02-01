@@ -42,8 +42,8 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
 
   // Calculate maturity level for a team
   const getMaturityLevel = (team: UnifiedTeam) => {
-    const sessionsCount = (team.delta?.total_sessions || 0) + (team.pulse?.participant_count || 0)
-    const avgScore = team.pulse?.average_score || team.delta?.average_score || 0
+    const sessionsCount = (team.ceremonies?.total_sessions || 0) + (team.vibe?.participant_count || 0)
+    const avgScore = team.vibe?.average_score || team.ceremonies?.average_score || 0
 
     if (sessionsCount >= 20 && avgScore >= 3.5) return 'mature'
     if (sessionsCount >= 5) return 'medium'
@@ -114,14 +114,14 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                   </svg>
                 </div>
                 <div className="text-sm font-medium text-stone-900 dark:text-stone-100">Pulse</div>
-                <div className="text-xs text-stone-500 dark:text-stone-400">{t('emptyStatePulseDesc')}</div>
+                <div className="text-xs text-stone-500 dark:text-stone-400">{t('emptyStateVibeDesc')}</div>
               </div>
               <div className="bg-white dark:bg-stone-800 rounded-xl p-4 border border-stone-200 dark:border-stone-700">
                 <div className="w-8 h-8 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mb-2">
                   <span className="text-cyan-600 dark:text-cyan-400 font-bold text-sm">Δ</span>
                 </div>
                 <div className="text-sm font-medium text-stone-900 dark:text-stone-100">Delta</div>
-                <div className="text-xs text-stone-500 dark:text-stone-400">{t('emptyStateDeltaDesc')}</div>
+                <div className="text-xs text-stone-500 dark:text-stone-400">{t('emptyStateCeremoniesDesc')}</div>
               </div>
               <div className="bg-white dark:bg-stone-800 rounded-xl p-4 border border-stone-200 dark:border-stone-700">
                 <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-2">
@@ -174,12 +174,12 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                     </div>
                     {/* Tool labels - hidden on mobile for cleaner look */}
                     <div className="hidden sm:flex flex-wrap gap-1 mt-1">
-                      {team.tools_enabled.includes('pulse') && (
+                      {team.tools_enabled.includes('vibe') && (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded">
                           Pulse
                         </span>
                       )}
-                      {team.tools_enabled.includes('delta') && (
+                      {team.tools_enabled.includes('ceremonies') && (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded">
                           Delta
                         </span>
@@ -196,34 +196,34 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
 
                 {/* Score indicators - simplified for mobile */}
                 <div className="flex items-center gap-3 mb-3">
-                  {team.pulse?.average_score && (
+                  {team.vibe?.average_score && (
                     <div className="flex items-center gap-1">
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm ${
-                        team.pulse.average_score >= 4 ? 'bg-green-500' :
-                        team.pulse.average_score >= 3 ? 'bg-cyan-500' :
-                        team.pulse.average_score >= 2 ? 'bg-amber-500' :
+                        team.vibe.average_score >= 4 ? 'bg-green-500' :
+                        team.vibe.average_score >= 3 ? 'bg-cyan-500' :
+                        team.vibe.average_score >= 2 ? 'bg-amber-500' :
                         'bg-red-500'
                       }`}>
-                        {team.pulse.average_score}
+                        {team.vibe.average_score}
                       </div>
                       {/* Trend indicator */}
-                      {team.pulse.trend && (
+                      {team.vibe.trend && (
                         <div className={`flex items-center justify-center w-4 h-4 ${
-                          team.pulse.trend === 'up' ? 'text-green-500' :
-                          team.pulse.trend === 'down' ? 'text-red-500' :
+                          team.vibe.trend === 'up' ? 'text-green-500' :
+                          team.vibe.trend === 'down' ? 'text-red-500' :
                           'text-stone-400 dark:text-stone-500'
                         }`}>
-                          {team.pulse.trend === 'up' && (
+                          {team.vibe.trend === 'up' && (
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                             </svg>
                           )}
-                          {team.pulse.trend === 'down' && (
+                          {team.vibe.trend === 'down' && (
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           )}
-                          {team.pulse.trend === 'stable' && (
+                          {team.vibe.trend === 'stable' && (
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
                             </svg>
@@ -233,34 +233,34 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                       <span className="hidden sm:inline text-xs text-stone-400 dark:text-stone-500">Pulse</span>
                     </div>
                   )}
-                  {team.delta?.average_score && (
+                  {team.ceremonies?.average_score && (
                     <div className="flex items-center gap-1">
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm ${
-                        team.delta.average_score >= 4 ? 'bg-green-500' :
-                        team.delta.average_score >= 3 ? 'bg-cyan-500' :
-                        team.delta.average_score >= 2 ? 'bg-amber-500' :
+                        team.ceremonies.average_score >= 4 ? 'bg-green-500' :
+                        team.ceremonies.average_score >= 3 ? 'bg-cyan-500' :
+                        team.ceremonies.average_score >= 2 ? 'bg-amber-500' :
                         'bg-red-500'
                       }`}>
-                        {team.delta.average_score}
+                        {team.ceremonies.average_score}
                       </div>
                       {/* Trend indicator */}
-                      {team.delta.trend && (
+                      {team.ceremonies.trend && (
                         <div className={`flex items-center justify-center w-4 h-4 ${
-                          team.delta.trend === 'up' ? 'text-green-500' :
-                          team.delta.trend === 'down' ? 'text-red-500' :
+                          team.ceremonies.trend === 'up' ? 'text-green-500' :
+                          team.ceremonies.trend === 'down' ? 'text-red-500' :
                           'text-stone-400 dark:text-stone-500'
                         }`}>
-                          {team.delta.trend === 'up' && (
+                          {team.ceremonies.trend === 'up' && (
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                             </svg>
                           )}
-                          {team.delta.trend === 'down' && (
+                          {team.ceremonies.trend === 'down' && (
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           )}
-                          {team.delta.trend === 'stable' && (
+                          {team.ceremonies.trend === 'stable' && (
                             <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
                             </svg>
@@ -270,17 +270,17 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                       <span className="hidden sm:inline text-xs text-stone-400 dark:text-stone-500">Delta</span>
                     </div>
                   )}
-                  {!team.pulse?.average_score && !team.delta?.average_score && (
+                  {!team.vibe?.average_score && !team.ceremonies?.average_score && (
                     <span className="text-xs text-stone-400 dark:text-stone-500">{t('teamsNoData')}</span>
                   )}
                 </div>
 
                 {/* Participation progress (Pulse only) */}
-                {team.pulse && (
+                {team.vibe && (
                   <div className="mb-3">
                     {(() => {
-                      const effectiveSize = team.expected_team_size || team.pulse.participant_count || 1
-                      const todayCount = team.pulse.today_entries
+                      const effectiveSize = team.expected_team_size || team.vibe.participant_count || 1
+                      const todayCount = team.vibe.today_entries
                       const percentage = effectiveSize > 0 ? Math.round((todayCount / effectiveSize) * 100) : 0
                       const isComplete = percentage >= 80
                       const isLow = percentage < 50 && effectiveSize > 0

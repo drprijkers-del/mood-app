@@ -2,9 +2,9 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth/admin'
-import type { TeamMetrics, DailyPulse, PulseInsight } from './types'
+import type { TeamMetrics, DailyVibe, VibeInsight } from './types'
 import {
-  buildPulseMetric,
+  buildVibeMetric,
   calculateMomentum,
   calculateConfidence,
   calculateTrend,
@@ -22,8 +22,8 @@ type Language = 'nl' | 'en'
 
 interface InsightTemplate {
   id: string
-  type: PulseInsight['type']
-  severity: PulseInsight['severity']
+  type: VibeInsight['type']
+  severity: VibeInsight['severity']
   message: { nl: string; en: string }
   detail?: { nl: string; en: string }
   suggestions?: { nl: string[]; en: string[] }
@@ -283,7 +283,7 @@ function buildInsight(
   template: InsightTemplate,
   lang: Language,
   values: Record<string, string | number> = {}
-): PulseInsight {
+): VibeInsight {
   return {
     id: template.id,
     type: template.type,
@@ -327,7 +327,7 @@ export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null
   const { data: rawHistory } = await supabase
     .rpc('get_team_trend', { p_team_id: teamId })
 
-  const history: DailyPulse[] = (rawHistory || []).map((d: { date: string; average: number; count: number }) => ({
+  const history: DailyVibe[] = (rawHistory || []).map((d: { date: string; average: number; count: number }) => ({
     date: d.date,
     average: d.average,
     count: d.count,
@@ -354,10 +354,10 @@ export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null
   })
 
   // Build metrics
-  const livePulse = buildPulseMetric(todayData, yesterdayData, totalParticipants)
-  const dayPulse = buildPulseMetric(yesterdayData, [], totalParticipants)
-  const weekPulse = buildPulseMetric(last7Days, previous7Days, totalParticipants)
-  const previousWeekPulse = buildPulseMetric(previous7Days, [], totalParticipants)
+  const liveVibe = buildVibeMetric(todayData, yesterdayData, totalParticipants)
+  const dayVibe = buildVibeMetric(yesterdayData, [], totalParticipants)
+  const weekVibe = buildVibeMetric(last7Days, previous7Days, totalParticipants)
+  const previousWeekVibe = buildVibeMetric(previous7Days, [], totalParticipants)
 
   // Calculate momentum
   const momentum = calculateMomentum(last7Days)
@@ -387,10 +387,10 @@ export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null
   const maturityLevel = calculateDataMaturity(totalDaysWithData, consistencyRate)
 
   return {
-    livePulse,
-    dayPulse,
-    weekPulse,
-    previousWeekPulse,
+    liveVibe,
+    dayVibe,
+    weekVibe,
+    previousWeekVibe,
     momentum,
     participation: {
       today: todayEntries,
@@ -417,25 +417,25 @@ export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null
 export async function getTeamInsights(
   teamId: string,
   language: Language = 'en'
-): Promise<PulseInsight[]> {
+): Promise<VibeInsight[]> {
   const metrics = await getTeamMetrics(teamId)
   if (!metrics) return []
 
-  const insights: PulseInsight[] = []
+  const insights: VibeInsight[] = []
 
   // ==========================================================================
   // FALSE ALARM PREVENTION
   // ==========================================================================
   // Don't generate trend/pattern insights without enough data
-  const hasEnoughForTrends = metrics.hasEnoughData && metrics.weekPulse.confidence !== 'low'
-  const hasEnoughForPatterns = metrics.hasEnoughData && metrics.weekPulse.entryCount >= 5
+  const hasEnoughForTrends = metrics.hasEnoughData && metrics.weekVibe.confidence !== 'low'
+  const hasEnoughForPatterns = metrics.hasEnoughData && metrics.weekVibe.entryCount >= 5
 
   // ==========================================================================
   // PARTICIPATION INSIGHTS (always show if relevant)
   // ==========================================================================
 
   // Low participation today
-  if (metrics.livePulse.confidence === 'low' && metrics.participation.teamSize > 0) {
+  if (metrics.liveVibe.confidence === 'low' && metrics.participation.teamSize > 0) {
     insights.push(
       buildInsight(INSIGHT_TEMPLATES.lowParticipation, language, {
         today: metrics.participation.today,
@@ -477,8 +477,8 @@ export async function getTeamInsights(
     }
 
     // Week-over-week comparison (requires both weeks of data)
-    if (metrics.weekPulse.value && metrics.previousWeekPulse.value) {
-      const weekDelta = metrics.weekPulse.value - metrics.previousWeekPulse.value
+    if (metrics.weekVibe.value && metrics.previousWeekVibe.value) {
+      const weekDelta = metrics.weekVibe.value - metrics.previousWeekVibe.value
 
       // Significant drop (>= 0.5)
       if (weekDelta <= -0.5) {
@@ -506,26 +506,26 @@ export async function getTeamInsights(
 
   if (hasEnoughForPatterns) {
     // Under pressure zone
-    if (metrics.weekPulse.zone === 'under_pressure') {
+    if (metrics.weekVibe.zone === 'under_pressure') {
       insights.push(buildInsight(INSIGHT_TEMPLATES.underPressure, language))
     }
 
     // High confidence zone (sustained good performance)
     if (
-      metrics.weekPulse.zone === 'high_confidence' &&
+      metrics.weekVibe.zone === 'high_confidence' &&
       metrics.momentum.direction !== 'declining'
     ) {
       insights.push(buildInsight(INSIGHT_TEMPLATES.highConfidence, language))
     }
 
     // Mixed signals (moderate variation in scores)
-    if (metrics.weekPulse.zone === 'mixed_signals') {
+    if (metrics.weekVibe.zone === 'mixed_signals') {
       insights.push(buildInsight(INSIGHT_TEMPLATES.mixedSignals, language))
     }
 
     // Consistently stable (steady state zone with stable momentum)
     if (
-      metrics.weekPulse.zone === 'steady_state' &&
+      metrics.weekVibe.zone === 'steady_state' &&
       metrics.momentum.direction === 'stable'
     ) {
       insights.push(buildInsight(INSIGHT_TEMPLATES.consistentlyStable, language))
@@ -565,7 +565,7 @@ export async function getFlyFrequency(teamId: string): Promise<'none' | 'rare' |
 
   // High frequency: under pressure for 3+ days
   if (
-    metrics.weekPulse.zone === 'under_pressure' &&
+    metrics.weekVibe.zone === 'under_pressure' &&
     metrics.momentum.direction === 'declining' &&
     metrics.momentum.daysTrending >= 3
   ) {

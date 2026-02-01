@@ -28,17 +28,17 @@ export interface TeamWithStats extends Team {
 }
 
 export interface TeamTool {
-  tool: 'pulse' | 'delta'
+  tool: 'vibe' | 'ceremonies'
   enabled_at: string
   config: Record<string, unknown>
 }
 
 export interface UnifiedTeam extends Team {
   // Tools enabled
-  tools_enabled: ('pulse' | 'delta')[]
+  tools_enabled: ('vibe' | 'ceremonies')[]
 
-  // Pulse stats (null if not enabled)
-  pulse: {
+  // Vibe stats (null if not enabled)
+  vibe: {
     enabled: boolean
     participant_count: number
     today_entries: number
@@ -47,8 +47,8 @@ export interface UnifiedTeam extends Team {
     share_link: string | null
   } | null
 
-  // Delta stats (null if not enabled)
-  delta: {
+  // Ceremonies stats (null if not enabled)
+  ceremonies: {
     enabled: boolean
     total_sessions: number
     active_sessions: number
@@ -88,7 +88,7 @@ async function verifyTeamOwnership(teamId: string, adminUser: AdminUser): Promis
   return data?.owner_id === adminUser.id
 }
 
-export async function getTeams(appType?: 'pulse' | 'delta'): Promise<TeamWithStats[]> {
+export async function getTeams(appType?: 'vibe' | 'ceremonies'): Promise<TeamWithStats[]> {
   const adminUser = await requireAdmin()
   const supabase = await createClient()
 
@@ -160,13 +160,13 @@ function hasDenormalizedStats(team: Record<string, unknown>): boolean {
   return team.pulse_stats_updated_at !== undefined && team.pulse_stats_updated_at !== null
 }
 
-// Helper: Compute Pulse stats the old way (fallback before migration)
-async function computePulseStatsFallback(
+// Helper: Compute Vibe stats the old way (fallback before migration)
+async function computeVibeStatsFallback(
   supabase: Awaited<ReturnType<typeof createClient>>,
   teamId: string,
   teamSlug: string,
   hasActiveLink: boolean
-): Promise<NonNullable<UnifiedTeam['pulse']>> {
+): Promise<NonNullable<UnifiedTeam['vibe']>> {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
   const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
@@ -194,8 +194,8 @@ async function computePulseStatsFallback(
   }
 }
 
-// Helper: Compute Delta stats the old way (fallback before migration)
-async function computeDeltaStatsFallback(teamId: string): Promise<NonNullable<UnifiedTeam['delta']>> {
+// Helper: Compute Ceremonies stats the old way (fallback before migration)
+async function computeCeremoniesStatsFallback(teamId: string): Promise<NonNullable<UnifiedTeam['ceremonies']>> {
   const adminSupabase = await createAdminClient()
   const { data: sessions } = await adminSupabase
     .from('delta_sessions')
@@ -247,7 +247,7 @@ async function computeDeltaStatsFallback(teamId: string): Promise<NonNullable<Un
 
 // Get all teams with unified stats for both tools
 // Uses denormalized stats if available (fast), falls back to computed stats (slow but works without migration)
-export async function getTeamsUnified(filter?: 'all' | 'pulse' | 'delta' | 'needs_attention'): Promise<UnifiedTeam[]> {
+export async function getTeamsUnified(filter?: 'all' | 'vibe' | 'ceremonies' | 'needs_attention'): Promise<UnifiedTeam[]> {
   const adminUser = await requireAdmin()
   const supabase = await createClient()
 
@@ -287,19 +287,19 @@ export async function getTeamsUnified(filter?: 'all' | 'pulse' | 'delta' | 'need
   const unifiedTeams: UnifiedTeam[] = await Promise.all(
     (teams || []).map(async (team) => {
       const teamTools = toolsByTeam.get(team.id) || []
-      const tools_enabled = teamTools.map(t => t.tool) as ('pulse' | 'delta')[]
-      const hasPulse = tools_enabled.includes('pulse')
-      const hasDelta = tools_enabled.includes('delta')
+      const tools_enabled = teamTools.map(t => t.tool) as ('vibe' | 'ceremonies')[]
+      const hasVibe = tools_enabled.includes('vibe')
+      const hasCeremonies = tools_enabled.includes('ceremonies')
       const useFastPath = hasDenormalizedStats(team)
 
-      // Pulse stats
-      let pulseStats: UnifiedTeam['pulse'] = null
-      if (hasPulse) {
+      // Vibe stats
+      let vibeStats: UnifiedTeam['vibe'] = null
+      if (hasVibe) {
         if (useFastPath) {
           // Fast path: use denormalized columns
           const avgScore = team.pulse_avg_score ? parseFloat(String(team.pulse_avg_score)) : null
           const prevAvgScore = team.pulse_prev_avg_score ? parseFloat(String(team.pulse_prev_avg_score)) : null
-          pulseStats = {
+          vibeStats = {
             enabled: true,
             participant_count: (team.pulse_participant_count as number) || 0,
             today_entries: (team.pulse_today_entries as number) || 0,
@@ -309,18 +309,18 @@ export async function getTeamsUnified(filter?: 'all' | 'pulse' | 'delta' | 'need
           }
         } else {
           // Fallback: compute on the fly (slow)
-          pulseStats = await computePulseStatsFallback(supabase, team.id, team.slug, teamsWithActiveLink.has(team.id))
+          vibeStats = await computeVibeStatsFallback(supabase, team.id, team.slug, teamsWithActiveLink.has(team.id))
         }
       }
 
-      // Delta stats
-      let deltaStats: UnifiedTeam['delta'] = null
-      if (hasDelta) {
+      // Ceremonies stats
+      let ceremoniesStats: UnifiedTeam['ceremonies'] = null
+      if (hasCeremonies) {
         if (useFastPath) {
           // Fast path: use denormalized columns
           const avgScore = team.delta_avg_score ? parseFloat(String(team.delta_avg_score)) : null
           const prevAvgScore = team.delta_prev_avg_score ? parseFloat(String(team.delta_prev_avg_score)) : null
-          deltaStats = {
+          ceremoniesStats = {
             enabled: true,
             total_sessions: (team.delta_total_sessions as number) || 0,
             active_sessions: (team.delta_active_sessions as number) || 0,
@@ -331,24 +331,24 @@ export async function getTeamsUnified(filter?: 'all' | 'pulse' | 'delta' | 'need
           }
         } else {
           // Fallback: compute on the fly (slow)
-          deltaStats = await computeDeltaStatsFallback(team.id)
+          ceremoniesStats = await computeCeremoniesStatsFallback(team.id)
         }
       }
 
       // Compute needs_attention
       const needsAttention =
-        (pulseStats && pulseStats.average_score !== null && pulseStats.average_score < 2.5) ||
-        (deltaStats && deltaStats.average_score !== null && deltaStats.average_score < 2.5) ||
+        (vibeStats && vibeStats.average_score !== null && vibeStats.average_score < 2.5) ||
+        (ceremoniesStats && ceremoniesStats.average_score !== null && ceremoniesStats.average_score < 2.5) ||
         false
 
       // Compute last_updated
-      const lastUpdated = deltaStats?.last_session_date || team.updated_at
+      const lastUpdated = ceremoniesStats?.last_session_date || team.updated_at
 
       return {
         ...team,
         tools_enabled,
-        pulse: pulseStats,
-        delta: deltaStats,
+        vibe: vibeStats,
+        ceremonies: ceremoniesStats,
         last_updated: lastUpdated,
         needs_attention: needsAttention,
       }
@@ -356,11 +356,11 @@ export async function getTeamsUnified(filter?: 'all' | 'pulse' | 'delta' | 'need
   )
 
   // Apply filter
-  if (filter === 'pulse') {
-    return unifiedTeams.filter(t => t.tools_enabled.includes('pulse'))
+  if (filter === 'vibe') {
+    return unifiedTeams.filter(t => t.tools_enabled.includes('vibe'))
   }
-  if (filter === 'delta') {
-    return unifiedTeams.filter(t => t.tools_enabled.includes('delta'))
+  if (filter === 'ceremonies') {
+    return unifiedTeams.filter(t => t.tools_enabled.includes('ceremonies'))
   }
   if (filter === 'needs_attention') {
     return unifiedTeams.filter(t => t.needs_attention)
@@ -436,20 +436,20 @@ export async function getTeamUnified(id: string): Promise<UnifiedTeam | null> {
     return null
   }
 
-  const tools_enabled = (toolsResult.data || []).map(t => t.tool) as ('pulse' | 'delta')[]
-  const hasPulse = tools_enabled.includes('pulse')
-  const hasDelta = tools_enabled.includes('delta')
+  const tools_enabled = (toolsResult.data || []).map(t => t.tool) as ('vibe' | 'ceremonies')[]
+  const hasVibe = tools_enabled.includes('vibe')
+  const hasCeremonies = tools_enabled.includes('ceremonies')
   const hasActiveLink = !!linkResult.data
   const useFastPath = hasDenormalizedStats(team)
 
-  // Pulse stats
-  let pulseStats: UnifiedTeam['pulse'] = null
-  if (hasPulse) {
+  // Vibe stats
+  let vibeStats: UnifiedTeam['vibe'] = null
+  if (hasVibe) {
     if (useFastPath) {
       // Fast path: use denormalized columns
       const avgScore = team.pulse_avg_score ? parseFloat(String(team.pulse_avg_score)) : null
       const prevAvgScore = team.pulse_prev_avg_score ? parseFloat(String(team.pulse_prev_avg_score)) : null
-      pulseStats = {
+      vibeStats = {
         enabled: true,
         participant_count: (team.pulse_participant_count as number) || 0,
         today_entries: (team.pulse_today_entries as number) || 0,
@@ -459,18 +459,18 @@ export async function getTeamUnified(id: string): Promise<UnifiedTeam | null> {
       }
     } else {
       // Fallback: compute on the fly (slow)
-      pulseStats = await computePulseStatsFallback(supabase, team.id, team.slug, hasActiveLink)
+      vibeStats = await computeVibeStatsFallback(supabase, team.id, team.slug, hasActiveLink)
     }
   }
 
-  // Delta stats
-  let deltaStats: UnifiedTeam['delta'] = null
-  if (hasDelta) {
+  // Ceremonies stats
+  let ceremoniesStats: UnifiedTeam['ceremonies'] = null
+  if (hasCeremonies) {
     if (useFastPath) {
       // Fast path: use denormalized columns
       const avgScore = team.delta_avg_score ? parseFloat(String(team.delta_avg_score)) : null
       const prevAvgScore = team.delta_prev_avg_score ? parseFloat(String(team.delta_prev_avg_score)) : null
-      deltaStats = {
+      ceremoniesStats = {
         enabled: true,
         total_sessions: (team.delta_total_sessions as number) || 0,
         active_sessions: (team.delta_active_sessions as number) || 0,
@@ -481,29 +481,29 @@ export async function getTeamUnified(id: string): Promise<UnifiedTeam | null> {
       }
     } else {
       // Fallback: compute on the fly (slow)
-      deltaStats = await computeDeltaStatsFallback(team.id)
+      ceremoniesStats = await computeCeremoniesStatsFallback(team.id)
     }
   }
 
   const needsAttention =
-    (pulseStats && pulseStats.average_score !== null && pulseStats.average_score < 2.5) ||
-    (deltaStats && deltaStats.average_score !== null && deltaStats.average_score < 2.5) ||
+    (vibeStats && vibeStats.average_score !== null && vibeStats.average_score < 2.5) ||
+    (ceremoniesStats && ceremoniesStats.average_score !== null && ceremoniesStats.average_score < 2.5) ||
     false
 
-  const lastUpdated = deltaStats?.last_session_date || team.updated_at
+  const lastUpdated = ceremoniesStats?.last_session_date || team.updated_at
 
   return {
     ...team,
     tools_enabled,
-    pulse: pulseStats,
-    delta: deltaStats,
+    vibe: vibeStats,
+    ceremonies: ceremoniesStats,
     last_updated: lastUpdated,
     needs_attention: needsAttention,
   }
 }
 
 // Get tools enabled for a team
-export async function getTeamTools(teamId: string): Promise<('pulse' | 'delta')[]> {
+export async function getTeamTools(teamId: string): Promise<('vibe' | 'ceremonies')[]> {
   const supabase = await createClient()
 
   const { data } = await supabase
@@ -511,11 +511,11 @@ export async function getTeamTools(teamId: string): Promise<('pulse' | 'delta')[
     .select('tool')
     .eq('team_id', teamId)
 
-  return (data || []).map(t => t.tool as 'pulse' | 'delta')
+  return (data || []).map(t => t.tool as 'vibe' | 'ceremonies')
 }
 
 // Enable a tool for a team
-export async function enableTool(teamId: string, tool: 'pulse' | 'delta'): Promise<{ success: boolean; error?: string }> {
+export async function enableTool(teamId: string, tool: 'vibe' | 'ceremonies'): Promise<{ success: boolean; error?: string }> {
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
@@ -531,8 +531,8 @@ export async function enableTool(teamId: string, tool: 'pulse' | 'delta'): Promi
     return { success: false, error: error.message }
   }
 
-  // For Pulse: ensure an invite link exists
-  if (tool === 'pulse') {
+  // For Vibe: ensure an invite link exists
+  if (tool === 'vibe') {
     // Check if active invite link exists
     const { data: existingLink } = await supabase
       .from('invite_links')
@@ -559,7 +559,7 @@ export async function enableTool(teamId: string, tool: 'pulse' | 'delta'): Promi
 }
 
 // Disable a tool for a team
-export async function disableTool(teamId: string, tool: 'pulse' | 'delta'): Promise<{ success: boolean; error?: string }> {
+export async function disableTool(teamId: string, tool: 'vibe' | 'ceremonies'): Promise<{ success: boolean; error?: string }> {
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
@@ -635,8 +635,8 @@ export async function createTeam(formData: FormData): Promise<{ success: boolean
   await supabase
     .from('team_tools')
     .insert([
-      { team_id: team.id, tool: 'pulse' },
-      { team_id: team.id, tool: 'delta' },
+      { team_id: team.id, tool: 'vibe' },
+      { team_id: team.id, tool: 'ceremonies' },
     ])
 
   // Create initial invite link for Pulse

@@ -4,7 +4,7 @@ import { TeamsListContent } from '@/components/admin/teams-list-content'
 
 export default async function TeamsPage() {
   await requireAdmin()
-  const teams = await getTeams('pulse')
+  const teams = await getTeams('vibe')
 
-  return <TeamsListContent teams={teams} appType="pulse" />
+  return <TeamsListContent teams={teams} appType="vibe" />
 }

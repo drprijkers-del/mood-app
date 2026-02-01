@@ -4,7 +4,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 // Types matching database schema
-export type ProductType = 'delta' | 'pulse' | 'shared'
+export type ProductType = 'ceremonies' | 'vibe' | 'shared'
 export type BacklogCategory = 'ux' | 'statements' | 'analytics' | 'integration' | 'features'
 export type BacklogStatus = 'review' | 'exploring' | 'decided'
 export type BacklogDecision = 'building' | 'not_doing' | 'done'
@@ -100,7 +100,7 @@ export async function createBacklogItem(formData: FormData): Promise<{ success: 
   const ourTakeEn = formData.get('our_take_en') as string | null
 
   const item = {
-    product: (formData.get('product') as ProductType) || 'pulse',
+    product: (formData.get('product') as ProductType) || 'vibe',
     category: formData.get('category') as BacklogCategory,
     status,
     decision: status === 'decided' ? (formData.get('decision') as BacklogDecision) : null,
@@ -142,7 +142,7 @@ export async function updateBacklogItem(id: string, formData: FormData): Promise
   const ourTakeEn = formData.get('our_take_en') as string | null
 
   const updates = {
-    product: (formData.get('product') as ProductType) || 'pulse',
+    product: (formData.get('product') as ProductType) || 'vibe',
     category: formData.get('category') as BacklogCategory,
     status,
     decision: status === 'decided' ? (formData.get('decision') as BacklogDecision) : null,
@@ -255,7 +255,7 @@ export async function createReleaseNote(formData: FormData): Promise<{ success: 
   }
 
   const note = {
-    product: (formData.get('product') as ProductType) || 'pulse',
+    product: (formData.get('product') as ProductType) || 'vibe',
     version: formData.get('version') as string,
     title_nl: formData.get('title_en') as string, // English only
     title_en: formData.get('title_en') as string,
@@ -298,7 +298,7 @@ export async function updateReleaseNote(id: string, formData: FormData): Promise
   }
 
   const updates = {
-    product: (formData.get('product') as ProductType) || 'pulse',
+    product: (formData.get('product') as ProductType) || 'vibe',
     version: formData.get('version') as string,
     title_nl: formData.get('title_en') as string,
     title_en: formData.get('title_en') as string,
@@ -356,7 +356,7 @@ export async function submitWish(wish: string, why: string): Promise<{ success: 
   const supabase = await createClient()
 
   const item = {
-    product: 'pulse' as ProductType,
+    product: 'vibe' as ProductType,
     category: 'features' as BacklogCategory,
     status: 'review' as BacklogStatus,
     decision: null,

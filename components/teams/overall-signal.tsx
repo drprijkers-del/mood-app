@@ -20,17 +20,17 @@ export function OverallSignal({
   // Calculate combined score (weighted average)
   // Pulse: 60% weight (daily signal), Delta: 40% weight (periodic deep dive)
   let combinedScore: number | null = null
-  let scoreSource: 'both' | 'pulse' | 'delta' | 'none' = 'none'
+  let scoreSource: 'both' | 'vibe' | 'ceremonies' | 'none' = 'none'
 
   if (pulseScore !== null && deltaScore !== null) {
     combinedScore = pulseScore * 0.6 + deltaScore * 0.4
     scoreSource = 'both'
   } else if (pulseScore !== null) {
     combinedScore = pulseScore
-    scoreSource = 'pulse'
+    scoreSource = 'vibe'
   } else if (deltaScore !== null) {
     combinedScore = deltaScore
-    scoreSource = 'delta'
+    scoreSource = 'ceremonies'
   }
 
   // Determine health status
@@ -140,7 +140,7 @@ export function OverallSignal({
           {/* Data completeness hint */}
           {scoreSource !== 'both' && scoreSource !== 'none' && (
             <p className="text-xs text-stone-400 dark:text-stone-500 mt-1">
-              {scoreSource === 'pulse' ? t('signalAddDelta') : t('signalAddPulse')}
+              {scoreSource === 'vibe' ? t('signalAddCeremonies') : t('signalAddVibe')}
             </p>
           )}
         </div>

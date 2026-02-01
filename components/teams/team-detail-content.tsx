@@ -6,24 +6,24 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { UnifiedTeam, enableTool, disableTool, deleteTeam, exportPulseData } from '@/domain/teams/actions'
 import { Button } from '@/components/ui/button'
 import { useTranslation, TranslationFunction } from '@/lib/i18n/context'
-import { PulseMetrics } from '@/components/admin/pulse-metrics'
+import { VibeMetrics } from '@/components/admin/vibe-metrics'
 import { ShareLinkSection } from '@/components/admin/share-link-section'
 import { GettingStartedChecklist } from '@/components/teams/getting-started-checklist'
 import { OverallSignal } from '@/components/teams/overall-signal'
-import { SessionCompare } from '@/components/delta/session-compare'
+import { SessionCompare } from '@/components/ceremonies/session-compare'
 import { CoachQuestions } from '@/components/teams/coach-questions'
 import { FeedbackTool } from '@/components/teams/feedback-tool'
-import type { TeamMetrics, PulseInsight } from '@/domain/metrics/types'
-import type { DeltaSessionWithStats } from '@/domain/delta/types'
+import type { TeamMetrics, VibeInsight } from '@/domain/metrics/types'
+import type { CeremonySessionWithStats } from '@/domain/ceremonies/types'
 
 interface TeamDetailContentProps {
   team: UnifiedTeam
-  pulseMetrics?: TeamMetrics | null
-  pulseInsights?: PulseInsight[]
-  deltaSessions?: DeltaSessionWithStats[]
+  vibeMetrics?: TeamMetrics | null
+  vibeInsights?: VibeInsight[]
+  ceremoniesSessions?: CeremonySessionWithStats[]
 }
 
-type TabType = 'pulse' | 'delta' | 'feedback' | 'coach' | 'modules' | 'settings'
+type TabType = 'vibe' | 'ceremonies' | 'feedback' | 'coach' | 'modules' | 'settings'
 
 const ANGLE_LABELS: Record<string, string> = {
   scrum: 'Scrum',
@@ -37,7 +37,7 @@ const ANGLE_LABELS: Record<string, string> = {
   demo: 'Demo',
 }
 
-export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], deltaSessions = [] }: TeamDetailContentProps) {
+export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremoniesSessions = [] }: TeamDetailContentProps) {
   const t = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -45,15 +45,15 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
   // Get initial tab from URL or default based on enabled tools
   const getInitialTab = (): TabType => {
     const urlTab = searchParams.get('tab') as TabType | null
-    const validTabs = ['pulse', 'delta', 'feedback', 'coach', 'modules', 'settings']
+    const validTabs = ['vibe', 'ceremonies', 'feedback', 'coach', 'modules', 'settings']
     if (urlTab && validTabs.includes(urlTab)) {
       // Only use URL tab if the tool is enabled (or it's a general tab)
       if (['settings', 'feedback', 'coach', 'modules'].includes(urlTab)) return urlTab
-      if (team.tools_enabled.includes(urlTab as 'pulse' | 'delta')) return urlTab
+      if (team.tools_enabled.includes(urlTab as 'vibe' | 'ceremonies')) return urlTab
     }
     // Default: first enabled tool or settings
-    return team.tools_enabled.includes('pulse') ? 'pulse' :
-           team.tools_enabled.includes('delta') ? 'delta' : 'settings'
+    return team.tools_enabled.includes('vibe') ? 'vibe' :
+           team.tools_enabled.includes('ceremonies') ? 'ceremonies' : 'settings'
   }
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab)
@@ -63,15 +63,15 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
   // Update tab when URL changes (e.g., browser back/forward)
   useEffect(() => {
     const urlTab = searchParams.get('tab') as TabType | null
-    const validTabs = ['pulse', 'delta', 'feedback', 'coach', 'modules', 'settings']
+    const validTabs = ['vibe', 'ceremonies', 'feedback', 'coach', 'modules', 'settings']
     if (urlTab && validTabs.includes(urlTab)) {
-      if (['settings', 'feedback', 'coach', 'modules'].includes(urlTab) || team.tools_enabled.includes(urlTab as 'pulse' | 'delta')) {
+      if (['settings', 'feedback', 'coach', 'modules'].includes(urlTab) || team.tools_enabled.includes(urlTab as 'vibe' | 'ceremonies')) {
         setActiveTab(urlTab)
       }
     }
   }, [searchParams, team.tools_enabled])
 
-  const handleEnableTool = async (tool: 'pulse' | 'delta') => {
+  const handleEnableTool = async (tool: 'vibe' | 'ceremonies') => {
     setLoading(`enable-${tool}`)
     const result = await enableTool(team.id, tool)
     setLoading(null)
@@ -86,7 +86,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
     router.refresh()
   }
 
-  const handleDisableTool = async (tool: 'pulse' | 'delta') => {
+  const handleDisableTool = async (tool: 'vibe' | 'ceremonies') => {
     setLoading(`disable-${tool}`)
     const result = await disableTool(team.id, tool)
     setLoading(null)
@@ -145,8 +145,8 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
   }
 
   const tabs: { key: TabType; label: string; premium?: boolean }[] = [
-    { key: 'pulse', label: t('teamsDetailPulse') },
-    { key: 'delta', label: t('teamsDetailDelta') },
+    { key: 'vibe', label: t('teamsDetailVibe') },
+    { key: 'ceremonies', label: t('teamsDetailCeremonies') },
     { key: 'feedback', label: t('feedbackTitle') },
     { key: 'coach', label: t('coachQuestionsTab') },
     { key: 'modules', label: t('modulePremium'), premium: true },
@@ -166,8 +166,8 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
           )}
           {/* Team Maturity Badge */}
           <TeamMaturityBadge
-            sessionsCount={(team.delta?.total_sessions || 0) + (pulseMetrics?.maturity?.daysOfData || 0)}
-            avgScore={team.pulse?.average_score || team.delta?.average_score || 0}
+            sessionsCount={(team.ceremonies?.total_sessions || 0) + (vibeMetrics?.maturity?.daysOfData || 0)}
+            avgScore={team.vibe?.average_score || team.ceremonies?.average_score || 0}
             t={t}
           />
         </div>
@@ -180,21 +180,21 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
       <GettingStartedChecklist
         teamId={team.id}
         teamSlug={team.slug}
-        hasPulseEntries={(team.pulse?.participant_count || 0) > 0}
-        hasDeltaSessions={(team.delta?.total_sessions || 0) > 0}
-        hasClosedSessions={(team.delta?.closed_sessions || 0) > 0}
+        hasPulseEntries={(team.vibe?.participant_count || 0) > 0}
+        hasCeremonySessions={(team.ceremonies?.total_sessions || 0) > 0}
+        hasClosedSessions={(team.ceremonies?.closed_sessions || 0) > 0}
       />
 
       {/* Overall Signal - shows combined health score */}
       <OverallSignal
-        pulseScore={team.pulse?.average_score || null}
-        deltaScore={team.delta?.average_score || null}
+        pulseScore={team.vibe?.average_score || null}
+        deltaScore={team.ceremonies?.average_score || null}
         pulseParticipation={(() => {
-          const effectiveSize = team.expected_team_size || team.pulse?.participant_count || 1
-          const todayCount = team.pulse?.today_entries || 0
+          const effectiveSize = team.expected_team_size || team.vibe?.participant_count || 1
+          const todayCount = team.vibe?.today_entries || 0
           return effectiveSize > 0 ? Math.round((todayCount / effectiveSize) * 100) : 0
         })()}
-        deltaSessions={team.delta?.total_sessions || 0}
+        ceremoniesSessions={team.ceremonies?.total_sessions || 0}
       />
 
       {/* Tabs */}
@@ -222,14 +222,14 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
       </div>
 
       {/* Tab content */}
-      {activeTab === 'pulse' && (
+      {activeTab === 'vibe' && (
         <div className="space-y-6">
-          {team.pulse ? (
+          {team.vibe ? (
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Left column: Metrics */}
               <div className="space-y-6">
-                {pulseMetrics && (
-                  <PulseMetrics metrics={pulseMetrics} insights={pulseInsights} />
+                {vibeMetrics && (
+                  <VibeMetrics metrics={vibeMetrics} insights={vibeInsights} />
                 )}
               </div>
 
@@ -243,8 +243,8 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                   {/* Today's participation */}
                   <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-4">
                     {(() => {
-                      const effectiveSize = team.expected_team_size || team.pulse.participant_count || 1
-                      const todayCount = team.pulse.today_entries
+                      const effectiveSize = team.expected_team_size || team.vibe.participant_count || 1
+                      const todayCount = team.vibe.today_entries
                       const percentage = effectiveSize > 0 ? Math.round((todayCount / effectiveSize) * 100) : 0
                       const isComplete = percentage >= 80
                       const isLow = percentage < 50 && effectiveSize > 0
@@ -287,7 +287,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                   <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-4">
                     <div className="flex items-baseline gap-1">
                       <span className="text-2xl font-bold text-stone-900 dark:text-stone-100">
-                        {team.pulse.participant_count}
+                        {team.vibe.participant_count}
                       </span>
                       {team.expected_team_size && (
                         <span className="text-sm text-stone-500 dark:text-stone-400">
@@ -315,7 +315,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleDisableTool('pulse')}
+                    onClick={() => handleDisableTool('vibe')}
                     loading={loading === 'disable-pulse'}
                     className="text-red-600 hover:text-red-700"
                   >
@@ -331,46 +331,46 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('teamsPulseNotEnabled')}</h3>
+              <h3 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('teamsVibeNotEnabled')}</h3>
               <Button
-                onClick={() => handleEnableTool('pulse')}
+                onClick={() => handleEnableTool('vibe')}
                 loading={loading === 'enable-pulse'}
               >
-                {t('teamsEnablePulse')}
+                {t('teamsEnableVibe')}
               </Button>
             </div>
           )}
         </div>
       )}
 
-      {activeTab === 'delta' && (
+      {activeTab === 'ceremonies' && (
         <div className="space-y-6">
-          {team.delta ? (
+          {team.ceremonies ? (
             <>
               {/* Header with New Session button */}
               <div className="flex flex-col gap-4">
                 {/* Stats row */}
                 <div className="flex items-center gap-6 overflow-x-auto pb-2">
                   <div className="text-center shrink-0">
-                    <div className="text-2xl font-bold text-stone-900 dark:text-stone-100">{team.delta.total_sessions}</div>
+                    <div className="text-2xl font-bold text-stone-900 dark:text-stone-100">{team.ceremonies.total_sessions}</div>
                     <div className="text-xs text-stone-500 dark:text-stone-400">{t('sessions')}</div>
                   </div>
                   <div className="w-px h-8 bg-stone-200 dark:bg-stone-700 shrink-0" />
                   <div className="text-center shrink-0">
-                    <div className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">{team.delta.active_sessions}</div>
+                    <div className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">{team.ceremonies.active_sessions}</div>
                     <div className="text-xs text-stone-500 dark:text-stone-400">{t('active')}</div>
                   </div>
-                  {team.delta.average_score && (
+                  {team.ceremonies.average_score && (
                     <>
                       <div className="w-px h-8 bg-stone-200 dark:bg-stone-700 shrink-0" />
                       <div className="text-center shrink-0">
                         <div className={`text-2xl font-bold ${
-                          team.delta.average_score >= 4 ? 'text-green-600' :
-                          team.delta.average_score >= 3 ? 'text-cyan-600' :
-                          team.delta.average_score >= 2 ? 'text-amber-600' :
+                          team.ceremonies.average_score >= 4 ? 'text-green-600' :
+                          team.ceremonies.average_score >= 3 ? 'text-cyan-600' :
+                          team.ceremonies.average_score >= 2 ? 'text-amber-600' :
                           'text-red-600'
                         }`}>
-                          {team.delta.average_score.toFixed(1)}
+                          {team.ceremonies.average_score.toFixed(1)}
                         </div>
                         <div className="text-xs text-stone-500 dark:text-stone-400">{t('teamsAvgScore')}</div>
                       </div>
@@ -387,7 +387,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                       {t('newSession')}
                     </Button>
                   </Link>
-                  {(team.delta?.closed_sessions || 0) >= 2 && (
+                  {(team.ceremonies?.closed_sessions || 0) >= 2 && (
                     <Button
                       variant="secondary"
                       onClick={() => setShowCompare(true)}
@@ -395,20 +395,20 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
-                      {t('deltaCompare')}
+                      {t('ceremoniesCompare')}
                     </Button>
                   )}
                 </div>
               </div>
 
               {/* Sessions list */}
-              {deltaSessions.length > 0 && (
+              {ceremoniesSessions.length > 0 && (
                 <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
                   <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-700">
                     <h3 className="font-semibold text-stone-900 dark:text-stone-100">{t('sessions')}</h3>
                   </div>
                   <div className="divide-y divide-stone-100 dark:divide-stone-700">
-                    {deltaSessions.map(session => (
+                    {ceremoniesSessions.map(session => (
                       <Link
                         key={session.id}
                         href={`/delta/session/${session.id}`}
@@ -455,7 +455,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => handleDisableTool('delta')}
+                  onClick={() => handleDisableTool('ceremonies')}
                   loading={loading === 'disable-delta'}
                   className="text-red-600 hover:text-red-700"
                 >
@@ -466,12 +466,12 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
           ) : (
             <div className="text-center py-12 bg-stone-50 dark:bg-stone-800 rounded-xl">
               <div className="text-cyan-400 mb-4 text-4xl font-bold">Δ</div>
-              <h3 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('teamsDeltaNotEnabled')}</h3>
+              <h3 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('teamsCeremoniesNotEnabled')}</h3>
               <Button
-                onClick={() => handleEnableTool('delta')}
+                onClick={() => handleEnableTool('ceremonies')}
                 loading={loading === 'enable-delta'}
               >
-                {t('teamsEnableDelta')}
+                {t('teamsEnableCeremonies')}
               </Button>
             </div>
           )}
@@ -522,10 +522,10 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
 
             {/* Coach Question Generator */}
             <CoachQuestions
-              pulseScore={team.pulse?.average_score || null}
+              pulseScore={team.vibe?.average_score || null}
               pulseParticipation={(() => {
-                const effectiveSize = team.expected_team_size || team.pulse?.participant_count || 1
-                const todayCount = team.pulse?.today_entries || 0
+                const effectiveSize = team.expected_team_size || team.vibe?.participant_count || 1
+                const todayCount = team.vibe?.today_entries || 0
                 return effectiveSize > 0 ? Math.round((todayCount / effectiveSize) * 100) : 0
               })()}
               deltaTensions={[]}
@@ -644,11 +644,11 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                   </span>
                   <span className="font-medium text-stone-900 dark:text-stone-100">Pulse</span>
                 </div>
-                {team.tools_enabled.includes('pulse') ? (
+                {team.tools_enabled.includes('vibe') ? (
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleDisableTool('pulse')}
+                    onClick={() => handleDisableTool('vibe')}
                     loading={loading === 'disable-pulse'}
                   >
                     {t('teamsToolDisable')}
@@ -656,7 +656,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                 ) : (
                   <Button
                     size="sm"
-                    onClick={() => handleEnableTool('pulse')}
+                    onClick={() => handleEnableTool('vibe')}
                     loading={loading === 'enable-pulse'}
                   >
                     {t('teamsToolEnable')}
@@ -668,11 +668,11 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                   <span className="text-cyan-500 font-bold">Δ</span>
                   <span className="font-medium text-stone-900 dark:text-stone-100">Delta</span>
                 </div>
-                {team.tools_enabled.includes('delta') ? (
+                {team.tools_enabled.includes('ceremonies') ? (
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleDisableTool('delta')}
+                    onClick={() => handleDisableTool('ceremonies')}
                     loading={loading === 'disable-delta'}
                   >
                     {t('teamsToolDisable')}
@@ -680,7 +680,7 @@ export function TeamDetailContent({ team, pulseMetrics, pulseInsights = [], delt
                 ) : (
                   <Button
                     size="sm"
-                    onClick={() => handleEnableTool('delta')}
+                    onClick={() => handleEnableTool('ceremonies')}
                     loading={loading === 'enable-delta'}
                   >
                     {t('teamsToolEnable')}

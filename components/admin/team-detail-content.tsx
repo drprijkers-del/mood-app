@@ -2,20 +2,20 @@
 
 import Link from 'next/link'
 import { TeamWithStats } from '@/domain/teams/actions'
-import type { TeamMetrics, PulseInsight } from '@/domain/metrics/types'
+import type { TeamMetrics, VibeInsight } from '@/domain/metrics/types'
 import { AdminHeader } from '@/components/admin/header'
 import { TeamActions } from '@/components/admin/team-actions'
 import { ShareLinkSection } from '@/components/admin/share-link-section'
 import { TeamStats } from '@/components/admin/team-stats'
 import { TeamSettings } from '@/components/admin/team-settings'
-import { PulseMetrics } from '@/components/admin/pulse-metrics'
+import { VibeMetrics } from '@/components/admin/vibe-metrics'
 import { Fly, FlyFrequency } from '@/components/ui/fly'
 import { useTranslation, useLanguage } from '@/lib/i18n/context'
 
 interface TeamDetailContentProps {
   team: TeamWithStats
   metrics: TeamMetrics | null
-  insights: PulseInsight[]
+  insights: VibeInsight[]
   flyFrequency: FlyFrequency
 }
 
@@ -68,7 +68,7 @@ export function TeamDetailContent({ team, metrics, insights, flyFrequency }: Tea
           {/* Left column: Metrics */}
           <div className="space-y-6">
             {metrics && (
-              <PulseMetrics metrics={metrics} insights={insights} />
+              <VibeMetrics metrics={metrics} insights={insights} />
             )}
           </div>
 

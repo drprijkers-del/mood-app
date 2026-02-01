@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTeam } from '@/domain/teams/actions'
-import { getTeamSessions, getTeamStats } from '@/domain/delta/actions'
+import { getTeamSessions, getTeamStats } from '@/domain/ceremonies/actions'
 import { requireAdmin } from '@/lib/auth/admin'
 import { AdminHeader } from '@/components/admin/header'
-import { DeltaTeamContent } from '@/components/teams/delta-team-content'
+import { CeremoniesTeamContent } from '@/components/teams/ceremonies-team-content'
 
 interface TeamDeltaPageProps {
   params: Promise<{ id: string }>
@@ -37,7 +37,7 @@ export default async function TeamDeltaPage({ params }: TeamDeltaPageProps) {
           <span className="text-stone-900 dark:text-stone-100">Delta</span>
         </div>
 
-        <DeltaTeamContent
+        <CeremoniesTeamContent
           team={team}
           sessions={sessions}
           stats={stats}

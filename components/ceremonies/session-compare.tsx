@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
-import { getComparableSessions, compareSessions, SessionComparison } from '@/domain/delta/actions'
+import { getComparableSessions, compareSessions, SessionComparison } from '@/domain/ceremonies/actions'
 
 const ANGLE_LABELS: Record<string, string> = {
   scrum: 'Scrum',
@@ -95,7 +95,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-stone-800 px-6 py-4 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-            {t('deltaCompareTitle')}
+            {t('ceremoniesCompareTitle')}
           </h2>
           <button
             onClick={onClose}
@@ -148,7 +148,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
-                      {t('deltaCompareSelect')} 1
+                      {t('ceremoniesCompareSelect')} 1
                     </label>
                     <div className="space-y-2">
                       {selectedAngleData.sessions.map(session => (
@@ -176,7 +176,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
-                      {t('deltaCompareSelect')} 2
+                      {t('ceremoniesCompareSelect')} 2
                     </label>
                     <div className="space-y-2">
                       {selectedAngleData.sessions.map(session => (
@@ -218,7 +218,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                 loading={comparing}
                 className="w-full"
               >
-                {t('deltaCompare')}
+                {t('ceremoniesCompare')}
               </Button>
             </div>
           ) : (
@@ -231,7 +231,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                     {comparison.summary.improved_count}
                   </div>
                   <div className="text-xs text-green-700 dark:text-green-300">
-                    {t('deltaCompareImproved')}
+                    {t('ceremoniesCompareImproved')}
                   </div>
                 </div>
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 text-center">
@@ -239,7 +239,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                     {comparison.summary.declined_count}
                   </div>
                   <div className="text-xs text-red-700 dark:text-red-300">
-                    {t('deltaCompareDeclined')}
+                    {t('ceremoniesCompareDeclined')}
                   </div>
                 </div>
                 <div className="bg-stone-50 dark:bg-stone-700 rounded-xl p-4 text-center">
@@ -247,7 +247,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                     {comparison.summary.unchanged_count}
                   </div>
                   <div className="text-xs text-stone-500 dark:text-stone-400">
-                    {t('deltaCompareUnchanged')}
+                    {t('ceremoniesCompareUnchanged')}
                   </div>
                 </div>
               </div>

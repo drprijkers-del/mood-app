@@ -1,6 +1,6 @@
-import { validateSessionCode } from '@/domain/delta/actions'
-import { ParticipationContent } from '@/components/delta/participation-content'
-import { InvalidSession } from '@/components/delta/invalid-session'
+import { validateSessionCode } from '@/domain/ceremonies/actions'
+import { ParticipationContent } from '@/components/ceremonies/participation-content'
+import { InvalidSession } from '@/components/ceremonies/invalid-session'
 
 interface ParticipationPageProps {
   params: Promise<{ sessionCode: string }>

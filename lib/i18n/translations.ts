@@ -2,8 +2,8 @@ export const translations = {
   nl: {
     // General
     pinkPollos: 'Pink Pollos',
-    labTool: 'Lab Tool',
-    pulse: 'Pulse',
+    labTool: 'Pulse',
+    vibe: 'Vibe',
     admin: 'Admin',
     error: 'Er ging iets mis in het lab',
     loading: 'Laden...',
@@ -12,25 +12,25 @@ export const translations = {
     create: 'Aanmaken',
 
     // The Lab landing page
-    labTitle: 'Team Lab',
+    labTitle: 'Pulse',
     labSubtitle: 'Tools voor teams die bouwen',
     labFeature1: 'Geen gedoe',
     labFeature2: 'Direct inzicht',
     labFeature3: 'Data-driven',
     labFooter: 'Tools for builders',
     labLoginHint: 'Log in om je teams te beheren',
-    pulseDesc: 'Dagelijkse team signalen. Meet hoe je team ervoor staat.',
-    deltaDesc: 'Team coaching interventies. Scherpe statements, concrete experimenten.',
+    vibeDesc: 'Dagelijkse team signalen. Meet hoe je team ervoor staat.',
+    ceremoniesDesc: 'Team coaching interventies. Scherpe statements, concrete experimenten.',
     openTool: 'Open tool',
 
     // Homepage (legacy, keep for backwards compat)
-    homeTitle: 'Pulse',
+    homeTitle: 'Vibe',
     homeSubtitle: 'Team signalen in één klik',
     homeDescription: 'Anonieme dagelijkse signalen voor agile teams. Geen accounts, geen gedoe.',
     homeFeature1: '2 seconden',
     homeFeature2: 'Anoniem',
     homeFeature3: 'Inzicht',
-    homeAskTeamLead: 'Vraag je Scrum Master om een Pulse link',
+    homeAskTeamLead: 'Vraag je Scrum Master om een Vibe link',
     homeFooter: 'Lab tool',
     homeScrumMasterCTA: 'Ik ben Scrum Master',
     homeScrumMasterSubtext: 'Start in 30 seconden',
@@ -108,7 +108,7 @@ export const translations = {
     adminTeamsSubtitle: 'Beheer je lab experimenten',
     adminNewTeam: 'Nieuw experiment',
     adminNoTeams: 'Nog geen experimenten',
-    adminNoTeamsMessage: 'Start je eerste Pulse experiment.',
+    adminNoTeamsMessage: 'Start je eerste Vibe experiment.',
     adminFirstTeam: 'Eerste experiment starten',
     adminBack: 'Terug',
     adminCreatedOn: 'Gestart',
@@ -117,7 +117,7 @@ export const translations = {
     adminActive: 'Actief',
     adminLogout: 'Uitloggen',
 
-    // New Pulse form
+    // New Vibe form
     newTeamTitle: 'Nieuw experiment',
     newTeamName: 'Team naam',
     newTeamNamePlaceholder: 'bijv. Sprint Team Alpha',
@@ -191,7 +191,7 @@ export const translations = {
     wishClose: 'Sluiten',
     wishAddButton: 'Idee toevoegen',
 
-    // Delta - Angle labels
+    // Ceremonies - Angle labels
     angleScrum: 'Scrum',
     angleScrumDesc: 'Zijn events nuttig? Helpt het framework?',
     angleFlow: 'Flow',
@@ -211,18 +211,18 @@ export const translations = {
     angleDemo: 'Demo',
     angleDemoDesc: 'Zijn stakeholders betrokken? Is feedback waardevol?',
 
-    // Delta - Session
+    // Ceremonies - Session
     pickAngle: 'Kies een invalshoek',
     justOne: 'Eén per sessie. 10 stellingen. 2 minuten per persoon.',
     startSession: 'Start sessie',
 
-    // Delta - Invalid session
+    // Ceremonies - Invalid session
     sessionNotFound: 'Sessie niet gevonden',
     sessionNotFoundMessage: 'Deze sessie link is ongeldig of de sessie is beëindigd.',
     goToHome: 'Naar homepage',
 
-    // Delta - Participation
-    deltaSession: 'Delta Sessie',
+    // Ceremonies - Participation
+    ceremoniesSession: 'Ceremonies Sessie',
     howItWorks: 'Hoe het werkt',
     statementsHonest: 'stellingen. Wees eerlijk.',
     rateStatement: 'Beoordeel elke stelling van 1 (oneens) tot 5 (eens).',
@@ -239,7 +239,7 @@ export const translations = {
     teamScore: 'Team score',
     thankYouParticipation: 'Bedankt voor je deelname',
 
-    // Delta - Session detail
+    // Ceremonies - Session detail
     shareWithTeam: 'Deel met je team',
     copyLink: 'Kopieer',
     copied: 'Gekopieerd!',
@@ -271,7 +271,7 @@ export const translations = {
     disagreement: 'Onenigheid',
     useInRetro: 'Neem dit mee naar je retro',
 
-    // Delta - Setup view
+    // Ceremonies - Setup view
     readyToShare: 'Klaar om te delen',
     openLink: 'Open sessie',
     previewFirst: 'Bekijk eerst zelf de ervaring',
@@ -289,21 +289,21 @@ export const translations = {
     metricExperimentDesc: 'Een concrete actie.',
     minimumResponses: 'Minimaal 3 reacties nodig voor inzichten.',
 
-    // Delta - Team detail
+    // Ceremonies - Team detail
     sessions: 'Sessies',
     responses: 'Reacties',
     active: 'Actief',
     newSession: 'Nieuwe sessie',
-    startDeltaSession: 'Nieuwe Delta sessie',
-    startDeltaSessionSubtitle: 'Kies een invalshoek en start binnen 30 seconden.',
+    startCeremoniesSession: 'Nieuwe Delta sessie',
+    startCeremoniesSessionSubtitle: 'Kies een invalshoek en start binnen 30 seconden.',
     noSessionsYet: 'Nog geen sessies',
-    noSessionsMessage: 'Start je eerste Delta sessie.',
+    noSessionsMessage: 'Start je eerste Ceremonies sessie.',
     activeSessions: 'Actieve sessies',
     teamActions: 'Acties',
     clearData: 'Data wissen',
     deleteTeam: 'Team verwijderen',
 
-    // Delta - Team metrics
+    // Ceremonies - Team metrics
     teamHealth: 'Team Health',
     trendLabel: 'Trend',
     trendUp: 'Stijgend',
@@ -319,10 +319,10 @@ export const translations = {
     teamDiary: 'Team dagboek',
     teamDiarySubtitle: 'Je interventies over tijd.',
     collectiveSignal: 'Samen vormen deze sessies een beeld van je team.',
-    pulseTeaser: 'Wil je ook je teams stemming monitoren?',
-    pulseLink: 'Ontdek Pulse',
+    vibeTeaser: 'Wil je ook je teams stemming monitoren?',
+    vibeLink: 'Ontdek Vibe',
 
-    // Delta - Coach insights
+    // Ceremonies - Coach insights
     insightWaitingForResults: 'Wacht op meer reacties...',
     insightFlowBlocked: 'Flow wordt geblokkeerd.',
     insightRefinementWeak: 'Refinement heeft aandacht nodig.',
@@ -343,30 +343,30 @@ export const translations = {
     teamsNoData: 'Nog geen data',
     teamsFirstTeam: 'Eerste team aanmaken',
     teamsFilterAll: 'Alle',
-    teamsFilterPulse: 'Pulse',
-    teamsFilterDelta: 'Delta',
+    teamsFilterVibe: 'Vibe',
+    teamsFilterCeremonies: 'Ceremonies',
     teamsFilterAttention: 'Aandacht nodig',
     teamsToolsEnabled: 'Tools actief',
-    teamsPulseSignals: 'signalen vandaag',
-    teamsDeltaSessions: 'sessies',
+    teamsVibeSignals: 'signalen vandaag',
+    teamsCeremoniesSessions: 'sessies',
     teamsLastActivity: 'Laatste activiteit',
     teamsNeedsAttention: 'Aandacht nodig',
     teamsViewTeam: 'Bekijk team',
     teamsCreateTitle: 'Nieuw team',
-    teamsCreateSubtitle: 'Maak een team aan voor Pulse en Delta',
-    teamsDetailPulse: 'Pulse',
-    teamsDetailDelta: 'Delta',
+    teamsCreateSubtitle: 'Maak een team aan voor Vibe en Ceremonies',
+    teamsDetailVibe: 'Vibe',
+    teamsDetailCeremonies: 'Ceremonies',
     teamsDetailSettings: 'Instellingen',
     teamsToolEnable: 'Activeer',
     teamsToolDisable: 'Deactiveer',
     teamsToolEnabled: 'Actief',
     teamsToolDisabled: 'Niet actief',
-    teamsPulseNotEnabled: 'Pulse is niet actief voor dit team',
-    teamsDeltaNotEnabled: 'Delta is niet actief voor dit team',
-    teamsEnablePulse: 'Activeer Pulse',
-    teamsEnableDelta: 'Activeer Delta',
-    teamsGoToPulse: 'Open Pulse',
-    teamsGoToDelta: 'Open Delta',
+    teamsVibeNotEnabled: 'Vibe is niet actief voor dit team',
+    teamsCeremoniesNotEnabled: 'Ceremonies is niet actief voor dit team',
+    teamsEnableVibe: 'Activeer Pulse',
+    teamsEnableCeremonies: 'Activeer Delta',
+    teamsGoToVibe: 'Open Pulse',
+    teamsGoToCeremonies: 'Open Delta',
     teamsAvgScore: 'Gem. score',
     teamsNoScore: 'Geen data',
 
@@ -400,15 +400,15 @@ export const translations = {
     feedbackRule4: 'Bied een oplossing of suggestie',
     feedbackComingSoon: 'Binnenkort beschikbaar',
 
-    // Delta compare
-    deltaCompare: 'Vergelijk',
-    deltaCompareTitle: 'Sessies vergelijken',
-    deltaCompareSelect: 'Selecteer sessies om te vergelijken',
-    deltaCompareImproved: 'Verbeterd',
-    deltaCompareDeclined: 'Gedaald',
-    deltaCompareUnchanged: 'Ongewijzigd',
-    deltaRepeat: 'Herhaal sessie',
-    deltaRepeatInfo: 'Voer dezelfde invalshoek opnieuw uit',
+    // Ceremonies compare
+    ceremoniesCompare: 'Vergelijk',
+    ceremoniesCompareTitle: 'Sessies vergelijken',
+    ceremoniesCompareSelect: 'Selecteer sessies om te vergelijken',
+    ceremoniesCompareImproved: 'Verbeterd',
+    ceremoniesCompareDeclined: 'Gedaald',
+    ceremoniesCompareUnchanged: 'Ongewijzigd',
+    ceremoniesRepeat: 'Herhaal sessie',
+    ceremoniesRepeatInfo: 'Voer dezelfde invalshoek opnieuw uit',
 
     // Dark mode
     darkMode: 'Donkere modus',
@@ -433,7 +433,7 @@ export const translations = {
     maturityStarterDesc: 'Basis tools om te starten',
     maturityMediumDesc: 'Geavanceerde analyses en inzichten',
     maturityMatureDesc: 'Volledige toolkit voor experts',
-    maturityStarterFeatures: 'Pulse check-ins, Delta sessies, Basis metrics',
+    maturityStarterFeatures: 'Vibe check-ins, Ceremonies sessies, Basis metrics',
     maturityMediumFeatures: 'Trend analyses, AI insights, Coach vragen, Vergelijkingen',
     maturityMatureFeatures: 'Obeya, Leadership tools, Portfolio, Department views',
     maturitySessions: 'sessies',
@@ -471,9 +471,9 @@ export const translations = {
     onboardingTitle: 'Aan de slag',
     onboardingSubtitle: 'Voltooi deze stappen om te starten',
     onboardingComplete: 'voltooid',
-    onboardingStep1: 'Deel Pulse link met je team',
+    onboardingStep1: 'Deel Vibe link met je team',
     onboardingStep1Hint: 'Kopieer de link en deel via Slack of Teams',
-    onboardingStep2: 'Start je eerste Delta sessie',
+    onboardingStep2: 'Start je eerste Ceremonies sessie',
     onboardingStep2Hint: 'Kies een invalshoek en verzamel feedback',
     onboardingStep3: 'Bekijk team inzichten',
     onboardingStep3Hint: 'Sluit een sessie af om resultaten te zien',
@@ -481,8 +481,8 @@ export const translations = {
     onboardingStartSession: 'Start sessie',
 
     // Empty state
-    emptyStatePulseDesc: 'Dagelijkse team signalen',
-    emptyStateDeltaDesc: 'Coaching interventies',
+    emptyStateVibeDesc: 'Dagelijkse team signalen',
+    emptyStateCeremoniesDesc: 'Coaching interventies',
     emptyStateInsightsTitle: 'Inzichten',
     emptyStateInsightsDesc: 'Data-driven besluiten',
     emptyStateTime: 'Klaar in 30 seconden',
@@ -495,8 +495,8 @@ export const translations = {
     signalAttention: 'Aandacht',
     signalCritical: 'Kritiek',
     signalCollectData: 'Start met data verzamelen',
-    signalAddDelta: 'Voeg Delta toe voor completer beeld',
-    signalAddPulse: 'Voeg Pulse toe voor dagelijkse signalen',
+    signalAddCeremonies: 'Voeg Delta toe voor completer beeld',
+    signalAddVibe: 'Voeg Pulse toe voor dagelijkse signalen',
     signalParticipation: 'Deelname',
 
     // Export
@@ -508,8 +508,8 @@ export const translations = {
   en: {
     // General
     pinkPollos: 'Pink Pollos',
-    labTool: 'Lab Tool',
-    pulse: 'Pulse',
+    labTool: 'Pulse',
+    vibe: 'Vibe',
     admin: 'Admin',
     error: 'Something went wrong in the lab',
     loading: 'Loading...',
@@ -518,25 +518,25 @@ export const translations = {
     create: 'Create',
 
     // The Lab landing page
-    labTitle: 'Team Lab',
+    labTitle: 'Pulse',
     labSubtitle: 'Tools for teams that build',
     labFeature1: 'No friction',
     labFeature2: 'Instant insight',
     labFeature3: 'Data-driven',
     labFooter: 'Tools for builders',
     labLoginHint: 'Log in to manage your teams',
-    pulseDesc: 'Daily team signals. Measure how your team is doing.',
-    deltaDesc: 'Team coaching interventions. Sharp statements, concrete experiments.',
+    vibeDesc: 'Daily team signals. Measure how your team is doing.',
+    ceremoniesDesc: 'Team coaching interventions. Sharp statements, concrete experiments.',
     openTool: 'Open tool',
 
     // Homepage (legacy, keep for backwards compat)
-    homeTitle: 'Pulse',
+    homeTitle: 'Vibe',
     homeSubtitle: 'Team signals in one click',
     homeDescription: 'Anonymous daily signals for agile teams. No accounts, no friction.',
     homeFeature1: '2 seconds',
     homeFeature2: 'Anonymous',
     homeFeature3: 'Insight',
-    homeAskTeamLead: 'Ask your Scrum Master for a Pulse link',
+    homeAskTeamLead: 'Ask your Scrum Master for a Vibe link',
     homeFooter: 'Lab tool',
     homeScrumMasterCTA: "I'm a Scrum Master",
     homeScrumMasterSubtext: 'Start in 30 seconds',
@@ -614,7 +614,7 @@ export const translations = {
     adminTeamsSubtitle: 'Manage your lab experiments',
     adminNewTeam: 'New experiment',
     adminNoTeams: 'No experiments yet',
-    adminNoTeamsMessage: 'Start your first Pulse experiment.',
+    adminNoTeamsMessage: 'Start your first Vibe experiment.',
     adminFirstTeam: 'Start first experiment',
     adminBack: 'Back',
     adminCreatedOn: 'Started',
@@ -623,7 +623,7 @@ export const translations = {
     adminActive: 'Active',
     adminLogout: 'Log out',
 
-    // New Pulse form
+    // New Vibe form
     newTeamTitle: 'New experiment',
     newTeamName: 'Team name',
     newTeamNamePlaceholder: 'e.g. Sprint Team Alpha',
@@ -697,7 +697,7 @@ export const translations = {
     wishClose: 'Close',
     wishAddButton: 'Add idea',
 
-    // Delta - Angle labels
+    // Ceremonies - Angle labels
     angleScrum: 'Scrum',
     angleScrumDesc: 'Are events useful? Is the framework helping?',
     angleFlow: 'Flow',
@@ -717,18 +717,18 @@ export const translations = {
     angleDemo: 'Demo',
     angleDemoDesc: 'Are stakeholders engaged? Is feedback valuable?',
 
-    // Delta - Session
+    // Ceremonies - Session
     pickAngle: 'Pick an angle',
     justOne: 'One per session. 10 statements. 2 minutes per person.',
     startSession: 'Start Session',
 
-    // Delta - Invalid session
+    // Ceremonies - Invalid session
     sessionNotFound: 'Session Not Found',
     sessionNotFoundMessage: 'This session link is invalid or the session has ended.',
     goToHome: 'Go to homepage',
 
-    // Delta - Participation
-    deltaSession: 'Delta Session',
+    // Ceremonies - Participation
+    ceremoniesSession: 'Ceremonies Session',
     howItWorks: 'How it works',
     statementsHonest: 'statements. Be honest.',
     rateStatement: 'Rate each from 1 (disagree) to 5 (agree).',
@@ -745,7 +745,7 @@ export const translations = {
     teamScore: 'Team score',
     thankYouParticipation: 'Thank you for participating',
 
-    // Delta - Session detail
+    // Ceremonies - Session detail
     shareWithTeam: 'Share with your team',
     copyLink: 'Copy Link',
     copied: 'Copied!',
@@ -777,7 +777,7 @@ export const translations = {
     disagreement: 'Disagreement',
     useInRetro: 'Bring this to your retro',
 
-    // Delta - Setup view
+    // Ceremonies - Setup view
     readyToShare: 'Ready to share',
     openLink: 'Open session',
     previewFirst: 'Preview the experience yourself first',
@@ -795,21 +795,21 @@ export const translations = {
     metricExperimentDesc: 'A concrete action.',
     minimumResponses: 'Minimum 3 responses needed for insights.',
 
-    // Delta - Team detail
+    // Ceremonies - Team detail
     sessions: 'Sessions',
     responses: 'Responses',
     active: 'Active',
     newSession: 'New session',
-    startDeltaSession: 'New Delta session',
-    startDeltaSessionSubtitle: 'Pick an angle and start within 30 seconds.',
+    startCeremoniesSession: 'New Delta session',
+    startCeremoniesSessionSubtitle: 'Pick an angle and start within 30 seconds.',
     noSessionsYet: 'No sessions yet',
-    noSessionsMessage: 'Start your first Delta session.',
+    noSessionsMessage: 'Start your first Ceremonies session.',
     activeSessions: 'Active Sessions',
     teamActions: 'Actions',
     clearData: 'Clear data',
     deleteTeam: 'Delete team',
 
-    // Delta - Team metrics
+    // Ceremonies - Team metrics
     teamHealth: 'Team Health',
     trendLabel: 'Trend',
     trendUp: 'Improving',
@@ -825,10 +825,10 @@ export const translations = {
     teamDiary: 'Team diary',
     teamDiarySubtitle: 'Your interventions over time.',
     collectiveSignal: 'Together these sessions paint a picture of your team.',
-    pulseTeaser: 'Want to monitor your team mood too?',
-    pulseLink: 'Discover Pulse',
+    vibeTeaser: 'Want to monitor your team mood too?',
+    vibeLink: 'Discover Vibe',
 
-    // Delta - Coach insights
+    // Ceremonies - Coach insights
     insightWaitingForResults: 'Waiting for more responses...',
     insightFlowBlocked: 'Flow is being blocked.',
     insightRefinementWeak: 'Refinement needs attention.',
@@ -849,30 +849,30 @@ export const translations = {
     teamsNoData: 'No data yet',
     teamsFirstTeam: 'Create first team',
     teamsFilterAll: 'All',
-    teamsFilterPulse: 'Pulse',
-    teamsFilterDelta: 'Delta',
+    teamsFilterVibe: 'Vibe',
+    teamsFilterCeremonies: 'Ceremonies',
     teamsFilterAttention: 'Needs attention',
     teamsToolsEnabled: 'Tools active',
-    teamsPulseSignals: 'signals today',
-    teamsDeltaSessions: 'sessions',
+    teamsVibeSignals: 'signals today',
+    teamsCeremoniesSessions: 'sessions',
     teamsLastActivity: 'Last activity',
     teamsNeedsAttention: 'Needs attention',
     teamsViewTeam: 'View team',
     teamsCreateTitle: 'New team',
-    teamsCreateSubtitle: 'Create a team for Pulse and Delta',
-    teamsDetailPulse: 'Pulse',
-    teamsDetailDelta: 'Delta',
+    teamsCreateSubtitle: 'Create a team for Vibe and Ceremonies',
+    teamsDetailVibe: 'Vibe',
+    teamsDetailCeremonies: 'Ceremonies',
     teamsDetailSettings: 'Settings',
     teamsToolEnable: 'Enable',
     teamsToolDisable: 'Disable',
     teamsToolEnabled: 'Active',
     teamsToolDisabled: 'Not active',
-    teamsPulseNotEnabled: 'Pulse is not enabled for this team',
-    teamsDeltaNotEnabled: 'Delta is not enabled for this team',
-    teamsEnablePulse: 'Enable Pulse',
-    teamsEnableDelta: 'Enable Delta',
-    teamsGoToPulse: 'Open Pulse',
-    teamsGoToDelta: 'Open Delta',
+    teamsVibeNotEnabled: 'Vibe is not enabled for this team',
+    teamsCeremoniesNotEnabled: 'Ceremonies is not enabled for this team',
+    teamsEnableVibe: 'Enable Pulse',
+    teamsEnableCeremonies: 'Enable Delta',
+    teamsGoToVibe: 'Open Pulse',
+    teamsGoToCeremonies: 'Open Delta',
     teamsAvgScore: 'Avg. score',
     teamsNoScore: 'No data',
 
@@ -906,15 +906,15 @@ export const translations = {
     feedbackRule4: 'Offer a solution or suggestion',
     feedbackComingSoon: 'Coming soon',
 
-    // Delta compare
-    deltaCompare: 'Compare',
-    deltaCompareTitle: 'Compare sessions',
-    deltaCompareSelect: 'Select sessions to compare',
-    deltaCompareImproved: 'Improved',
-    deltaCompareDeclined: 'Declined',
-    deltaCompareUnchanged: 'Unchanged',
-    deltaRepeat: 'Repeat session',
-    deltaRepeatInfo: 'Run the same angle again',
+    // Ceremonies compare
+    ceremoniesCompare: 'Compare',
+    ceremoniesCompareTitle: 'Compare sessions',
+    ceremoniesCompareSelect: 'Select sessions to compare',
+    ceremoniesCompareImproved: 'Improved',
+    ceremoniesCompareDeclined: 'Declined',
+    ceremoniesCompareUnchanged: 'Unchanged',
+    ceremoniesRepeat: 'Repeat session',
+    ceremoniesRepeatInfo: 'Run the same angle again',
 
     // Dark mode
     darkMode: 'Dark mode',
@@ -939,7 +939,7 @@ export const translations = {
     maturityStarterDesc: 'Basic tools to get started',
     maturityMediumDesc: 'Advanced analytics and insights',
     maturityMatureDesc: 'Complete toolkit for experts',
-    maturityStarterFeatures: 'Pulse check-ins, Delta sessions, Basic metrics',
+    maturityStarterFeatures: 'Vibe check-ins, Ceremonies sessions, Basic metrics',
     maturityMediumFeatures: 'Trend analysis, AI insights, Coach questions, Comparisons',
     maturityMatureFeatures: 'Obeya, Leadership tools, Portfolio, Department views',
     maturitySessions: 'sessions',
@@ -977,9 +977,9 @@ export const translations = {
     onboardingTitle: 'Getting Started',
     onboardingSubtitle: 'Complete these steps to get started',
     onboardingComplete: 'completed',
-    onboardingStep1: 'Share Pulse link with your team',
+    onboardingStep1: 'Share Vibe link with your team',
     onboardingStep1Hint: 'Copy the link and share via Slack or Teams',
-    onboardingStep2: 'Start your first Delta session',
+    onboardingStep2: 'Start your first Ceremonies session',
     onboardingStep2Hint: 'Pick an angle and collect feedback',
     onboardingStep3: 'Review team insights',
     onboardingStep3Hint: 'Close a session to see results',
@@ -987,8 +987,8 @@ export const translations = {
     onboardingStartSession: 'Start session',
 
     // Empty state
-    emptyStatePulseDesc: 'Daily team signals',
-    emptyStateDeltaDesc: 'Coaching interventions',
+    emptyStateVibeDesc: 'Daily team signals',
+    emptyStateCeremoniesDesc: 'Coaching interventions',
     emptyStateInsightsTitle: 'Insights',
     emptyStateInsightsDesc: 'Data-driven decisions',
     emptyStateTime: 'Ready in 30 seconds',
@@ -1001,8 +1001,8 @@ export const translations = {
     signalAttention: 'Attention',
     signalCritical: 'Critical',
     signalCollectData: 'Start collecting data',
-    signalAddDelta: 'Add Delta for a more complete picture',
-    signalAddPulse: 'Add Pulse for daily signals',
+    signalAddCeremonies: 'Add Delta for a more complete picture',
+    signalAddVibe: 'Add Pulse for daily signals',
     signalParticipation: 'Participation',
 
     // Export

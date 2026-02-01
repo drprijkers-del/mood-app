@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getTeamUnified } from '@/domain/teams/actions'
 import { getTeamMetrics, getTeamInsights } from '@/domain/metrics/actions'
-import { getTeamSessions } from '@/domain/delta/actions'
+import { getTeamSessions } from '@/domain/ceremonies/actions'
 import { requireAdmin } from '@/lib/auth/admin'
 import { AdminHeader } from '@/components/admin/header'
 import { TeamDetailContent } from '@/components/teams/team-detail-content'
@@ -16,7 +16,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
   await requireAdmin()
   const { id } = await params
   const language = await getLanguage()
-  const [team, pulseMetrics, pulseInsights, deltaSessions] = await Promise.all([
+  const [team, vibeMetrics, vibeInsights, ceremoniesSessions] = await Promise.all([
     getTeamUnified(id),
     getTeamMetrics(id),
     getTeamInsights(id, language),
@@ -43,7 +43,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
           {t.adminBack}
         </Link>
 
-        <TeamDetailContent team={team} pulseMetrics={pulseMetrics} pulseInsights={pulseInsights} deltaSessions={deltaSessions} />
+        <TeamDetailContent team={team} vibeMetrics={vibeMetrics} vibeInsights={vibeInsights} ceremoniesSessions={ceremoniesSessions} />
       </main>
     </>
   )

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { submitResponse, hasResponded, getPublicSessionOutcome, PublicSessionOutcome } from '@/domain/delta/actions'
-import { getStatements } from '@/domain/delta/statements'
-import { DeltaAngle, getAngleInfo, ResponseAnswers, Statement } from '@/domain/delta/types'
+import { submitResponse, hasResponded, getPublicSessionOutcome, PublicSessionOutcome } from '@/domain/ceremonies/actions'
+import { getStatements } from '@/domain/ceremonies/statements'
+import { CeremonyAngle, getAngleInfo, ResponseAnswers, Statement } from '@/domain/ceremonies/types'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid'
 interface ParticipationContentProps {
   sessionId: string
   teamName: string
-  angle: DeltaAngle
+  angle: CeremonyAngle
   title: string | null
 }
 
@@ -207,7 +207,7 @@ export function ParticipationContent({
       <div className="min-h-screen bg-stone-900 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="py-8 text-center">
-            <div className="text-sm text-cyan-600 dark:text-cyan-400 font-medium mb-2">{t('deltaSession')}</div>
+            <div className="text-sm text-cyan-600 dark:text-cyan-400 font-medium mb-2">{t('ceremoniesSession')}</div>
             <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-1">{teamName}</h1>
             <p className="text-stone-500 dark:text-stone-400 mb-8">{title || angleInfo.label}</p>
 

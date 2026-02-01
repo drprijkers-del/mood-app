@@ -226,8 +226,8 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
 
   function getProductBadge(product: ProductType) {
     const config: Record<ProductType, { label: string; color: string }> = {
-      delta: { label: 'Delta', color: 'bg-cyan-900 text-cyan-300' },
-      pulse: { label: 'Pulse', color: 'bg-purple-900 text-purple-300' },
+      ceremonies: { label: 'Ceremonies', color: 'bg-cyan-900 text-cyan-300' },
+      vibe: { label: 'Vibe', color: 'bg-purple-900 text-purple-300' },
       shared: { label: 'Shared', color: 'bg-stone-700 text-stone-300' },
     }
     const p = config[product]
@@ -308,7 +308,7 @@ export function BacklogManagementContent({ backlogItems, releaseNotes }: Backlog
                         <label className="block text-sm font-medium text-stone-300 mb-1">Product</label>
                         <select
                           name="product"
-                          defaultValue={editingBacklog?.product || 'pulse'}
+                          defaultValue={editingBacklog?.product || 'vibe'}
                           className="w-full px-3 py-2 rounded-lg border border-stone-600 bg-stone-700 text-white"
                         >
                           <option value="pulse">Pulse</option>
@@ -685,7 +685,7 @@ function ReleaseNoteForm({ editingRelease, loading, onSubmit, onCancel }: Releas
           <label className="block text-sm font-medium text-stone-300 mb-1">Product</label>
           <select
             name="product"
-            defaultValue={editingRelease?.product || 'pulse'}
+            defaultValue={editingRelease?.product || 'vibe'}
             className="w-full px-3 py-2 rounded-lg border border-stone-600 bg-stone-700 text-white"
           >
             <option value="pulse">Pulse</option>

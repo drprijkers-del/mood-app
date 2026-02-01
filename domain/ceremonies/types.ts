@@ -1,11 +1,11 @@
 /**
- * Delta Types
+ * Ceremonies Types
  *
- * Core types for the Delta intervention tool.
+ * Core types for the Ceremonies intervention tool.
  */
 
-// Available angles for Delta sessions
-export type DeltaAngle =
+// Available angles for Ceremonies sessions
+export type CeremonyAngle =
   | 'scrum'
   | 'flow'
   | 'ownership'
@@ -17,26 +17,26 @@ export type DeltaAngle =
   | 'demo'
 
 // Session lifecycle status
-export type DeltaStatus = 'draft' | 'active' | 'closed'
+export type CeremonyStatus = 'draft' | 'active' | 'closed'
 
 // A single statement that team members respond to
 export interface Statement {
   id: string
   text: string
-  angle: DeltaAngle
+  angle: CeremonyAngle
 }
 
 // Team member's answers: statement_id -> score (1-5)
 export type ResponseAnswers = Record<string, number>
 
-// Delta session entity
-export interface DeltaSession {
+// Ceremony session entity
+export interface CeremonySession {
   id: string
   team_id: string
   session_code: string
-  angle: DeltaAngle
+  angle: CeremonyAngle
   title: string | null
-  status: DeltaStatus
+  status: CeremonyStatus
 
   // Outcome (populated when closed)
   focus_area: string | null
@@ -50,15 +50,15 @@ export interface DeltaSession {
   closed_at: string | null
 }
 
-// Delta session with additional computed fields
-export interface DeltaSessionWithStats extends DeltaSession {
+// Ceremony session with additional computed fields
+export interface CeremonySessionWithStats extends CeremonySession {
   response_count: number
   team_name?: string
   overall_score?: number | null  // Average score (1-5), null if < 3 responses
 }
 
 // Individual response (anonymous)
-export interface DeltaResponse {
+export interface CeremonyResponse {
   id: string
   session_id: string
   answers: ResponseAnswers
@@ -92,7 +92,7 @@ export interface SynthesisResult {
 
 // Angle metadata for UI
 export interface AngleInfo {
-  id: DeltaAngle
+  id: CeremonyAngle
   label: string
   description: string
 }
@@ -147,6 +147,6 @@ export const ANGLES: AngleInfo[] = [
 ]
 
 // Helper to get angle info
-export function getAngleInfo(angle: DeltaAngle): AngleInfo {
+export function getAngleInfo(angle: CeremonyAngle): AngleInfo {
   return ANGLES.find(a => a.id === angle) || ANGLES[0]
 }

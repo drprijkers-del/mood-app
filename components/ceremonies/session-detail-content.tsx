@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DeltaSessionWithStats, SynthesisResult, StatementScore, getAngleInfo, DeltaAngle } from '@/domain/delta/types'
-import { getStatements } from '@/domain/delta/statements'
-import { closeSession, deleteSession } from '@/domain/delta/actions'
+import { CeremonySessionWithStats, SynthesisResult, StatementScore, getAngleInfo, CeremonyAngle } from '@/domain/ceremonies/types'
+import { getStatements } from '@/domain/ceremonies/statements'
+import { closeSession, deleteSession } from '@/domain/ceremonies/actions'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
@@ -13,7 +13,7 @@ import { useTranslation, TranslationFunction } from '@/lib/i18n/context'
 import { AdminHeader } from '@/components/admin/header'
 
 interface SessionDetailContentProps {
-  session: DeltaSessionWithStats
+  session: CeremonySessionWithStats
   synthesis: SynthesisResult | null
   shareLink: string | null
   backPath?: string // Optional: defaults to /teams/[team_id]
@@ -236,15 +236,15 @@ export function SessionDetailContent({ session, synthesis, shareLink, backPath }
             <CardContent className="py-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex-1">
-                  <h3 className="font-medium text-stone-900 dark:text-stone-100">{t('deltaRepeat')}</h3>
-                  <p className="text-sm text-stone-600 dark:text-stone-400">{t('deltaRepeatInfo')}</p>
+                  <h3 className="font-medium text-stone-900 dark:text-stone-100">{t('ceremoniesRepeat')}</h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">{t('ceremoniesRepeatInfo')}</p>
                 </div>
                 <Link href={`/teams/${session.team_id}/delta/new?angle=${session.angle}`}>
                   <Button variant="secondary" className="shrink-0">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    {t('deltaRepeat')}
+                    {t('ceremoniesRepeat')}
                   </Button>
                 </Link>
               </div>
@@ -467,13 +467,13 @@ function SessionSetupView({
   t
 }: {
   shareLink: string
-  session: DeltaSessionWithStats
+  session: CeremonySessionWithStats
   copied: boolean
   onCopy: () => void
   t: TranslationFunction
 }) {
   const [showStatements, setShowStatements] = useState(false)
-  const statements = getStatements(session.angle as DeltaAngle)
+  const statements = getStatements(session.angle as CeremonyAngle)
 
   return (
     <div className="space-y-6 mb-8">

@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createSession } from '@/domain/delta/actions'
-import { ANGLES, DeltaAngle } from '@/domain/delta/types'
+import { createSession } from '@/domain/ceremonies/actions'
+import { ANGLES, CeremonyAngle } from '@/domain/ceremonies/types'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
 import { AdminHeader } from '@/components/admin/header'
 
-export default function NewDeltaSessionPage() {
+export default function NewCeremonySessionPage() {
   const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
@@ -17,11 +17,11 @@ export default function NewDeltaSessionPage() {
   const teamId = params.id as string
 
   // Pre-select angle from URL if provided (for repeat sessions)
-  const preSelectedAngle = searchParams.get('angle') as DeltaAngle | null
+  const preSelectedAngle = searchParams.get('angle') as CeremonyAngle | null
   const validAngles = ANGLES.map(a => a.id)
   const initialAngle = preSelectedAngle && validAngles.includes(preSelectedAngle) ? preSelectedAngle : null
 
-  const [selectedAngle, setSelectedAngle] = useState<DeltaAngle | null>(initialAngle)
+  const [selectedAngle, setSelectedAngle] = useState<CeremonyAngle | null>(initialAngle)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

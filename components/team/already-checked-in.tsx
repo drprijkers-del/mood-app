@@ -122,7 +122,7 @@ export function AlreadyCheckedIn({ teamName }: AlreadyCheckedInProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">⚗️</span>
-            <span className="text-sm text-stone-400 dark:text-stone-500">{t('pulse')}</span>
+            <span className="text-sm text-stone-400 dark:text-stone-500">{t('vibe')}</span>
           </div>
           <LanguageToggle />
         </div>

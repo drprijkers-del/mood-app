@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
-import { getSession, synthesizeSession, getSessionShareLink } from '@/domain/delta/actions'
-import { SessionDetailContent } from '@/components/delta/session-detail-content'
+import { getSession, synthesizeSession, getSessionShareLink } from '@/domain/ceremonies/actions'
+import { SessionDetailContent } from '@/components/ceremonies/session-detail-content'
 
 interface SessionDetailPageProps {
   params: Promise<{ sessionId: string }>

@@ -103,8 +103,8 @@ export function BacklogDisplay({ items, releases }: BacklogDisplayProps) {
 
   const getProductBadge = (product: string) => {
     const config: Record<string, { label: string; color: string }> = {
-      delta: { label: 'Delta', color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800' },
-      pulse: { label: 'Pulse', color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800' },
+      ceremonies: { label: 'Ceremonies', color: 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800' },
+      vibe: { label: 'Vibe', color: 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800' },
       shared: { label: 'Shared', color: 'bg-stone-50 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700' },
     }
     return config[product] || config.shared

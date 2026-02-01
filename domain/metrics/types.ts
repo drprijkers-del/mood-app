@@ -1,5 +1,5 @@
 /**
- * Pulse Metrics Types
+ * Vibe Metrics Types
  *
  * Core metrics for team signal monitoring.
  * Designed for Scrum Masters to quickly understand team state.
@@ -12,7 +12,7 @@ export type ConfidenceLevel = 'low' | 'moderate' | 'high'
 export type TrendDirection = 'rising' | 'stable' | 'declining'
 
 // Zone labels (replaces raw numbers for display)
-export type PulseZone = 'under_pressure' | 'mixed_signals' | 'steady_state' | 'high_confidence'
+export type VibeZone = 'under_pressure' | 'mixed_signals' | 'steady_state' | 'high_confidence'
 
 // Day state - creates tension and closure
 export type DayState = 'day_forming' | 'signal_emerging' | 'day_complete'
@@ -24,9 +24,9 @@ export type WeekState = 'week_building' | 'signal_forming' | 'week_complete'
 export type DataMaturity = 'calibrating' | 'establishing_baseline' | 'pattern_forming' | 'reliable_signal'
 
 // Individual metric with trend
-export interface PulseMetric {
+export interface VibeMetric {
   value: number | null           // Raw average (null if no data)
-  zone: PulseZone | null         // Semantic zone
+  zone: VibeZone | null         // Semantic zone
   trend: TrendDirection          // Direction compared to previous period
   delta: number                  // Change from previous period
   entryCount: number             // Number of entries this period
@@ -37,12 +37,12 @@ export interface PulseMetric {
 // Complete metrics set for a team
 export interface TeamMetrics {
   // Current state
-  livePulse: PulseMetric         // Today, real-time
+  liveVibe: VibeMetric         // Today, real-time
 
   // Historical reference
-  dayPulse: PulseMetric          // Yesterday (last completed day)
-  weekPulse: PulseMetric         // 7-day rolling average
-  previousWeekPulse: PulseMetric // Previous 7 days (for week-over-week)
+  dayVibe: VibeMetric          // Yesterday (last completed day)
+  weekVibe: VibeMetric         // 7-day rolling average
+  previousWeekVibe: VibeMetric // Previous 7 days (for week-over-week)
 
   // Momentum indicator
   momentum: {
@@ -76,7 +76,7 @@ export interface TeamMetrics {
 }
 
 // Daily data point for trends
-export interface DailyPulse {
+export interface DailyVibe {
   date: string                   // YYYY-MM-DD
   average: number
   count: number
@@ -84,7 +84,7 @@ export interface DailyPulse {
 }
 
 // Insight generated from metrics
-export interface PulseInsight {
+export interface VibeInsight {
   id: string
   type: 'trend' | 'participation' | 'pattern' | 'milestone'
   severity: 'info' | 'attention' | 'warning'

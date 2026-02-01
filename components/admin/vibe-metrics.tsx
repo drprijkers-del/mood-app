@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useLanguage } from '@/lib/i18n/context'
-import type { TeamMetrics, PulseInsight } from '@/domain/metrics/types'
+import type { TeamMetrics, VibeInsight } from '@/domain/metrics/types'
 import {
   getZoneLabel,
   getZoneColor,
@@ -18,14 +18,14 @@ import {
   getMaturityColor,
 } from '@/domain/metrics/calculations'
 
-interface PulseMetricsProps {
+interface VibeMetricsProps {
   metrics: TeamMetrics
-  insights: PulseInsight[]
+  insights: VibeInsight[]
 }
 
 type TimeView = 'live' | 'day' | 'week'
 
-export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
+export function VibeMetrics({ metrics, insights }: VibeMetricsProps) {
   const { language } = useLanguage()
   const [activeView, setActiveView] = useState<TimeView>('week')
 
@@ -118,21 +118,21 @@ export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
     switch (activeView) {
       case 'live':
         return {
-          metric: metrics.livePulse,
+          metric: metrics.liveVibe,
           label: t.liveNow,
           context: t.vsYesterday,
           isLive: true,
         }
       case 'day':
         return {
-          metric: metrics.dayPulse,
+          metric: metrics.dayVibe,
           label: t.endOfDay,
           context: null,
           isLive: false,
         }
       case 'week':
         return {
-          metric: metrics.weekPulse,
+          metric: metrics.weekVibe,
           label: t.thisWeek,
           context: t.vsLastWeek,
           isLive: false,
@@ -149,7 +149,7 @@ export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
         <TimeButton
           active={activeView === 'live'}
           onClick={() => setActiveView('live')}
-          hasData={metrics.livePulse.value !== null}
+          hasData={metrics.liveVibe.value !== null}
           isLive
         >
           {t.liveNow}
@@ -157,14 +157,14 @@ export function PulseMetrics({ metrics, insights }: PulseMetricsProps) {
         <TimeButton
           active={activeView === 'day'}
           onClick={() => setActiveView('day')}
-          hasData={metrics.dayPulse.value !== null}
+          hasData={metrics.dayVibe.value !== null}
         >
           {t.endOfDay}
         </TimeButton>
         <TimeButton
           active={activeView === 'week'}
           onClick={() => setActiveView('week')}
-          hasData={metrics.weekPulse.value !== null}
+          hasData={metrics.weekVibe.value !== null}
         >
           {t.thisWeek}
         </TimeButton>
@@ -376,7 +376,7 @@ function ParticipationBar({
 }
 
 // Insight card
-function InsightCard({ insight, language }: { insight: PulseInsight; language: 'nl' | 'en' }) {
+function InsightCard({ insight, language }: { insight: VibeInsight; language: 'nl' | 'en' }) {
   const severityStyles = {
     info: 'border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800',
     attention: 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30',

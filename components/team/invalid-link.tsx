@@ -17,11 +17,11 @@ export function InvalidLink({ message }: InvalidLinkProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xl">⚗️</span>
-            <span className="text-sm text-stone-400 dark:text-stone-500">{t('pulse')}</span>
+            <span className="text-sm text-stone-400 dark:text-stone-500">{t('vibe')}</span>
           </div>
           <div className="flex items-center gap-3">
             <LanguageToggle />
-            <span className="tool-badge">{t('pulse')}</span>
+            <span className="tool-badge">{t('vibe')}</span>
           </div>
         </div>
       </header>

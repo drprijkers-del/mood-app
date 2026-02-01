@@ -11,7 +11,7 @@
  * 5. Present tense - About now, not aspirational
  */
 
-import { Statement, DeltaAngle } from './types'
+import { Statement, CeremonyAngle } from './types'
 
 // Scrum statements
 const scrumStatements: Statement[] = [
@@ -140,7 +140,7 @@ const demoStatements: Statement[] = [
 ]
 
 // All statements indexed by angle
-const statementsByAngle: Record<DeltaAngle, Statement[]> = {
+const statementsByAngle: Record<CeremonyAngle, Statement[]> = {
   scrum: scrumStatements,
   flow: flowStatements,
   ownership: ownershipStatements,
@@ -155,7 +155,7 @@ const statementsByAngle: Record<DeltaAngle, Statement[]> = {
 /**
  * Get statements for a specific angle
  */
-export function getStatements(angle: DeltaAngle): Statement[] {
+export function getStatements(angle: CeremonyAngle): Statement[] {
   return statementsByAngle[angle] || []
 }
 
