@@ -15,39 +15,39 @@ interface CheckinSuccessProps {
 // Purity levels like Heisenberg's product
 const PURITY_LABELS = ['50%', '70%', '85%', '96%', '99.1%']
 
-// Dynamic messages based on mood level - Breaking Bad style
+// Dynamic messages based on mood level - supportive and neutral
 const MOOD_MESSAGES = {
   nl: {
-    1: ['Zware dag in het lab.', 'Soms gaat het zo.', 'Morgen een nieuwe batch.'],
-    2: ['Nog niet de juiste formule.', 'We komen er wel.', 'Elke dag telt.'],
-    3: ['Stabiel product.', 'Solide basis.', 'Steady state.'],
-    4: ['Goede batch!', 'De formule werkt.', 'Mooie resultaten.'],
-    5: ['Heisenberg-niveau!', 'Perfecte batch.', '99.1% pure excellence.'],
+    1: ['Zware dag.', 'Soms gaat het zo.', 'Morgen is een nieuwe dag.'],
+    2: ['Niet de beste dag.', 'We komen er wel.', 'Elke dag telt.'],
+    3: ['Stabiel.', 'Solide basis.', 'Steady.'],
+    4: ['Goed bezig!', 'Mooie dag.', 'Lekker gewerkt.'],
+    5: ['Top!', 'Geweldige dag.', 'Helemaal goed.'],
   },
   en: {
-    1: ['Rough day in the lab.', 'Sometimes it goes like this.', 'New batch tomorrow.'],
-    2: ['Not the right formula yet.', "We'll get there.", 'Every day counts.'],
-    3: ['Stable product.', 'Solid foundation.', 'Steady state.'],
-    4: ['Good batch!', 'The formula works.', 'Nice results.'],
-    5: ['Heisenberg level!', 'Perfect batch.', '99.1% pure excellence.'],
+    1: ['Rough day.', 'Sometimes it goes like this.', 'Tomorrow is a new day.'],
+    2: ['Not the best day.', "We'll get there.", 'Every day counts.'],
+    3: ['Stable.', 'Solid foundation.', 'Steady.'],
+    4: ['Good job!', 'Nice day.', 'Well done.'],
+    5: ['Great!', 'Excellent day.', 'All good.'],
   },
 }
 
-// Streak messages
+// Streak messages - simple and encouraging
 const STREAK_MESSAGES = {
   nl: {
-    first: 'Eerste sample in het lab!',
-    early: 'Je bouwt momentum op.',
-    good: 'Consistent contributen!',
-    great: 'Lab veteraan!',
-    legendary: 'Echte Heisenberg vibes.',
+    first: 'Eerste dag!',
+    early: 'Je bouwt ritme op.',
+    good: 'Consistent!',
+    great: 'Goed bezig!',
+    legendary: 'Zeer consistent.',
   },
   en: {
-    first: 'First sample in the lab!',
-    early: 'Building momentum.',
-    good: 'Consistent contributor!',
-    great: 'Lab veteran!',
-    legendary: 'True Heisenberg vibes.',
+    first: 'First day!',
+    early: 'Building rhythm.',
+    good: 'Consistent!',
+    great: 'Great going!',
+    legendary: 'Very consistent.',
   },
 }
 
@@ -71,10 +71,7 @@ export function CheckinSuccess({ mood, streak, teamStats, teamName }: CheckinSuc
   const moodMessage = getRandomMessage(MOOD_MESSAGES[language][mood as keyof typeof MOOD_MESSAGES.nl] || MOOD_MESSAGES[language][3])
   const streakMessage = getStreakMessage(streak, language)
 
-  const isGoodStreak = streak >= 3
-  const isGreatStreak = streak >= 7
-  const isLegendaryStreak = streak >= 14
-  const isEpicStreak = streak >= 30
+  // Simplified milestone detection - subtle acknowledgment at 7, 14, 30 days
   const isMilestone = streak === 7 || streak === 14 || streak === 30
 
   return (
@@ -130,39 +127,27 @@ export function CheckinSuccess({ mood, streak, teamStats, teamName }: CheckinSuc
             </p>
           </div>
 
-          {/* Streak */}
+          {/* Streak - simplified, non-gamified */}
           {streak > 0 && (
-            <div className={`relative mb-8 p-4 rounded-2xl transition-all duration-500 ${
-              isEpicStreak
-                ? 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white shadow-xl scale-105'
-                : isLegendaryStreak
-                  ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-pink-500 text-white shadow-lg'
-                  : isGreatStreak
-                    ? 'bg-gradient-to-br from-cyan-500 to-cyan-600 text-white shadow-md'
-                    : isGoodStreak
-                      ? 'bg-gradient-to-br from-stone-600 to-stone-700 text-white'
-                      : 'bg-stone-100 dark:bg-stone-800'
-            } ${isMilestone ? 'ring-4 ring-white/50' : ''}`}>
-              {/* Milestone badge */}
-              {isMilestone && (
-                <div className="absolute -top-3 -right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                  🎉 MILESTONE!
-                </div>
-              )}
+            <div className="mb-8 p-4 rounded-2xl bg-stone-100 dark:bg-stone-800">
               <div className="flex items-center justify-center gap-2 mb-1">
-                <span className="text-2xl">
-                  {isEpicStreak ? '🧙‍♂️' : isLegendaryStreak ? '👨‍🔬' : isGreatStreak ? '🔥' : isGoodStreak ? '⚗️' : streak > 1 ? '✨' : '🌱'}
-                </span>
-                <span className={`text-3xl font-bold ${isGoodStreak ? 'text-white' : 'text-stone-900 dark:text-stone-100'}`}>
+                <span className="text-lg text-green-500">✓</span>
+                <span className="text-2xl font-bold text-stone-900 dark:text-stone-100">
                   {streak}
                 </span>
-                <span className={`text-sm ${isGoodStreak ? 'text-white/90' : 'text-stone-500 dark:text-stone-400'}`}>
+                <span className="text-sm text-stone-500 dark:text-stone-400">
                   {streak === 1 ? t('successStreakSingular') : t('successStreak')}
                 </span>
               </div>
-              <p className={`text-xs ${isGoodStreak ? 'text-white/80' : 'text-stone-400 dark:text-stone-500'}`}>
+              <p className="text-xs text-stone-400 dark:text-stone-500 text-center">
                 {streakMessage}
               </p>
+              {/* Subtle milestone acknowledgment */}
+              {isMilestone && (
+                <p className="text-xs text-cyan-600 dark:text-cyan-400 text-center mt-2 font-medium">
+                  {language === 'nl' ? `${streak} dagen bereikt!` : `${streak} days reached!`}
+                </p>
+              )}
             </div>
           )}
 

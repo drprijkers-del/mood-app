@@ -172,12 +172,13 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                     <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium rounded ${config.color}`}>
                       {config.icon}
                     </span>
-                    {/* Attention indicator */}
+                    {/* Attention indicator with clear explanation */}
                     {team.needs_attention && (
                       <span className="relative group/attention">
-                        <span className="w-2 h-2 rounded-full bg-red-500 block" />
-                        <span className="absolute bottom-full right-0 mb-2 px-2 py-1 text-xs bg-stone-900 text-white rounded shadow-lg opacity-0 group-hover/attention:opacity-100 transition-opacity whitespace-nowrap z-10">
-                          {t('teamsAttentionTooltip')}
+                        <span className="w-2 h-2 rounded-full bg-red-500 block animate-pulse" />
+                        <span className="absolute bottom-full right-0 mb-2 px-3 py-2 text-xs bg-stone-900 text-white rounded-lg shadow-lg opacity-0 group-hover/attention:opacity-100 transition-opacity whitespace-nowrap z-10 max-w-[200px]">
+                          <span className="font-medium block mb-1">{t('teamsNeedsAttention')}</span>
+                          <span className="text-stone-300">{t('teamsAttentionExplain')}</span>
                         </span>
                       </span>
                     )}
