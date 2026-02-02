@@ -15,7 +15,6 @@ type FilterType = 'all' | 'needs_attention'
 export function TeamsListContent({ teams }: TeamsListContentProps) {
   const t = useTranslation()
   const [filter, setFilter] = useState<FilterType>('all')
-  const [showLevelsModal, setShowLevelsModal] = useState(false)
 
   const filteredTeams = teams.filter(team => {
     if (filter === 'all') return true
@@ -40,20 +39,11 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
     return date.toLocaleDateString()
   }
 
-  // Calculate maturity level for a team
-  const getMaturityLevel = (team: UnifiedTeam) => {
-    const sessionsCount = (team.ceremonies?.total_sessions || 0) + (team.vibe?.participant_count || 0)
-    const avgScore = team.vibe?.average_score || team.ceremonies?.average_score || 0
-
-    if (sessionsCount >= 20 && avgScore >= 3.5) return 'mature'
-    if (sessionsCount >= 5) return 'medium'
-    return 'basic'
-  }
-
-  const maturityConfig = {
-    basic: { label: t('maturityBasic'), color: 'bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300' },
-    medium: { label: t('maturityMedium'), color: 'bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300' },
-    mature: { label: t('maturityMature'), color: 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300' },
+  // Shu-Ha-Ri level config for ceremonies
+  const shuHaRiConfig = {
+    shu: { kanji: '守', label: 'Shu', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700' },
+    ha: { kanji: '破', label: 'Ha', color: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 border border-cyan-300 dark:border-cyan-700' },
+    ri: { kanji: '離', label: 'Ri', color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-300 dark:border-purple-700' },
   }
 
   return (
@@ -78,13 +68,7 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
             )}
           </button>
         ))}
-        {/* Levels info button - hidden on mobile, visible in Coming Next menu */}
-        <button
-          onClick={() => setShowLevelsModal(true)}
-          className="hidden sm:flex ml-auto px-3 py-2 rounded-lg text-xs font-medium bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors items-center gap-1.5"
-        >
-          {t('maturityViewLevels')}
-        </button>
+        {/* Levels info button - hidden for now */}
       </div>
 
       {/* Teams list */}
@@ -151,8 +135,8 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredTeams.map(team => {
-            const maturity = getMaturityLevel(team)
-            const config = maturityConfig[maturity]
+            const ceremonyLevel = team.ceremonies?.level as 'shu' | 'ha' | 'ri' | undefined
+            const levelConfig = ceremonyLevel ? shuHaRiConfig[ceremonyLevel] : null
 
             return (
               <Link
@@ -186,12 +170,15 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
                       )}
                     </div>
                   </div>
-                  {/* Maturity badge - hidden on mobile */}
-                  <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-                    <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium rounded ${config.color}`}>
-                      {config.label}
-                    </span>
-                  </div>
+                  {/* Shu-Ha-Ri level badge - hidden on mobile */}
+                  {levelConfig && (
+                    <div className="hidden sm:flex items-center gap-1 shrink-0">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded ${levelConfig.color}`}>
+                        <span className="font-bold">{levelConfig.kanji}</span>
+                        <span>{levelConfig.label}</span>
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Score indicators - simplified for mobile */}
@@ -323,84 +310,6 @@ export function TeamsListContent({ teams }: TeamsListContentProps) {
         </div>
       )}
 
-      {/* Levels Modal */}
-      {showLevelsModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowLevelsModal(false)}>
-          <div className="bg-white dark:bg-stone-800 rounded-2xl shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">{t('maturityLevel')}</h2>
-              <button onClick={() => setShowLevelsModal(false)} className="p-2 hover:bg-stone-100 dark:hover:bg-stone-700 rounded-lg transition-colors">
-                <svg className="w-5 h-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Starter Level */}
-              <div className="p-4 rounded-xl border-2 border-stone-200 dark:border-stone-600 bg-stone-50 dark:bg-stone-700/50">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-stone-900 dark:text-stone-100">{t('maturityBasic')}</span>
-                  <span className="px-2 py-0.5 text-xs font-bold bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-full">
-                    {t('maturityFree')}
-                  </span>
-                </div>
-                <p className="text-sm text-stone-600 dark:text-stone-300 mb-2">{t('maturityStarterDesc')}</p>
-                <p className="text-xs text-stone-500 dark:text-stone-400">{t('maturityStarterFeatures')}</p>
-              </div>
-
-              {/* Intermediate Level */}
-              <div className="p-4 rounded-xl border-2 border-cyan-300 dark:border-cyan-600 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-stone-900 dark:text-stone-100">{t('maturityMedium')}</span>
-                  <span className="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full">
-                    {t('maturityPaid')}
-                  </span>
-                </div>
-                <p className="text-sm text-stone-600 dark:text-stone-300 mb-2">{t('maturityMediumDesc')}</p>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mb-3">{t('maturityMediumFeatures')}</p>
-                <div className="flex items-center gap-2 text-xs text-cyan-600 dark:text-cyan-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  5+ sessies of 5+ dagen actief
-                </div>
-              </div>
-
-              {/* Expert Level */}
-              <div className="p-4 rounded-xl border-2 border-amber-300 dark:border-amber-600 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-stone-900 dark:text-stone-100">{t('maturityMature')}</span>
-                  <span className="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full">
-                    {t('maturityPaid')}
-                  </span>
-                </div>
-                <p className="text-sm text-stone-600 dark:text-stone-300 mb-2">{t('maturityMatureDesc')}</p>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mb-3">{t('maturityMatureFeatures')}</p>
-                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  20+ sessies + score 3.5+
-                </div>
-              </div>
-
-              {/* Upgrade CTA */}
-              <div className="pt-4 border-t border-stone-200 dark:border-stone-600">
-                <a
-                  href="mailto:expert@pinkpollos.nl?subject=Pulse Premium Interest"
-                  className="block w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-xl text-center transition-colors"
-                >
-                  {t('maturityUpgradeTitle')} →
-                </a>
-                <p className="text-xs text-stone-500 dark:text-stone-400 text-center mt-2">
-                  {t('maturityUpgradeDesc')}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

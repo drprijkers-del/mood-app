@@ -838,7 +838,7 @@ export async function getShareLink(teamId: string): Promise<{ url: string; token
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
   return {
-    url: `${baseUrl}/pulse/t/${team.slug}?k=${token}`,
+    url: `${baseUrl}/vibe/t/${team.slug}?k=${token}`,
     token,
   }
 }

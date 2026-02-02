@@ -120,6 +120,12 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
       return
     }
 
+    // Reset share URL when vibe is disabled
+    if (tool === 'vibe') {
+      setShareUrl(null)
+      setShowVibeAdvanced(false)
+    }
+
     // Switch to settings tab after disabling
     setActiveTab('settings')
     router.refresh()
@@ -363,6 +369,19 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                       <div className="flex-1">
                         <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareResetTitle')}</div>
                         <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('shareResetInfo')}</p>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={async () => {
+                            if (!confirm(t('shareResetConfirm'))) return
+                            setShareUrl(null)
+                            await handleGetShareLink()
+                          }}
+                          loading={shareLoading}
+                          className="text-amber-600 hover:text-amber-700 mt-2"
+                        >
+                          {t('shareResetButton')}
+                        </Button>
                       </div>
                     </div>
 
