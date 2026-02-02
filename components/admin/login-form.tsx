@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 
-const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE || 'password'
+// Auth mode: set to true for password-only, false to show magic link option
+const PASSWORD_ONLY_MODE = true
 
 export function LoginForm() {
   const t = useTranslation()
@@ -19,9 +20,9 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
-  const [usePassword, setUsePassword] = useState(AUTH_MODE === 'password')
+  const [usePassword, setUsePassword] = useState(PASSWORD_ONLY_MODE)
 
-  const showAuthToggle = AUTH_MODE === 'magic-link'
+  const showAuthToggle = !PASSWORD_ONLY_MODE
 
   const unauthorized = searchParams.get('error') === 'unauthorized'
   const redirectTo = searchParams.get('redirect') || '/teams'
