@@ -100,7 +100,8 @@ export async function getTeams(appType?: 'vibe' | 'ceremonies'): Promise<TeamWit
     .select('*')
     .order('created_at', { ascending: false })
 
-  // If not super_admin, filter by owner_id
+  // Filter by owner_id - always exclude null owners, and filter by specific owner if not super admin
+  query = query.not('owner_id', 'is', null)
   if (adminUser.role !== 'super_admin') {
     query = query.eq('owner_id', adminUser.id)
   }
@@ -261,6 +262,8 @@ export async function getTeamsUnified(filter?: 'all' | 'vibe' | 'ceremonies' | '
     .select('*')
     .order('created_at', { ascending: false })
 
+  // Always exclude orphaned teams with null owner, then filter by specific owner if not super admin
+  query = query.not('owner_id', 'is', null)
   if (adminUser.role !== 'super_admin') {
     query = query.eq('owner_id', adminUser.id)
   }
