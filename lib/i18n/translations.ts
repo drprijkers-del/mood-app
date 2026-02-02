@@ -162,6 +162,10 @@ export const translations = {
     shareNotCreated: 'Nog geen link',
     shareNotCreatedDetail: 'Maak een link om met je team te delen',
     shareCreate: 'Link maken',
+    shareDeactivateTitle: 'Link deactiveren',
+    shareDeactivateInfo: 'Schakel de deellink uit. Teamleden kunnen niet meer inchecken tot je een nieuwe link maakt.',
+    shareDeactivateConfirm: 'Link deactiveren? Teamleden kunnen niet meer inchecken.',
+    shareDeactivateButton: 'Deactiveer link',
 
     // Team actions
     teamDelete: 'Verwijderen',
@@ -713,6 +717,10 @@ export const translations = {
     shareNotCreated: 'No link yet',
     shareNotCreatedDetail: 'Create a link to share with your team',
     shareCreate: 'Create link',
+    shareDeactivateTitle: 'Deactivate link',
+    shareDeactivateInfo: 'Turn off the share link. Team members cannot check in until you create a new link.',
+    shareDeactivateConfirm: 'Deactivate link? Team members will not be able to check in.',
+    shareDeactivateButton: 'Deactivate link',
 
     // Team actions
     teamDelete: 'Delete',

@@ -843,6 +843,29 @@ export async function getShareLink(teamId: string): Promise<{ url: string; token
   }
 }
 
+export async function deactivateShareLink(teamId: string): Promise<{ success: boolean; error?: string }> {
+  const adminUser = await requireAdmin()
+  const supabase = await createAdminClient()
+
+  // Verify ownership
+  if (!(await verifyTeamOwnership(teamId, adminUser))) {
+    return { success: false, error: 'Geen toegang tot dit team' }
+  }
+
+  // Deactivate all active links for this team
+  const { error } = await supabase
+    .from('invite_links')
+    .update({ is_active: false })
+    .eq('team_id', teamId)
+
+  if (error) {
+    return { success: false, error: 'Kon link niet deactiveren' }
+  }
+
+  revalidatePath(`/teams/${teamId}`)
+  return { success: true }
+}
+
 export async function getTeamMoodHistory(teamId: string, days: number = 7): Promise<{
   date: string
   average: number

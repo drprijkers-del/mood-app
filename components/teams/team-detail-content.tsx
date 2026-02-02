@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { UnifiedTeam, enableTool, disableTool, deleteTeam, exportPulseData, getShareLink } from '@/domain/teams/actions'
+import { UnifiedTeam, enableTool, disableTool, deleteTeam, exportPulseData, getShareLink, deactivateShareLink } from '@/domain/teams/actions'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
 import { GettingStartedChecklist } from '@/components/teams/getting-started-checklist'
@@ -385,7 +385,7 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                       </div>
                     </div>
 
-                    {/* Disable Vibe */}
+                    {/* Deactivate Link (kill switch) */}
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
                         <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -393,16 +393,27 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('vibeDisableTitle')}</div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('vibeDisableInfo')}</p>
+                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareDeactivateTitle')}</div>
+                        <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('shareDeactivateInfo')}</p>
                         <Button
                           variant="secondary"
                           size="sm"
-                          onClick={() => handleDisableTool('vibe')}
-                          loading={loading === 'disable-vibe'}
+                          onClick={async () => {
+                            if (!confirm(t('shareDeactivateConfirm'))) return
+                            setShareLoading(true)
+                            const result = await deactivateShareLink(team.id)
+                            if (result.success) {
+                              setShareUrl(null)
+                              setShowVibeAdvanced(false)
+                            } else {
+                              alert(result.error || 'Could not deactivate link')
+                            }
+                            setShareLoading(false)
+                          }}
+                          loading={shareLoading}
                           className="text-red-600 hover:text-red-700 mt-2"
                         >
-                          {t('teamsToolDisable')}
+                          {t('shareDeactivateButton')}
                         </Button>
                       </div>
                     </div>

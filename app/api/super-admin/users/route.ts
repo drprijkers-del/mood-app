@@ -26,7 +26,7 @@ export async function DELETE(request: NextRequest) {
   try {
     await requireSuperAdmin()
 
-    const { userId } = await request.json()
+    const { userId } = await request.json() as { userId?: string }
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
