@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const token = searchParams.get('k')
   const slug = searchParams.get('slug')
+  const redirectTo = searchParams.get('redirect') // 'results' or default to vibe
 
   if (!token || !slug) {
     return NextResponse.json({ error: 'Missing token or slug' }, { status: 400 })
@@ -30,15 +31,17 @@ export async function GET(request: NextRequest) {
   const { data: teamData, error } = await supabase
     .rpc('validate_invite_token', { p_token_hash: tokenHash })
 
+  const errorPath = redirectTo === 'results' ? `/results/${slug}` : `/vibe/t/${slug}`
+
   if (error || !teamData || teamData.length === 0) {
-    return NextResponse.redirect(new URL(`/vibe/t/${slug}?error=invalid`, request.url))
+    return NextResponse.redirect(new URL(`${errorPath}?error=invalid`, request.url))
   }
 
   const team = teamData[0]
 
   // Verify slug matches
   if (team.team_slug !== slug) {
-    return NextResponse.redirect(new URL(`/vibe/t/${slug}?error=invalid`, request.url))
+    return NextResponse.redirect(new URL(`${errorPath}?error=invalid`, request.url))
   }
 
   // Get or create device ID
@@ -56,8 +59,11 @@ export async function GET(request: NextRequest) {
     deviceId,
   })
 
+  // Determine redirect destination
+  const redirectPath = redirectTo === 'results' ? `/results/${slug}` : `/vibe/t/${slug}`
+
   // Create response with redirect
-  const response = NextResponse.redirect(new URL(`/vibe/t/${slug}`, request.url))
+  const response = NextResponse.redirect(new URL(redirectPath, request.url))
 
   // Set cookies on response
   response.cookies.set(DEVICE_COOKIE_NAME, deviceId, {

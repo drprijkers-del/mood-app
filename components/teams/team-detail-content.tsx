@@ -514,6 +514,33 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
               {t('teamsDetailSettings')}
             </button>
           </div>
+
+          {/* Share Results Section */}
+          {shareUrl && (
+            <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareResultsTitle')}</div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400">{t('shareResultsDescription')}</div>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    const resultsUrl = shareUrl.replace('/vibe/t/', '/results/')
+                    navigator.clipboard.writeText(resultsUrl)
+                  }}
+                >
+                  {t('shareCopy')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -604,6 +631,33 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                       >
                         {t('shareAdvanced')}
                       </Button>
+                    </div>
+                  )}
+
+                  {/* Share Results Link */}
+                  {shareUrl && (
+                    <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareResultsTitle')}</div>
+                          <div className="text-xs text-stone-500 dark:text-stone-400">{t('shareResultsDescription')}</div>
+                        </div>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => {
+                            const resultsUrl = shareUrl.replace('/vibe/t/', '/results/')
+                            navigator.clipboard.writeText(resultsUrl)
+                          }}
+                        >
+                          {t('shareCopy')}
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
