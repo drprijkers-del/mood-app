@@ -31,14 +31,14 @@ export async function GET(request: NextRequest) {
     .rpc('validate_invite_token', { p_token_hash: tokenHash })
 
   if (error || !teamData || teamData.length === 0) {
-    return NextResponse.redirect(new URL(`/t/${slug}?error=invalid`, request.url))
+    return NextResponse.redirect(new URL(`/vibe/t/${slug}?error=invalid`, request.url))
   }
 
   const team = teamData[0]
 
   // Verify slug matches
   if (team.team_slug !== slug) {
-    return NextResponse.redirect(new URL(`/t/${slug}?error=invalid`, request.url))
+    return NextResponse.redirect(new URL(`/vibe/t/${slug}?error=invalid`, request.url))
   }
 
   // Get or create device ID
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
   })
 
   // Create response with redirect
-  const response = NextResponse.redirect(new URL(`/t/${slug}`, request.url))
+  const response = NextResponse.redirect(new URL(`/vibe/t/${slug}`, request.url))
 
   // Set cookies on response
   response.cookies.set(DEVICE_COOKIE_NAME, deviceId, {
