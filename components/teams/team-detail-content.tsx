@@ -260,28 +260,7 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
         <div className="space-y-6">
           {team.vibe ? (
             <>
-              {/* Insights - only show if there are actionable ones */}
-              {vibeInsights && vibeInsights.length > 0 && (
-                <div className="space-y-2">
-                  {vibeInsights.slice(0, 2).map((insight) => (
-                    <div
-                      key={insight.id}
-                      className={`rounded-lg p-3 border ${
-                        insight.severity === 'warning' ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20' :
-                        insight.severity === 'attention' ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20' :
-                        'border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800'
-                      }`}
-                    >
-                      <p className="text-sm font-medium text-stone-800 dark:text-stone-200">{insight.message}</p>
-                      {insight.detail && (
-                        <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">{insight.detail}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Share Link Section */}
+              {/* Share Link Section - right under intro */}
               <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
                 <div className="flex items-center gap-3 p-4">
                   <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center shrink-0">
@@ -362,6 +341,27 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                   </div>
                 )}
               </div>
+
+              {/* Insights - only show if there are actionable ones */}
+              {vibeInsights && vibeInsights.length > 0 && (
+                <div className="space-y-2">
+                  {vibeInsights.slice(0, 2).map((insight) => (
+                    <div
+                      key={insight.id}
+                      className={`rounded-lg p-3 border ${
+                        insight.severity === 'warning' ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20' :
+                        insight.severity === 'attention' ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20' :
+                        'border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800'
+                      }`}
+                    >
+                      <p className="text-sm font-medium text-stone-800 dark:text-stone-200">{insight.message}</p>
+                      {insight.detail && (
+                        <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">{insight.detail}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </>
           ) : (
             <div className="text-center py-12 bg-stone-50 dark:bg-stone-800 rounded-xl">
