@@ -183,13 +183,26 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
 
             {/* Desktop: Global Navigation (when not on team page) */}
             {!isOnTeamPage && (
-              <div className="hidden md:flex items-center gap-1.5 ml-4 border-l border-stone-200 dark:border-stone-700 pl-4">
+              <div className="hidden md:flex items-center gap-1 ml-4 border-l border-stone-200 dark:border-stone-700 pl-4">
+                {/* Back button on backlog page */}
+                {pathname === '/backlog' && (
+                  <Link
+                    href="/teams"
+                    className="flex items-center gap-1 px-2 py-1.5 text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-lg transition-colors mr-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    {t('teamsTitle')}
+                  </Link>
+                )}
+                {/* Navigation tabs */}
                 <Link
                   href="/teams"
                   className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                     pathname === '/teams'
-                      ? 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-400'
-                      : 'bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/40'
+                      ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100'
+                      : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
                   }`}
                 >
                   {t('teamsTitle')}
@@ -198,8 +211,8 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
                   href="/backlog"
                   className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                     pathname === '/backlog'
-                      ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400'
-                      : 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/40'
+                      ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100'
+                      : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
                   }`}
                 >
                   {t('backlogTab')}
@@ -389,22 +402,43 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
 
             {/* Navigation Links */}
             <div className="p-2">
+              {/* Back button on backlog page */}
+              {pathname === '/backlog' && (
+                <Link
+                  href="/teams"
+                  className="flex items-center gap-2 px-3 py-2 mb-2 rounded-lg text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 border-b border-stone-100 dark:border-stone-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  {t('teamsTitle')}
+                </Link>
+              )}
               <Link
                 href="/teams"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === '/teams'
+                    ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100'
+                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${pathname === '/teams' ? 'text-stone-700 dark:text-stone-300' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 {t('teamsTitle')}
               </Link>
               <Link
                 href="/backlog"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === '/backlog'
+                    ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100'
+                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${pathname === '/backlog' ? 'text-stone-700 dark:text-stone-300' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
                 {t('backlogTab')}
