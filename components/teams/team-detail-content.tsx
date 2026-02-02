@@ -46,14 +46,13 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
   const getInitialTab = (): TabType => {
     const urlTab = searchParams.get('tab') as TabType | null
     const validTabs = ['vibe', 'ceremonies', 'feedback', 'coach', 'modules', 'settings']
+    // Always respect URL tab - content handles disabled state
     if (urlTab && validTabs.includes(urlTab)) {
-      // Only use URL tab if the tool is enabled (or it's a general tab)
-      if (['settings', 'feedback', 'coach', 'modules'].includes(urlTab)) return urlTab
-      if (team.tools_enabled.includes(urlTab as 'vibe' | 'ceremonies')) return urlTab
+      return urlTab
     }
-    // Default: first enabled tool or settings
+    // Default: first enabled tool, or vibe, or settings
     return team.tools_enabled.includes('vibe') ? 'vibe' :
-           team.tools_enabled.includes('ceremonies') ? 'ceremonies' : 'settings'
+           team.tools_enabled.includes('ceremonies') ? 'ceremonies' : 'vibe'
   }
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab)
@@ -67,12 +66,11 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
   useEffect(() => {
     const urlTab = searchParams.get('tab') as TabType | null
     const validTabs = ['vibe', 'ceremonies', 'feedback', 'coach', 'modules', 'settings']
+    // Always respect URL tab - content handles disabled state
     if (urlTab && validTabs.includes(urlTab)) {
-      if (['settings', 'feedback', 'coach', 'modules'].includes(urlTab) || team.tools_enabled.includes(urlTab as 'vibe' | 'ceremonies')) {
-        setActiveTab(urlTab)
-      }
+      setActiveTab(urlTab)
     }
-  }, [searchParams, team.tools_enabled])
+  }, [searchParams])
 
   // Fetch or create share link for Vibe
   const handleGetShareLink = async () => {
