@@ -32,6 +32,7 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false)
   const [showTeamSelector, setShowTeamSelector] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
   const { language, setLanguage } = useLanguage()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -61,12 +62,13 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
       setShowSettingsMenu(false)
       setShowTeamSelector(false)
       setShowCoachDropdown(false)
+      setShowMoreMenu(false)
     }
-    if (showSettingsMenu || showTeamSelector || showCoachDropdown) {
+    if (showSettingsMenu || showTeamSelector || showCoachDropdown || showMoreMenu) {
       document.addEventListener('click', handleClickOutside)
       return () => document.removeEventListener('click', handleClickOutside)
     }
-  }, [showSettingsMenu, showTeamSelector, showCoachDropdown])
+  }, [showSettingsMenu, showTeamSelector, showCoachDropdown, showMoreMenu])
 
   async function handleLogout() {
     try {
@@ -90,14 +92,24 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
     setShowTeamSelector(false)
   }
 
-  const navModes: { key: NavMode; label: string }[] = [
+  // Primary tabs shown directly in navbar
+  const primaryModes: { key: NavMode; label: string }[] = [
     { key: 'vibe', label: t('teamsDetailVibe') },
     { key: 'ceremonies', label: t('teamsDetailCeremonies') },
     { key: 'feedback', label: t('feedbackTitle') },
+  ]
+
+  // Secondary tabs shown in "More" dropdown
+  const secondaryModes: { key: NavMode; label: string }[] = [
     { key: 'coach', label: t('coachQuestionsTab') },
     { key: 'modules', label: t('teamsDetailModules') },
     { key: 'settings', label: t('teamsDetailSettings') },
   ]
+
+  // All modes for mobile menu
+  const navModes = [...primaryModes, ...secondaryModes]
+
+  const isSecondaryActive = secondaryModes.some(m => m.key === activeMode)
 
   return (
     <>
@@ -168,7 +180,8 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
             {/* Desktop: Mode Navigation (only on team pages) */}
             {isOnTeamPage && currentTeam && (
               <div className="hidden md:flex items-center gap-1 ml-4 border-l border-stone-200 dark:border-stone-700 pl-4">
-                {navModes.map(({ key, label }) => (
+                {/* Primary tabs */}
+                {primaryModes.map(({ key, label }) => (
                   <button
                     key={key}
                     onClick={() => navigateToMode(key)}
@@ -181,6 +194,47 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
                     {label}
                   </button>
                 ))}
+
+                {/* More dropdown for secondary tabs */}
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowMoreMenu(!showMoreMenu)
+                    }}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-1 ${
+                      isSecondaryActive
+                        ? 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400'
+                        : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+                    }`}
+                  >
+                    {isSecondaryActive ? secondaryModes.find(m => m.key === activeMode)?.label : t('more')}
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {showMoreMenu && (
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-stone-800 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 py-1 z-50">
+                      {secondaryModes.map(({ key, label }) => (
+                        <button
+                          key={key}
+                          onClick={() => {
+                            navigateToMode(key)
+                            setShowMoreMenu(false)
+                          }}
+                          className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                            activeMode === key
+                              ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400'
+                              : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -226,77 +280,19 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
             {/* Spacer */}
             <div className="flex-1" />
 
-            {/* Need a coach? dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setShowCoachDropdown(!showCoachDropdown)
-                  setEmailCopied(false)
-                }}
-                className="px-3 py-1.5 text-xs font-medium text-stone-500 dark:text-stone-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors cursor-pointer"
-              >
-                {t('needCoach')}
-              </button>
-
-              {showCoachDropdown && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-stone-800 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 p-4 z-50">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center shrink-0">
-                      <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-medium text-stone-900 dark:text-stone-100 text-sm">{t('contactExpertTitle')}</div>
-                      <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('contactExpertMessage')}</p>
-                    </div>
-                  </div>
-
-                  <div className="bg-stone-50 dark:bg-stone-900 rounded-lg p-3 mb-3">
-                    <div className="text-xs text-stone-400 dark:text-stone-500 mb-1">Email</div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-stone-900 dark:text-stone-100">info@pinkpollos.com</span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          navigator.clipboard.writeText('info@pinkpollos.com')
-                          setEmailCopied(true)
-                          setTimeout(() => setEmailCopied(false), 2000)
-                        }}
-                        className="text-xs px-2 py-1 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors"
-                      >
-                        {emailCopied ? '✓ Gekopieerd' : 'Kopieer'}
-                      </button>
-                    </div>
-                  </div>
-
-                  <a
-                    href="mailto:info@pinkpollos.com?subject=Pulse%20-%20Coaching%20Request"
-                    className="block w-full text-center py-2 px-4 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg transition-colors"
-                    onClick={() => setShowCoachDropdown(false)}
-                  >
-                    {t('contactExpertButton')}
-                  </a>
-                </div>
-              )}
-            </div>
-
             {/* Desktop: Right Side Actions */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1">
 
-              {/* Backlog link - only show when on team page (global nav handles it otherwise) */}
+              {/* Backlog link (icon only) - only show when on team page */}
               {isOnTeamPage && (
                 <Link
                   href="/backlog"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors"
+                  className="p-2 rounded-lg text-stone-500 hover:text-stone-900 hover:bg-stone-100 dark:text-stone-400 dark:hover:text-stone-100 dark:hover:bg-stone-800 transition-colors"
+                  title={t('backlogTab')}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
-                  {t('backlogTab')}
                 </Link>
               )}
 
@@ -373,16 +369,27 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
                       </div>
                     </div>
 
+                    {/* Coach contact */}
+                    <div className="px-3 py-2 border-t border-stone-100 dark:border-stone-700">
+                      <div className="text-xs font-medium text-stone-400 dark:text-stone-500 mb-2">{t('needCoach')}</div>
+                      <div className="flex items-center justify-between bg-stone-50 dark:bg-stone-900 rounded-md px-2 py-1.5">
+                        <span className="text-xs text-stone-600 dark:text-stone-300 truncate">info@pinkpollos.com</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigator.clipboard.writeText('info@pinkpollos.com')
+                            setEmailCopied(true)
+                            setTimeout(() => setEmailCopied(false), 2000)
+                          }}
+                          className="text-xs px-1.5 py-0.5 rounded bg-stone-200 dark:bg-stone-700 text-stone-500 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors ml-1"
+                        >
+                          {emailCopied ? '✓' : t('shareCopy')}
+                        </button>
+                      </div>
+                    </div>
+
                     <div className="border-t border-stone-100 dark:border-stone-700 mt-1 pt-1">
-                      <button
-                        onClick={() => {
-                          setShowSettingsMenu(false)
-                          setShowExpertModal(true)
-                        }}
-                        className="w-full text-left px-3 py-2 text-sm text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-700"
-                      >
-                        {t('contactExpert')}
-                      </button>
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
