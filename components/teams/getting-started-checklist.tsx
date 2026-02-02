@@ -119,13 +119,9 @@ export function GettingStartedChecklist({
             )}
           </div>
           {!hasPulseEntries && (
-            <Link
-              href={`/vibe/t/${teamSlug}`}
-              target="_blank"
-              className="px-4 py-2.5 text-xs font-medium bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors shrink-0 min-h-11 flex items-center"
-            >
-              {t('onboardingTestLink')}
-            </Link>
+            <span className="px-4 py-2.5 text-xs font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-lg shrink-0 min-h-11 flex items-center">
+              {t('onboardingUseShareLink')}
+            </span>
           )}
         </div>
 
@@ -160,7 +156,7 @@ export function GettingStartedChecklist({
           </div>
           {!hasCeremonySessions && (
             <Link
-              href={`/teams/${teamId}/delta/new`}
+              href={`/teams/${teamId}/ceremonies/new`}
               className="px-4 py-2.5 text-xs font-medium bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors shrink-0 min-h-11 flex items-center"
             >
               {t('onboardingStartSession')}

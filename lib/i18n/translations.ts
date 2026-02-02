@@ -522,6 +522,7 @@ export const translations = {
     onboardingStep3: 'Bekijk team inzichten',
     onboardingStep3Hint: 'Sluit een sessie af om resultaten te zien',
     onboardingTestLink: 'Test link',
+    onboardingUseShareLink: 'Gebruik share link ↑',
     onboardingStartSession: 'Start sessie',
 
     // Empty state
@@ -1072,6 +1073,7 @@ export const translations = {
     onboardingStep3: 'Review team insights',
     onboardingStep3Hint: 'Close a session to see results',
     onboardingTestLink: 'Test link',
+    onboardingUseShareLink: 'Use share link ↑',
     onboardingStartSession: 'Start session',
 
     // Empty state
