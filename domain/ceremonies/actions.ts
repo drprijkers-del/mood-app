@@ -342,10 +342,10 @@ export async function createSession(
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
-  // Verify team ownership
+  // Verify team ownership and get ceremony level
   const { data: team } = await supabase
     .from('teams')
-    .select('owner_id')
+    .select('owner_id, ceremony_level')
     .eq('id', teamId)
     .single()
 
@@ -364,13 +364,17 @@ export async function createSession(
     return { success: false, error: 'Failed to generate session code' }
   }
 
-  // Create session
+  // Get team's current ceremony level (default to 'shu')
+  const sessionLevel = (team.ceremony_level as CeremonyLevel) || 'shu'
+
+  // Create session with the team's current level
   const { data: session, error } = await supabase
     .from('delta_sessions')
     .insert({
       team_id: teamId,
       session_code: sessionCode,
       angle,
+      level: sessionLevel,  // Store the level this session was run at
       title: title || null,
       status: 'active',  // Start active immediately
       created_by: adminUser.id,
@@ -494,22 +498,14 @@ export async function validateSessionCode(sessionCode: string): Promise<{
 
   const row = data[0]
 
-  // Get ceremony level from team
+  // Get ceremony level from session (stored when session was created)
   const { data: sessionData } = await supabase
     .from('delta_sessions')
-    .select('team_id')
+    .select('level')
     .eq('id', row.session_id)
     .single()
 
-  let ceremonyLevel: CeremonyLevel = 'shu'
-  if (sessionData?.team_id) {
-    const { data: teamData } = await supabase
-      .from('teams')
-      .select('ceremony_level')
-      .eq('id', sessionData.team_id)
-      .single()
-    ceremonyLevel = (teamData?.ceremony_level as CeremonyLevel) || 'shu'
-  }
+  const ceremonyLevel: CeremonyLevel = (sessionData?.level as CeremonyLevel) || 'shu'
 
   return {
     valid: true,
@@ -669,10 +665,10 @@ export async function synthesizeSession(sessionId: string): Promise<SynthesisRes
     return null
   }
 
-  // Get session to know the angle
+  // Get session to know the angle and level
   const { data: session } = await supabase
     .from('delta_sessions')
-    .select('angle')
+    .select('angle, level')
     .eq('id', sessionId)
     .single()
 
@@ -687,8 +683,9 @@ export async function synthesizeSession(sessionId: string): Promise<SynthesisRes
     return null
   }
 
-  // Get statements for this angle
-  const statements = getStatements(session.angle as CeremonyAngle)
+  // Get statements for this angle and level
+  const sessionLevel = (session.level as CeremonyLevel) || 'shu'
+  const statements = getStatements(session.angle as CeremonyAngle, sessionLevel)
 
   // Track all scores for overall calculation
   let allScoresSum = 0

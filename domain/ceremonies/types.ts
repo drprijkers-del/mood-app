@@ -19,11 +19,15 @@ export type CeremonyAngle =
 // Session lifecycle status
 export type CeremonyStatus = 'draft' | 'active' | 'closed'
 
+// Ceremony progression levels (守破離)
+export type CeremonyLevel = 'shu' | 'ha' | 'ri'
+
 // A single statement that team members respond to
 export interface Statement {
   id: string
   text: string
   angle: CeremonyAngle
+  level: CeremonyLevel  // Which Shu-Ha-Ri level this statement belongs to
 }
 
 // Team member's answers: statement_id -> score (1-5)
@@ -35,6 +39,7 @@ export interface CeremonySession {
   team_id: string
   session_code: string
   angle: CeremonyAngle
+  level: CeremonyLevel  // Which Shu-Ha-Ri level this session was run at
   title: string | null
   status: CeremonyStatus
 
@@ -91,116 +96,46 @@ export interface SynthesisResult {
 }
 
 // Angle metadata for UI
+// All angles are available at ALL levels - the level determines question depth, not angle availability
 export interface AngleInfo {
   id: CeremonyAngle
   label: string
   description: string
-  level: CeremonyLevel  // Required level to access this angle
 }
 
-// Angles organized by Shu-Ha-Ri level
-// Shu (守): Learn the basics - standard ceremonies
-// Ha (破): Adapt intentionally - team dynamics & process
-// Ri (離): Mastery - advanced practices & self-organization
-
+// All ceremony angles - available at every Shu-Ha-Ri level
+// The statements for each angle vary by level (deeper questions as you progress)
 export const ANGLES: AngleInfo[] = [
-  // ═══════════════════════════════════════════
-  // SHU LEVEL (守) - Learn the basics
-  // ═══════════════════════════════════════════
-  {
-    id: 'retro',
-    label: 'Retro',
-    description: 'Are we improving? Do actions lead to change?',
-    level: 'shu'
-  },
-  {
-    id: 'planning',
-    label: 'Planning',
-    description: 'Is commitment realistic? Is the Sprint Goal clear?',
-    level: 'shu'
-  },
-  {
-    id: 'scrum',
-    label: 'Scrum',
-    description: 'Are events useful? Is the framework helping?',
-    level: 'shu'
-  },
-
-  // ═══════════════════════════════════════════
-  // HA LEVEL (破) - Adapt intentionally
-  // ═══════════════════════════════════════════
-  {
-    id: 'flow',
-    label: 'Flow',
-    description: 'Is work moving? Are we finishing what we start?',
-    level: 'ha'
-  },
-  {
-    id: 'collaboration',
-    label: 'Collaboration',
-    description: 'Are we working together? Is knowledge shared?',
-    level: 'ha'
-  },
-  {
-    id: 'refinement',
-    label: 'Refinement',
-    description: 'Are stories ready? Is the backlog actionable?',
-    level: 'ha'
-  },
-
-  // ═══════════════════════════════════════════
-  // RI LEVEL (離) - Mastery & own approach
-  // ═══════════════════════════════════════════
-  {
-    id: 'ownership',
-    label: 'Ownership',
-    description: 'Does the team own it? Can we act without asking?',
-    level: 'ri'
-  },
-  {
-    id: 'technical_excellence',
-    label: 'Technical Excellence',
-    description: 'Is the code getting better? Are we building quality in?',
-    level: 'ri'
-  },
-  {
-    id: 'demo',
-    label: 'Demo',
-    description: 'Are stakeholders engaged? Is feedback valuable?',
-    level: 'ri'
-  }
+  { id: 'retro', label: 'Retro', description: 'Are we improving? Do actions lead to change?' },
+  { id: 'planning', label: 'Planning', description: 'Is commitment realistic? Is the Sprint Goal clear?' },
+  { id: 'scrum', label: 'Scrum', description: 'Are events useful? Is the framework helping?' },
+  { id: 'flow', label: 'Flow', description: 'Is work moving? Are we finishing what we start?' },
+  { id: 'collaboration', label: 'Collaboration', description: 'Are we working together? Is knowledge shared?' },
+  { id: 'refinement', label: 'Refinement', description: 'Are stories ready? Is the backlog actionable?' },
+  { id: 'ownership', label: 'Ownership', description: 'Does the team own it? Can we act without asking?' },
+  { id: 'technical_excellence', label: 'Technical Excellence', description: 'Is the code getting better? Are we building quality in?' },
+  { id: 'demo', label: 'Demo', description: 'Are stakeholders engaged? Is feedback valuable?' },
 ]
 
-// Get angles available for a specific level (includes all unlocked levels)
-export function getAnglesForLevel(level: CeremonyLevel): AngleInfo[] {
-  const levelOrder: CeremonyLevel[] = ['shu', 'ha', 'ri']
-  const currentLevelIndex = levelOrder.indexOf(level)
-
-  return ANGLES.filter(angle => {
-    const angleLevelIndex = levelOrder.indexOf(angle.level)
-    return angleLevelIndex <= currentLevelIndex
-  })
+// Get all angles (all angles are available at all levels now)
+export function getAnglesForLevel(_level: CeremonyLevel): AngleInfo[] {
+  // All angles are available at all levels - the statements vary by level, not the angles
+  return ANGLES
 }
 
-// Get angles grouped by level for display
+// Get all angles (kept for backwards compatibility)
 export function getAnglesGroupedByLevel(): Record<CeremonyLevel, AngleInfo[]> {
+  // All angles available at all levels now
   return {
-    shu: ANGLES.filter(a => a.level === 'shu'),
-    ha: ANGLES.filter(a => a.level === 'ha'),
-    ri: ANGLES.filter(a => a.level === 'ri'),
+    shu: ANGLES,
+    ha: ANGLES,
+    ri: ANGLES,
   }
 }
 
-// Check if an angle is unlocked for a given level
-export function isAngleUnlocked(angle: CeremonyAngle, teamLevel: CeremonyLevel): boolean {
-  const angleInfo = ANGLES.find(a => a.id === angle)
-  if (!angleInfo) return false
-
-  const levelOrder: CeremonyLevel[] = ['shu', 'ha', 'ri']
-  const teamLevelIndex = levelOrder.indexOf(teamLevel)
-  const angleLevelIndex = levelOrder.indexOf(angleInfo.level)
-
-  return angleLevelIndex <= teamLevelIndex
+// Check if an angle is unlocked - always true now (all angles available at all levels)
+export function isAngleUnlocked(_angle: CeremonyAngle, _teamLevel: CeremonyLevel): boolean {
+  return true // All angles are available - the level determines question depth, not angle availability
 }
 
 // Helper to get angle info
@@ -212,8 +147,7 @@ export function getAngleInfo(angle: CeremonyAngle): AngleInfo {
 // SHU-HA-RI LEVELS
 // ============================================
 
-// Ceremony progression levels (守破離)
-export type CeremonyLevel = 'shu' | 'ha' | 'ri'
+// (CeremonyLevel type is defined at the top of the file)
 
 // Risk states (advisory only, no regression)
 export type CeremonyRiskState = 'none' | 'slipping' | 'low_participation' | 'stale'

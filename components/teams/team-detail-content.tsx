@@ -8,13 +8,11 @@ import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
 import { GettingStartedChecklist } from '@/components/teams/getting-started-checklist'
 import { OverallSignal } from '@/components/teams/overall-signal'
-import { SessionCompare } from '@/components/ceremonies/session-compare'
 import { CoachQuestions } from '@/components/teams/coach-questions'
 import { FeedbackTool } from '@/components/teams/feedback-tool'
 import { VibeMetrics } from '@/components/admin/vibe-metrics'
 import type { TeamMetrics, VibeInsight } from '@/domain/metrics/types'
 import type { CeremonySessionWithStats, CeremonyLevel } from '@/domain/ceremonies/types'
-import { CEREMONY_LEVELS, getAnglesGroupedByLevel } from '@/domain/ceremonies/types'
 
 interface TeamDetailContentProps {
   team: UnifiedTeam
@@ -57,8 +55,8 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab)
   const [loading, setLoading] = useState<string | null>(null)
-  const [showCompare, setShowCompare] = useState(false)
   const [showVibeAdvanced, setShowVibeAdvanced] = useState(false)
+  const [sessionsLevelTab, setSessionsLevelTab] = useState<CeremonyLevel>('shu')
   const [shareUrl, setShareUrl] = useState<string | null>(null)
   const [shareLoading, setShareLoading] = useState(false)
 
@@ -270,6 +268,47 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
             </p>
           </div>
         </div>
+
+        {/* Shu-Ha-Ri explanation - only on ceremonies tab */}
+        {activeTab === 'ceremonies' && team.ceremonies && (
+          <div className="mt-5 pt-5 border-t border-stone-100 dark:border-stone-700">
+            <h4 className="text-sm font-semibold text-stone-700 dark:text-stone-300 mb-3">{t('shuHaRiTitle')}</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Shu */}
+              <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg font-bold text-amber-600 dark:text-amber-400">守</span>
+                  <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">Shu</span>
+                </div>
+                <p className="text-xs text-amber-600 dark:text-amber-400">{t('shuDescription')}</p>
+              </div>
+              {/* Ha */}
+              <div className="p-3 rounded-lg bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg font-bold text-cyan-600 dark:text-cyan-400">破</span>
+                  <span className="text-sm font-semibold text-cyan-700 dark:text-cyan-300">Ha</span>
+                  {(team.ceremonies?.level || 'shu') === 'shu' && <span className="text-xs">🔒</span>}
+                </div>
+                <p className="text-xs text-cyan-600 dark:text-cyan-400">{t('haDescription')}</p>
+                {(team.ceremonies?.level || 'shu') === 'shu' && (
+                  <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-1.5 leading-tight"><strong>To unlock:</strong> {t('unlockHaCriteria')}</p>
+                )}
+              </div>
+              {/* Ri */}
+              <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg font-bold text-purple-600 dark:text-purple-400">離</span>
+                  <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">Ri</span>
+                  {(team.ceremonies?.level || 'shu') !== 'ri' && <span className="text-xs">🔒</span>}
+                </div>
+                <p className="text-xs text-purple-600 dark:text-purple-400">{t('riDescription')}</p>
+                {(team.ceremonies?.level || 'shu') === 'ha' && (
+                  <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-1.5 leading-tight"><strong>To unlock:</strong> {t('unlockRiCriteria')}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════
@@ -449,159 +488,113 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
         <div className="space-y-6">
           {team.ceremonies ? (
             <>
-              {/* Simple Start Session Section */}
+              {/* Stats */}
+              <div className="flex items-center gap-4 text-sm text-stone-500 dark:text-stone-400">
+                <span><strong>{team.ceremonies.total_sessions}</strong> sessions</span>
+                <span><strong>{team.ceremonies.active_sessions}</strong> active</span>
+                {team.ceremonies.average_score && (
+                  <span>Avg: <strong>{team.ceremonies.average_score.toFixed(1)}</strong></span>
+                )}
+              </div>
+
+              {/* Sessions with Level Tabs */}
               {(() => {
-                const teamLevel = (team.ceremonies?.level as CeremonyLevel) || 'shu'
-                const anglesGrouped = getAnglesGroupedByLevel()
-                const currentLevelInfo = CEREMONY_LEVELS.find(l => l.id === teamLevel)!
-                const nextLevel = teamLevel === 'shu' ? 'ha' : teamLevel === 'ha' ? 'ri' : null
-                const nextLevelInfo = nextLevel ? CEREMONY_LEVELS.find(l => l.id === nextLevel) : null
+                const currentTeamLevel = (team.ceremonies?.level as CeremonyLevel) || 'shu'
+                const levelOrder: CeremonyLevel[] = ['shu', 'ha', 'ri']
+                const currentLevelIndex = levelOrder.indexOf(currentTeamLevel)
 
-                const levelColors = {
-                  shu: { accent: 'bg-amber-500 hover:bg-amber-600', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800' },
-                  ha: { accent: 'bg-cyan-500 hover:bg-cyan-600', text: 'text-cyan-600 dark:text-cyan-400', bg: 'bg-cyan-50 dark:bg-cyan-900/20', border: 'border-cyan-200 dark:border-cyan-800' },
-                  ri: { accent: 'bg-purple-500 hover:bg-purple-600', text: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800' },
-                }
+                // Filter sessions by their stored level (defaults to 'shu' for old sessions)
+                const filteredSessions = ceremoniesSessions.filter(s => (s.level || 'shu') === sessionsLevelTab)
 
-                const getAngleLabel = (angleId: string) => {
-                  const labelMap: Record<string, string> = {
-                    scrum: t('angleScrum'), flow: t('angleFlow'), ownership: t('angleOwnership'),
-                    collaboration: t('angleCollaboration'), technical_excellence: t('angleTechnicalExcellence'),
-                    refinement: t('angleRefinement'), planning: t('anglePlanning'), retro: t('angleRetro'), demo: t('angleDemo'),
-                  }
-                  return labelMap[angleId] || angleId
-                }
-
-                const unlockRequirements = {
-                  ha: 'Run 3 sessions in 30 days with a team score of 3.2+ and 60%+ participation',
-                  ri: 'Complete 6 sessions across 3 different types, with scores above 3.5 and 70%+ participation',
-                }
+                const levelTabs: { id: CeremonyLevel; kanji: string; label: string; locked: boolean; color: string }[] = [
+                  { id: 'shu', kanji: '守', label: 'Shu', locked: false, color: 'amber' },
+                  { id: 'ha', kanji: '破', label: 'Ha', locked: currentLevelIndex < 1, color: 'cyan' },
+                  { id: 'ri', kanji: '離', label: 'Ri', locked: currentLevelIndex < 2, color: 'purple' },
+                ]
 
                 return (
-                  <div className="space-y-4">
-                    {/* Current Level - Start Session */}
-                    <div className={`rounded-xl border-2 ${levelColors[teamLevel].border} ${levelColors[teamLevel].bg} p-5`}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className={`text-3xl font-bold ${levelColors[teamLevel].text}`}>{currentLevelInfo.kanji}</span>
-                        <div>
-                          <div className={`font-bold text-lg ${levelColors[teamLevel].text}`}>{currentLevelInfo.label}</div>
-                          <div className="text-sm text-stone-500 dark:text-stone-400">{currentLevelInfo.subtitle}</div>
-                        </div>
-                      </div>
+                  <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
+                    {/* Level Tabs */}
+                    <div className="flex border-b border-stone-200 dark:border-stone-700">
+                      {levelTabs.map(tab => {
+                        const isActive = sessionsLevelTab === tab.id
+                        const colorClasses = {
+                          amber: isActive ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20' : '',
+                          cyan: isActive ? 'border-cyan-500 text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/20' : '',
+                          purple: isActive ? 'border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' : '',
+                        }
+                        return (
+                          <button
+                            key={tab.id}
+                            onClick={() => !tab.locked && setSessionsLevelTab(tab.id)}
+                            disabled={tab.locked}
+                            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                              isActive
+                                ? colorClasses[tab.color as keyof typeof colorClasses]
+                                : tab.locked
+                                  ? 'border-transparent text-stone-300 dark:text-stone-600 cursor-not-allowed'
+                                  : 'border-transparent text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'
+                            }`}
+                          >
+                            <span className="font-bold">{tab.kanji}</span>
+                            <span>{tab.label}</span>
+                            {tab.locked && <span className="text-xs">🔒</span>}
+                          </button>
+                        )
+                      })}
+                    </div>
 
-                      <div className="text-sm font-medium text-stone-700 dark:text-stone-300 mb-3">{t('startNewSession')}</div>
-                      <div className="flex flex-wrap gap-2">
-                        {anglesGrouped[teamLevel].map(angle => (
-                          <Link key={angle.id} href={`/teams/${team.id}/ceremonies/new?angle=${angle.id}`}>
-                            <button className={`px-4 py-2.5 rounded-lg text-white font-medium transition-colors ${levelColors[teamLevel].accent}`}>
-                              {getAngleLabel(angle.id)}
-                            </button>
+                    {/* Sessions for selected level */}
+                    {filteredSessions.length > 0 ? (
+                      <div className="divide-y divide-stone-100 dark:divide-stone-700">
+                        {filteredSessions.map(session => (
+                          <Link
+                            key={session.id}
+                            href={`/ceremonies/session/${session.id}`}
+                            className="flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold ${
+                                session.status === 'active' ? 'bg-cyan-500' : 'bg-stone-400 dark:bg-stone-500'
+                              }`}>
+                                {(ANGLE_LABELS[session.angle] || session.angle).charAt(0)}
+                              </div>
+                              <div>
+                                <div className="font-medium text-stone-900 dark:text-stone-100">
+                                  {ANGLE_LABELS[session.angle] || session.angle}
+                                </div>
+                                <div className="text-sm text-stone-500 dark:text-stone-400">
+                                  {session.response_count} {t('responses')} · {session.status === 'active' ? t('active') : t('sessionsCompleted')}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {session.overall_score && (
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                                  session.overall_score >= 4 ? 'bg-green-500' :
+                                  session.overall_score >= 3 ? 'bg-cyan-500' :
+                                  session.overall_score >= 2 ? 'bg-amber-500' :
+                                  'bg-red-500'
+                                }`}>
+                                  {session.overall_score.toFixed(1)}
+                                </div>
+                              )}
+                              <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
                           </Link>
                         ))}
                       </div>
-                    </div>
-
-                    {/* Next Level Preview */}
-                    {nextLevel && nextLevelInfo && (
-                      <div className="rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xl font-bold text-stone-400 dark:text-stone-500">{nextLevelInfo.kanji}</span>
-                          <span className="font-medium text-stone-400 dark:text-stone-500">{nextLevelInfo.label}</span>
-                          <span className="text-stone-400 dark:text-stone-500">🔒</span>
-                        </div>
-                        <div className="text-sm text-stone-500 dark:text-stone-400 mb-3">
-                          <strong>Unlock:</strong> {unlockRequirements[nextLevel]}
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {anglesGrouped[nextLevel].map(angle => (
-                            <span key={angle.id} className="px-3 py-1.5 rounded-lg bg-stone-200 dark:bg-stone-700 text-stone-400 dark:text-stone-500 text-sm">
-                              {getAngleLabel(angle.id)}
-                            </span>
-                          ))}
-                        </div>
+                    ) : (
+                      <div className="p-8 text-center text-stone-400 dark:text-stone-500">
+                        <p className="text-sm">{t('noSessionsAtLevel')}</p>
                       </div>
                     )}
-
-                    {/* Stats & Compare */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-stone-500 dark:text-stone-400">
-                        <span><strong>{team.ceremonies.total_sessions}</strong> sessions</span>
-                        <span><strong>{team.ceremonies.active_sessions}</strong> active</span>
-                        {team.ceremonies.average_score && (
-                          <span>Avg: <strong>{team.ceremonies.average_score.toFixed(1)}</strong></span>
-                        )}
-                      </div>
-                      {(team.ceremonies?.closed_sessions || 0) >= 2 && (
-                        <Button variant="secondary" size="sm" onClick={() => setShowCompare(true)}>
-                          {t('ceremoniesCompare')}
-                        </Button>
-                      )}
-                    </div>
                   </div>
                 )
               })()}
 
-              {/* Sessions list */}
-              {ceremoniesSessions.length > 0 && (
-                <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-700">
-                    <h3 className="font-semibold text-stone-900 dark:text-stone-100">{t('sessions')}</h3>
-                  </div>
-                  <div className="divide-y divide-stone-100 dark:divide-stone-700">
-                    {ceremoniesSessions.map(session => (
-                      <Link
-                        key={session.id}
-                        href={`/ceremonies/session/${session.id}`}
-                        className="flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold ${
-                            session.status === 'active' ? 'bg-cyan-500' : 'bg-stone-400 dark:bg-stone-500'
-                          }`}>
-                            {(ANGLE_LABELS[session.angle] || session.angle).charAt(0)}
-                          </div>
-                          <div>
-                            <div className="font-medium text-stone-900 dark:text-stone-100">
-                              {ANGLE_LABELS[session.angle] || session.angle}
-                            </div>
-                            <div className="text-sm text-stone-500 dark:text-stone-400">
-                              {session.response_count} {t('responses')} · {session.status === 'active' ? t('active') : t('sessionsCompleted')}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {session.overall_score && (
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${
-                              session.overall_score >= 4 ? 'bg-green-500' :
-                              session.overall_score >= 3 ? 'bg-cyan-500' :
-                              session.overall_score >= 2 ? 'bg-amber-500' :
-                              'bg-red-500'
-                            }`}>
-                              {session.overall_score.toFixed(1)}
-                            </div>
-                          )}
-                          <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Disable tool option */}
-              <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => handleDisableTool('ceremonies')}
-                  loading={loading === 'disable-ceremonies'}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  {t('teamsToolDisable')}
-                </Button>
-              </div>
             </>
           ) : (
             <div className="text-center py-12 bg-stone-50 dark:bg-stone-800 rounded-xl">
@@ -864,13 +857,6 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
         </div>
       )}
 
-      {/* Session Compare Modal */}
-      {showCompare && (
-        <SessionCompare
-          teamId={team.id}
-          onClose={() => setShowCompare(false)}
-        />
-      )}
     </div>
   )
 }
