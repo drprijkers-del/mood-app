@@ -192,16 +192,55 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
           ZONE 2: SECTION CONTEXT
           Elaborate explanation of what this area does
           ═══════════════════════════════════════════════════════════════════ */}
-      <div className="bg-stone-50 dark:bg-stone-800/50 rounded-xl p-4 sm:p-5">
-        <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-          {activeTab === 'vibe' && t('vibeExplanation')}
-          {activeTab === 'ceremonies' && t('ceremoniesExplanation')}
-          {activeTab === 'feedback' && t('feedbackExplanation')}
-          {activeTab === 'coach' && t('coachExplanation')}
-          {activeTab === 'settings' && t('settingsExplanation')}
-          {activeTab === 'modules' && t('modulesExplanation')}
-          {!activeTab && t('teamDetailContext')}
-        </p>
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-5">
+        <div className="flex items-start gap-3">
+          {/* Icon per tab */}
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+            activeTab === 'vibe' ? 'bg-pink-100 dark:bg-pink-900/30' :
+            activeTab === 'ceremonies' ? 'bg-cyan-100 dark:bg-cyan-900/30' :
+            activeTab === 'feedback' ? 'bg-purple-100 dark:bg-purple-900/30' :
+            activeTab === 'coach' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
+            'bg-stone-100 dark:bg-stone-700'
+          }`}>
+            {activeTab === 'vibe' && <span className="text-pink-500 text-lg">♥</span>}
+            {activeTab === 'ceremonies' && <span className="text-cyan-500 font-bold text-lg">Δ</span>}
+            {activeTab === 'feedback' && (
+              <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            )}
+            {activeTab === 'coach' && (
+              <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            )}
+            {(activeTab === 'settings' || activeTab === 'modules' || !activeTab) && (
+              <svg className="w-5 h-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-stone-900 dark:text-stone-100 mb-1">
+              {activeTab === 'vibe' && t('vibeTitle')}
+              {activeTab === 'ceremonies' && t('ceremoniesTitle')}
+              {activeTab === 'feedback' && t('feedbackTitle')}
+              {activeTab === 'coach' && t('coachQuestionsTitle')}
+              {activeTab === 'settings' && t('teamSettings')}
+              {activeTab === 'modules' && 'Premium Modules'}
+              {!activeTab && t('teamDetailContext')}
+            </h3>
+            <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              {activeTab === 'vibe' && t('vibeExplanation')}
+              {activeTab === 'ceremonies' && t('ceremoniesExplanation')}
+              {activeTab === 'feedback' && t('feedbackExplanation')}
+              {activeTab === 'coach' && t('coachExplanation')}
+              {activeTab === 'settings' && t('settingsExplanation')}
+              {activeTab === 'modules' && t('modulesExplanation')}
+              {!activeTab && t('teamDetailContext')}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════

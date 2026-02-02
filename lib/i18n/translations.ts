@@ -359,7 +359,9 @@ export const translations = {
     backlogTab: 'Backlog',
 
     // Section explanations (customer journey)
+    vibeTitle: 'Wat is Vibe?',
     vibeExplanation: 'Vibe geeft je dagelijkse signalen over het welzijn van je team. Teamleden geven anoniem hun stemming aan, zodat je trends kunt zien en tijdig kunt bijsturen als dat nodig is.',
+    ceremoniesTitle: 'Wat zijn Ceremonies?',
     vibeNotEnoughData: 'Nog niet genoeg data',
     vibeShareLinkSuggestion: 'Deel de link met je team om signalen te verzamelen.',
     vibeGreat: 'Het team zit lekker in z\'n vel!',
@@ -899,7 +901,9 @@ export const translations = {
     backlogTab: 'Backlog',
 
     // Section explanations (customer journey)
+    vibeTitle: 'What is Vibe?',
     vibeExplanation: 'Vibe provides daily signals about your team\'s wellbeing. Team members anonymously share their mood, allowing you to spot trends and intervene early when needed.',
+    ceremoniesTitle: 'What are Ceremonies?',
     vibeNotEnoughData: 'Not enough data yet',
     vibeShareLinkSuggestion: 'Share the link with your team to collect signals.',
     vibeGreat: 'Your team is thriving!',

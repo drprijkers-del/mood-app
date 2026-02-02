@@ -10,7 +10,7 @@ const EMAIL_ALIASES: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const { email, password } = await request.json() as { email?: string; password?: string }
 
     if (!email || !password) {
       return NextResponse.json(
