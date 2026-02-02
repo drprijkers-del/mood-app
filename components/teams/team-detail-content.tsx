@@ -520,8 +520,7 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
       {/* Section content (navigation is in the global header) */}
       {activeTab === 'vibe' && (
         <div className="space-y-6">
-          {team.vibe ? (
-            <>
+          <>
               {/* Share Link Section - right under intro */}
               <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
                 <div className="p-4">
@@ -679,35 +678,18 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                 <VibeMetrics metrics={vibeMetrics} insights={vibeInsights || []} />
               )}
             </>
-          ) : (
-            <div className="text-center py-12 bg-stone-50 dark:bg-stone-800 rounded-xl">
-              <div className="text-stone-400 dark:text-stone-500 mb-4">
-                <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('teamsVibeNotEnabled')}</h3>
-              <Button
-                onClick={() => handleEnableTool('vibe')}
-                loading={loading === 'enable-vibe'}
-              >
-                {t('teamsEnableVibe')}
-              </Button>
-            </div>
-          )}
         </div>
       )}
 
       {activeTab === 'ceremonies' && (
         <div className="space-y-6">
-          {team.ceremonies ? (
-            <>
+          <>
               {/* Stats + New Session Button */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 text-sm text-stone-500 dark:text-stone-400">
-                  <span><strong>{team.ceremonies.total_sessions}</strong> sessions</span>
-                  <span><strong>{team.ceremonies.active_sessions}</strong> active</span>
-                  {team.ceremonies.average_score && (
+                  <span><strong>{team.ceremonies?.total_sessions || 0}</strong> sessions</span>
+                  <span><strong>{team.ceremonies?.active_sessions || 0}</strong> active</span>
+                  {team.ceremonies?.average_score && (
                     <span>Avg: <strong>{team.ceremonies.average_score.toFixed(1)}</strong></span>
                   )}
                 </div>
@@ -821,18 +803,6 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
               })()}
 
             </>
-          ) : (
-            <div className="text-center py-12 bg-stone-50 dark:bg-stone-800 rounded-xl">
-              <div className="text-cyan-400 mb-4 text-4xl font-bold">Δ</div>
-              <h3 className="font-semibold text-stone-700 dark:text-stone-300 mb-2">{t('teamsCeremoniesNotEnabled')}</h3>
-              <Button
-                onClick={() => handleEnableTool('ceremonies')}
-                loading={loading === 'enable-ceremonies'}
-              >
-                {t('teamsEnableCeremonies')}
-              </Button>
-            </div>
-          )}
         </div>
       )}
 
