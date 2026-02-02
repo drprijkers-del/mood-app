@@ -684,6 +684,24 @@ export const translations = {
     exportData: 'Exporteer data',
     exportCSV: 'Download CSV',
     exportNoData: 'Geen data om te exporteren',
+
+    // Contact page
+    contactTitle: 'Contact',
+    contactSubtitle: 'Neem contact op met ons coaching team',
+    contactNameLabel: 'Je naam',
+    contactNamePlaceholder: 'Voornaam Achternaam',
+    contactEmailLabel: 'Je email',
+    contactEmailPlaceholder: 'jouw@email.nl',
+    contactTeamLabel: 'Team of organisatie (optioneel)',
+    contactTeamPlaceholder: 'Bedrijf of team naam',
+    contactMessageLabel: 'Je bericht',
+    contactMessagePlaceholder: 'Waar kunnen we je mee helpen?',
+    contactSend: 'Verstuur bericht',
+    contactSending: 'Versturen...',
+    contactSuccess: 'Bericht verzonden',
+    contactSuccessMessage: 'Bedankt voor je bericht. We nemen zo snel mogelijk contact met je op.',
+    contactError: 'Er ging iets mis bij het verzenden. Probeer het opnieuw.',
+    contactBackToTeams: 'Terug naar teams',
   },
 
   en: {
@@ -1371,6 +1389,24 @@ export const translations = {
     exportData: 'Export data',
     exportCSV: 'Download CSV',
     exportNoData: 'No data to export',
+
+    // Contact page
+    contactTitle: 'Contact',
+    contactSubtitle: 'Get in touch with our coaching team',
+    contactNameLabel: 'Your name',
+    contactNamePlaceholder: 'First Last',
+    contactEmailLabel: 'Your email',
+    contactEmailPlaceholder: 'your@email.com',
+    contactTeamLabel: 'Team or organization (optional)',
+    contactTeamPlaceholder: 'Company or team name',
+    contactMessageLabel: 'Your message',
+    contactMessagePlaceholder: 'How can we help you?',
+    contactSend: 'Send message',
+    contactSending: 'Sending...',
+    contactSuccess: 'Message sent',
+    contactSuccessMessage: 'Thank you for your message. We will get back to you as soon as possible.',
+    contactError: 'Something went wrong. Please try again.',
+    contactBackToTeams: 'Back to teams',
   },
 } as const
 

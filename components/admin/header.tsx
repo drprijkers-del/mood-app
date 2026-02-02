@@ -106,6 +106,12 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
     { key: 'settings', label: t('teamsDetailSettings') },
   ]
 
+  // Items for the "More" dropdown that are not team modes
+  const moreMenuExtras = [
+    { href: '/backlog', label: t('backlogTab') },
+    { href: '/contact', label: t('needCoach') },
+  ]
+
   // All modes for mobile menu
   const navModes = [...primaryModes, ...secondaryModes]
 
@@ -232,6 +238,20 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
                           {label}
                         </button>
                       ))}
+                      {moreMenuExtras.length > 0 && (
+                        <div className="border-t border-stone-200 dark:border-stone-700 mt-1 pt-1">
+                          {moreMenuExtras.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setShowMoreMenu(false)}
+                              className="block w-full text-left px-3 py-2 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
+                            >
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -282,20 +302,6 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
 
             {/* Desktop: Right Side Actions */}
             <div className="hidden md:flex items-center gap-1">
-
-              {/* Backlog link (icon only) - only show when on team page */}
-              {isOnTeamPage && (
-                <Link
-                  href="/backlog"
-                  className="p-2 rounded-lg text-stone-500 hover:text-stone-900 hover:bg-stone-100 dark:text-stone-400 dark:hover:text-stone-100 dark:hover:bg-stone-800 transition-colors"
-                  title={t('backlogTab')}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </Link>
-              )}
-
               {/* Settings Dropdown */}
               <div className="relative">
                 <button
@@ -591,13 +597,13 @@ function AdminHeaderInner({ currentTeam, allTeams = [] }: AdminHeaderProps) {
 
             {/* Contact & Logout */}
             <div className="p-2 border-t border-stone-200 dark:border-stone-700">
-              <a
-                href="mailto:info@pinkpollos.com?subject=Pulse%20-%20Coaching%20Request"
+              <Link
+                href="/contact"
                 className="flex items-center gap-3 w-full px-3 py-3 rounded-lg text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 active:bg-cyan-100 dark:active:bg-cyan-900/40 transition-colors touch-manipulation"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('needCoach')}
-              </a>
+              </Link>
               <button
                 type="button"
                 onClick={(e) => {

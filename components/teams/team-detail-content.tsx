@@ -392,68 +392,89 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
             <>
               {/* Share Link Section - right under intro */}
               <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
-                <div className="flex items-center gap-3 p-4">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center shrink-0">
-                    <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    {shareUrl ? (
-                      <>
-                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareReady')}</div>
-                        <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{shareUrl}</div>
-                      </>
-                    ) : shareLoading ? (
-                      <>
-                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareLoading')}</div>
-                        <div className="text-xs text-stone-500 dark:text-stone-400">{t('shareLoadingDetail')}</div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareNotCreated')}</div>
-                        <div className="text-xs text-stone-500 dark:text-stone-400">{t('shareNotCreatedDetail')}</div>
-                      </>
+                <div className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {shareUrl ? (
+                        <>
+                          <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareReady')}</div>
+                          <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{shareUrl}</div>
+                        </>
+                      ) : shareLoading ? (
+                        <>
+                          <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareLoading')}</div>
+                          <div className="text-xs text-stone-500 dark:text-stone-400">{t('shareLoadingDetail')}</div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareNotCreated')}</div>
+                          <div className="text-xs text-stone-500 dark:text-stone-400">{t('shareNotCreatedDetail')}</div>
+                        </>
+                      )}
+                    </div>
+                    {/* Desktop: Show create button inline */}
+                    {!shareUrl && !shareLoading && (
+                      <div className="hidden sm:block">
+                        <Button
+                          onClick={handleGetShareLink}
+                          loading={shareLoading}
+                          size="sm"
+                        >
+                          {t('shareCreate')}
+                        </Button>
+                      </div>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    {shareUrl ? (
-                      <>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => {
-                            navigator.clipboard.writeText(shareUrl)
-                          }}
-                        >
-                          {t('shareCopy')}
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => window.open(shareUrl, '_blank')}
-                        >
-                          {t('shareOpen')}
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => setShowVibeAdvanced(!showVibeAdvanced)}
-                          className={showVibeAdvanced ? 'bg-stone-100 dark:bg-stone-700' : ''}
-                        >
-                          {t('shareAdvanced')}
-                        </Button>
-                      </>
-                    ) : (
+
+                  {/* Mobile: Full-width create button */}
+                  {!shareUrl && !shareLoading && (
+                    <div className="sm:hidden mt-3">
                       <Button
                         onClick={handleGetShareLink}
                         loading={shareLoading}
-                        size="sm"
+                        className="w-full"
                       >
                         {t('shareCreate')}
                       </Button>
-                    )}
-                  </div>
+                    </div>
+                  )}
+
+                  {/* Action buttons when link exists - responsive grid */}
+                  {shareUrl && (
+                    <div className="grid grid-cols-3 gap-2 mt-3">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                          navigator.clipboard.writeText(shareUrl)
+                        }}
+                        className="w-full"
+                      >
+                        {t('shareCopy')}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => window.open(shareUrl, '_blank')}
+                        className="w-full"
+                      >
+                        {t('shareOpen')}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setShowVibeAdvanced(!showVibeAdvanced)}
+                        className={`w-full ${showVibeAdvanced ? 'bg-stone-100 dark:bg-stone-700' : ''}`}
+                      >
+                        {t('shareAdvanced')}
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Advanced panel */}

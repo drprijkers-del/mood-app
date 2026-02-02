@@ -83,11 +83,11 @@ export function ShareLinkSection({ teamId, teamSlug }: ShareLinkSectionProps) {
                 </div>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex gap-2">
+              {/* Action buttons - responsive grid */}
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={handleCopy}
-                  className="flex-1"
+                  className="w-full"
                 >
                   {copied ? (
                     <>
@@ -108,6 +108,7 @@ export function ShareLinkSection({ teamId, teamSlug }: ShareLinkSectionProps) {
                 <Button
                   variant="secondary"
                   onClick={() => window.open(shareUrl, '_blank')}
+                  className="w-full"
                 >
                   <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
