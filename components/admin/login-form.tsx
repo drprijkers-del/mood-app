@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/lib/i18n/context'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,6 @@ const PASSWORD_ONLY_MODE = true
 
 export function LoginForm() {
   const t = useTranslation()
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -77,10 +76,8 @@ export function LoginForm() {
         return
       }
 
-      // Small delay to ensure cookie is set before navigation
-      await new Promise(resolve => setTimeout(resolve, 100))
-      router.push(data.redirect || '/teams')
-      router.refresh()
+      // Hard redirect to ensure cookie is sent with request
+      window.location.href = data.redirect || '/teams'
     } catch {
       setError('An error occurred')
     } finally {
