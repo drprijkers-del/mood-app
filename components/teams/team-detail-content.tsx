@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { UnifiedTeam, enableTool, disableTool, deleteTeam, exportPulseData } from '@/domain/teams/actions'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
-import { ShareLinkSection } from '@/components/admin/share-link-section'
 import { GettingStartedChecklist } from '@/components/teams/getting-started-checklist'
 import { OverallSignal } from '@/components/teams/overall-signal'
 import { SessionCompare } from '@/components/ceremonies/session-compare'
@@ -59,6 +58,7 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab)
   const [loading, setLoading] = useState<string | null>(null)
   const [showCompare, setShowCompare] = useState(false)
+  const [showVibeAdvanced, setShowVibeAdvanced] = useState(false)
 
   // Update tab when URL changes (e.g., browser back/forward)
   useEffect(() => {
@@ -281,9 +281,9 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                 </div>
               )}
 
-              {/* Simple Share Link Section */}
-              <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-4">
-                <div className="flex items-center gap-3">
+              {/* Share Link Section */}
+              <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
+                <div className="flex items-center gap-3 p-4">
                   <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center shrink-0">
                     <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -311,31 +311,57 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
                     >
                       {t('shareOpen')}
                     </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setShowVibeAdvanced(!showVibeAdvanced)}
+                      className={showVibeAdvanced ? 'bg-stone-100 dark:bg-stone-700' : ''}
+                    >
+                      {t('shareAdvanced')}
+                    </Button>
                   </div>
                 </div>
-              </div>
 
-              {/* Advanced section */}
-              <details className="group">
-                <summary className="flex items-center gap-2 text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 cursor-pointer list-none">
-                  <svg className="w-3 h-3 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                  {t('shareAdvanced')}
-                </summary>
-                <div className="mt-4 space-y-4 pl-5">
-                  <ShareLinkSection teamId={team.id} teamSlug={team.slug} />
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleDisableTool('vibe')}
-                    loading={loading === 'disable-vibe'}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    {t('teamsToolDisable')}
-                  </Button>
-                </div>
-              </details>
+                {/* Advanced panel */}
+                {showVibeAdvanced && (
+                  <div className="border-t border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 p-4 space-y-4">
+                    {/* Reset Link */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('shareResetTitle')}</div>
+                        <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('shareResetInfo')}</p>
+                      </div>
+                    </div>
+
+                    {/* Disable Vibe */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('vibeDisableTitle')}</div>
+                        <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('vibeDisableInfo')}</p>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleDisableTool('vibe')}
+                          loading={loading === 'disable-vibe'}
+                          className="text-red-600 hover:text-red-700 mt-2"
+                        >
+                          {t('teamsToolDisable')}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <div className="text-center py-12 bg-stone-50 dark:bg-stone-800 rounded-xl">
