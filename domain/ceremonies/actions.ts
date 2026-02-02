@@ -925,7 +925,7 @@ export async function getSessionShareLink(sessionId: string): Promise<string | n
 
   if (!session) return null
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim()
   return `${baseUrl}/d/${session.session_code}`
 }
 

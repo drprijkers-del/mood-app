@@ -838,7 +838,7 @@ export async function getShareLink(teamId: string): Promise<{ url: string; token
     .from('invite_links')
     .insert({ team_id: teamId, token_hash: tokenHash })
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim()
 
   return {
     url: `${baseUrl}/vibe/t/${team.slug}?k=${token}`,

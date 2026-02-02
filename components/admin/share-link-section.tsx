@@ -37,8 +37,8 @@ export function ShareLinkSection({ teamId, teamSlug }: ShareLinkSectionProps) {
     const result = await regenerateInviteLink(teamId)
 
     if (result.success && result.token) {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
-      setShareUrl(`${baseUrl}/t/${teamSlug}?k=${result.token}`)
+      const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin).trim()
+      setShareUrl(`${baseUrl}/vibe/t/${teamSlug}?k=${result.token}`)
       setResetSuccess(true)
       setTimeout(() => setResetSuccess(false), 3000)
     }
