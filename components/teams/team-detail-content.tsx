@@ -992,6 +992,35 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], ceremo
               <h4 className="font-medium text-stone-700 dark:text-stone-300 text-sm mb-1">{t('modulePortfolio')}</h4>
               <p className="text-xs text-stone-500 dark:text-stone-400">{t('modulePortfolioDesc')}</p>
             </div>
+
+            {/* Transition Support Module */}
+            <div className="bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700 p-5 relative overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <span className="px-2 py-0.5 text-xs text-stone-400 dark:text-stone-500">{t('moduleComingSoon')}</span>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-stone-200 dark:bg-stone-700 flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-stone-400 dark:text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h4 className="font-medium text-stone-700 dark:text-stone-300 text-sm mb-1">{t('moduleTransition')}</h4>
+              <p className="text-xs text-stone-500 dark:text-stone-400">{t('moduleTransitionDesc')}</p>
+            </div>
+          </div>
+
+          {/* Backlog feedback CTA */}
+          <div className="mt-8 p-6 bg-gradient-to-r from-amber-500/10 to-orange-500/10 dark:from-amber-500/10 dark:to-orange-500/10 rounded-2xl border border-amber-500/20">
+            <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-200 mb-2">{t('homeWhatNext')}</h3>
+            <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">{t('homeWhatNextDesc')}</p>
+            <a
+              href="/backlog"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 rounded-lg text-sm font-medium transition-colors"
+            >
+              {t('homeLetUsKnow')}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
           </div>
 
           {/* Subtle optionality note */}

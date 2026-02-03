@@ -20,6 +20,9 @@ export const translations = {
     labFooter: 'Tools for builders',
     labLoginHint: 'Log in om je teams te beheren',
     homeGetStarted: 'Aan de slag',
+    homeWhatNext: 'Wat wil jij als eerste?',
+    homeWhatNextDesc: 'Welke tool zou jouw team het meest helpen? Laat het ons weten!',
+    homeLetUsKnow: 'Laat achter in de backlog',
     vibeDesc: 'Dagelijkse team signalen. Meet hoe je team ervoor staat.',
     ceremoniesDesc: 'Team coaching interventies. Scherpe statements, concrete experimenten.',
     openTool: 'Open tool',
@@ -689,6 +692,8 @@ export const translations = {
     moduleLeadershipDesc: 'Voor coaches die leiderschapsontwikkeling willen verkennen',
     modulePortfolio: 'Portfolio',
     modulePortfolioDesc: 'Voor organisaties die meerdere teams willen overzien',
+    moduleTransition: 'Transitie Ondersteuning',
+    moduleTransitionDesc: 'Op maat gemaakte begeleidingstool voor teams en organisaties in transitiefases. Gebaseerd op Systemisch Transitie Management.',
 
     // Onboarding checklist
     onboardingTitle: 'Aan de slag',
@@ -774,6 +779,9 @@ export const translations = {
     labFooter: 'Tools for builders',
     labLoginHint: 'Log in to manage your teams',
     homeGetStarted: 'Get Started',
+    homeWhatNext: 'What do you want first?',
+    homeWhatNextDesc: 'Which tool would help your team the most? Let us know!',
+    homeLetUsKnow: 'Leave in the backlog',
     vibeDesc: 'Daily team signals. Measure how your team is doing.',
     ceremoniesDesc: 'Team coaching interventions. Sharp statements, concrete experiments.',
     openTool: 'Open tool',
@@ -1443,6 +1451,8 @@ export const translations = {
     moduleLeadershipDesc: 'For coaches exploring leadership development',
     modulePortfolio: 'Portfolio',
     modulePortfolioDesc: 'For organizations overseeing multiple teams',
+    moduleTransition: 'Transition Support',
+    moduleTransitionDesc: 'Custom guidance tool for teams and organizations in transition phases. Based on Systemic Transition Management.',
 
     // Onboarding checklist
     onboardingTitle: 'Getting Started',
