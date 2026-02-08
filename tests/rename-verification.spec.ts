@@ -5,7 +5,7 @@ import { loginAsAdmin } from './helpers/auth'
  * These tests verify the "Ceremonies" → "Way of Work" rename is complete.
  * No user-facing page should contain the word "Ceremonies".
  */
-test.describe('Rename Verification: no "Ceremonies" in UI', () => {
+test.describe('Rename Verification: public pages', () => {
   test('homepage has no "Ceremonies"', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
@@ -22,7 +22,7 @@ test.describe('Rename Verification: no "Ceremonies" in UI', () => {
   })
 })
 
-test.describe('Rename Verification: authenticated pages', () => {
+test.describe('Rename Verification: authenticated pages @authenticated', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page)
   })
@@ -55,7 +55,6 @@ test.describe('Rename Verification: authenticated pages', () => {
       await firstTeamLink.click()
       await page.waitForURL(/\/teams\/[^/]+/)
 
-      // Click Way of Work card to go to wow tab
       await page.getByText('Way of Work').first().click()
       await page.waitForTimeout(500)
 
