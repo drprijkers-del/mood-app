@@ -2,7 +2,7 @@
 
 import { createAdminClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth/admin'
-import { mollieClient } from '@/lib/mollie/client'
+import { getMollieClient } from '@/lib/mollie/client'
 import { SequenceType } from '@mollie/api-client'
 import { revalidatePath } from 'next/cache'
 
@@ -108,7 +108,7 @@ export async function startSubscription(teamId: string): Promise<{
     // Step 1: Create or reuse Mollie customer
     let mollieCustomerId = team.mollie_customer_id as string | null
     if (!mollieCustomerId) {
-      const customer = await mollieClient.customers.create({
+      const customer = await getMollieClient().customers.create({
         name: team.name as string,
         email: adminUser.email,
         metadata: JSON.stringify({ teamId, adminUserId: adminUser.id }),
@@ -123,13 +123,14 @@ export async function startSubscription(teamId: string): Promise<{
 
     // Step 2: Create first payment with sequenceType 'first' to establish mandate
     const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, '')
-    const payment = await mollieClient.payments.create({
+    const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')
+    const payment = await getMollieClient().payments.create({
       amount: { currency: 'EUR', value: '19.00' },
       customerId: mollieCustomerId,
       sequenceType: SequenceType.first,
       description: `Pulse Labs Pro - ${team.name}`,
       redirectUrl: `${baseUrl}/teams/${teamId}?tab=billing&status=pending`,
-      webhookUrl: `${baseUrl}/api/webhooks/mollie`,
+      ...(!isLocalhost && { webhookUrl: `${baseUrl}/api/webhooks/mollie` }),
       metadata: JSON.stringify({ teamId, type: 'first_payment' }),
     })
 
@@ -188,7 +189,7 @@ export async function cancelSubscription(teamId: string): Promise<{
 
   try {
     // Cancel in Mollie
-    await mollieClient.customerSubscriptions.cancel(
+    await getMollieClient().customerSubscriptions.cancel(
       team.mollie_subscription_id as string,
       { customerId: team.mollie_customer_id as string }
     )
