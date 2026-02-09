@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { submitFeedback } from '@/domain/feedback/actions'
 import { useTranslation } from '@/lib/i18n/context'
 import { Button } from '@/components/ui/button'
@@ -24,22 +24,20 @@ export function FeedbackForm({ teamSlug, teamName, tokenHash }: FeedbackFormProp
   const t = useTranslation()
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [alreadySubmitted, setAlreadySubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [rulesAccepted, setRulesAccepted] = useState(false)
 
   // Device-based deduplication: check if this device already submitted feedback for this link
   const storageKey = `feedback_submitted_${teamSlug}_${tokenHash.slice(0, 12)}`
 
-  useEffect(() => {
+  const [alreadySubmitted, setAlreadySubmitted] = useState(() => {
+    if (typeof window === 'undefined') return false
     try {
-      if (localStorage.getItem(storageKey)) {
-        setAlreadySubmitted(true)
-      }
+      return !!localStorage.getItem(storageKey)
     } catch {
-      // localStorage unavailable — allow submission
+      return false
     }
-  }, [storageKey])
+  })
 
   const [prompts, setPrompts] = useState<PromptField[]>([
     { key: 'helps_collaboration', labelKey: 'feedbackPromptHelps', hintKey: 'feedbackPromptHelpsHint', value: '' },
