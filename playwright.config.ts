@@ -19,7 +19,7 @@ export default defineConfig({
       name: 'setup',
       testMatch: /auth\.setup\.ts/,
     },
-    // Authenticated tests (teams, wow-session, rename-verification)
+    // Authenticated tests (teams, billing, wow-session, rename-verification)
     {
       name: 'authenticated',
       use: {
@@ -27,7 +27,7 @@ export default defineConfig({
         storageState: 'tests/.auth/session.json',
       },
       dependencies: ['setup'],
-      testMatch: /\/(teams|wow-session|rename-verification)\.spec\.ts/,
+      testMatch: /\/(teams|billing|wow-session|rename-verification)\.spec\.ts/,
     },
     // Public tests (no login required)
     {
