@@ -54,15 +54,16 @@ function AdminHeaderInner({ currentTeam, allTeams = [], userEmail, userRole }: A
     ? currentTab as NavMode
     : isOnTeamPage ? 'home' : 'home'
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration safety: must be false on server
+  useEffect(() => { setMounted(true) }, [])
 
+  /* eslint-disable react-hooks/set-state-in-effect -- reset menus on navigation */
   useEffect(() => {
     setMobileMenuOpen(false)
     setShowSettingsMenu(false)
     setShowTeamSelector(false)
   }, [pathname])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Close dropdowns when clicking outside
   useEffect(() => {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
 
@@ -69,7 +70,7 @@ export function SuperAdminDashboard({ users: initialUsers }: Props) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <a
+            <Link
               href="/teams"
               className="px-3 py-2 text-sm bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors flex items-center gap-1.5"
             >
@@ -77,7 +78,7 @@ export function SuperAdminDashboard({ users: initialUsers }: Props) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Back to Teams
-            </a>
+            </Link>
             <button
               onClick={handleLogout}
               className="px-4 py-2 text-sm text-stone-400 hover:text-white hover:bg-stone-800 rounded-lg transition-colors"

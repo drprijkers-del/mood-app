@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { TeamWithStats } from '@/domain/teams/actions'
-import { WowSessionWithStats, getAngleInfo } from '@/domain/wow/types'
+import { WowSessionWithStats, WowAngle, getAngleInfo } from '@/domain/wow/types'
 import { TeamStats } from '@/domain/wow/actions'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -84,7 +84,7 @@ export function WowTeamContent({ team, sessions, stats, basePath }: WowTeamConte
 
   const formatTrendDrivers = () => {
     if (stats.trendDrivers.length === 0) return null
-    const driverLabels = stats.trendDrivers.map(angle => getAngleInfo(angle as any).label)
+    const driverLabels = stats.trendDrivers.map(angle => getAngleInfo(angle as WowAngle).label)
     return `${t('trendDrivenBy')} ${driverLabels.join(', ')}`
   }
 

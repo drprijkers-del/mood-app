@@ -29,11 +29,6 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
   const [feedback, setFeedback] = useState<Record<string, TeamFeedback[]>>({})
   const [feedbackLoading, setFeedbackLoading] = useState(true)
 
-  // Load share link and feedback on mount
-  useEffect(() => {
-    loadFeedback()
-  }, [teamId])
-
   const loadFeedback = async () => {
     setFeedbackLoading(true)
     try {
@@ -44,6 +39,13 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
     }
     setFeedbackLoading(false)
   }
+
+  // Load share link and feedback on mount
+  /* eslint-disable react-hooks/set-state-in-effect -- async data fetch, setState in callback */
+  useEffect(() => {
+    loadFeedback()
+  }, [teamId])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleGetShareLink = async () => {
     setShareLoading(true)

@@ -36,7 +36,7 @@ export function SessionDetailContent({ session, synthesis, shareLink, backPath }
   const [focusArea, setFocusArea] = useState(synthesis?.focus_area || '')
   const [experiment, setExperiment] = useState(synthesis?.suggested_experiment || '')
   const [owner, setOwner] = useState('')
-  const [followupDate, setFollowupDate] = useState(
+  const [followupDate, setFollowupDate] = useState(() =>
     new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
   )
 

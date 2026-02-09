@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
+import type { TranslationKey } from '@/lib/i18n/translations'
 
 interface CoachQuestionsProps {
   pulseScore: number | null
@@ -167,7 +168,7 @@ export function CoachQuestions({
                     {idx + 1}
                   </span>
                   <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed">
-                    {t(questionKey as any)}
+                    {t(questionKey as TranslationKey)}
                   </p>
                 </div>
               </div>

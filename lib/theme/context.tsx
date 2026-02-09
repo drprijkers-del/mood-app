@@ -22,6 +22,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return 'light'
   })
 
+  /* eslint-disable react-hooks/set-state-in-effect -- syncing with localStorage (external store) */
   useEffect(() => {
     // Load saved theme from localStorage, default to 'system' if not set
     const savedTheme = localStorage.getItem('theme') as Theme | null
@@ -30,6 +31,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
     // If no saved theme, keep 'system' as default (already set in useState)
   }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     // Resolve the actual theme based on system preference

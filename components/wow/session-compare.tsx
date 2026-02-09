@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n/context'
+import type { TranslationKey } from '@/lib/i18n/translations'
 import { getComparableSessions, compareSessions, SessionComparison } from '@/domain/wow/actions'
 
 // Map angle IDs to translation keys
-const ANGLE_TRANSLATION_KEYS: Record<string, string> = {
+const ANGLE_TRANSLATION_KEYS: Record<string, TranslationKey> = {
   scrum: 'angleScrum',
   flow: 'angleFlow',
   ownership: 'angleOwnership',
@@ -138,7 +139,7 @@ export function SessionCompare({ teamId, onClose }: SessionCompareProps) {
                           : 'bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-600'
                       }`}
                     >
-                      {t(ANGLE_TRANSLATION_KEYS[angle] as any) || angle}
+                      {t(ANGLE_TRANSLATION_KEYS[angle]) || angle}
                     </button>
                   ))}
                 </div>

@@ -24,12 +24,13 @@ export function GettingStartedChecklist({
   const t = useTranslation()
   const [dismissed, setDismissed] = useState(true) // Start hidden to prevent flash
 
-  // Check localStorage on mount - separate dismiss state per tab
+  /* eslint-disable react-hooks/set-state-in-effect -- reading from localStorage (external store) */
   useEffect(() => {
     const key = `team-${teamId}-${activeTab}-onboarding-dismissed`
     const isDismissed = localStorage.getItem(key) === 'true'
     setDismissed(isDismissed)
   }, [teamId, activeTab])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleDismiss = () => {
     const key = `team-${teamId}-${activeTab}-onboarding-dismissed`
