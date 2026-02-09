@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/admin/login",
-      "destination": "/login",
+      "destination": "/sign-in",
       "permanent": true
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "source": "/vibe/admin/login",
-      "destination": "/login",
+      "destination": "/sign-in",
       "permanent": true
     },
     {
