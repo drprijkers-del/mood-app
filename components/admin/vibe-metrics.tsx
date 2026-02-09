@@ -258,9 +258,16 @@ export function VibeMetrics({ metrics, insights }: VibeMetricsProps) {
       <Card>
         <CardContent className="py-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-stone-500 dark:text-stone-400">
-              {language === 'nl' ? 'Signaal status' : 'Signal status'}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-stone-500 dark:text-stone-400">
+                {language === 'nl' ? 'Signaal status' : 'Signal status'}
+              </span>
+              {metrics.trendDays > 14 && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                  {Math.round(metrics.trendDays / 2)}d
+                </span>
+              )}
+            </div>
             <span className={`text-xs px-2 py-1 rounded-full ${getMaturityColor(metrics.maturity.level)}`}>
               {getMaturityLabel(metrics.maturity.level, language)}
             </span>

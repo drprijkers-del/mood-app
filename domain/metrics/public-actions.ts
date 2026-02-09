@@ -139,6 +139,7 @@ export async function getPublicTeamMetrics(directTeamId?: string): Promise<{
     },
     lastUpdated: new Date().toISOString(),
     hasEnoughData: hasMinimumData(last7Days.reduce((sum, d) => sum + d.count, 0)),
+    trendDays: 14,
   }
 
   return { metrics, teamName: team.name }

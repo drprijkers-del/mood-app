@@ -167,6 +167,7 @@ export function BillingTab({ teamId, teamPlan }: BillingTabProps) {
         <ul className="space-y-3">
           {[
             t('billingFeatureCoach'),
+            t('billingFeatureAngles'),
             t('billingFeatureLevels'),
             t('billingFeatureTrends'),
           ].map((feature) => (

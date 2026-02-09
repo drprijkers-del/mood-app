@@ -16,18 +16,26 @@ export default async function TeamPage({ params }: TeamPageProps) {
   const admin = await requireAdmin()
   const { id } = await params
   const language = await getLanguage()
-  const [team, vibeMetrics, vibeInsights, wowSessions, wowStats, allTeams] = await Promise.all([
+  // First fetch team to determine plan, then fetch metrics with correct trend window
+  const [teamData, allTeams] = await Promise.all([
     getTeamUnified(id),
-    getTeamMetrics(id),
-    getTeamInsights(id, language),
-    getTeamSessions(id),
-    getPublicWowStats(id),
     getTeamsUnified(),
   ])
 
-  if (!team) {
+  if (!teamData) {
     notFound()
   }
+
+  // Pro teams get 60 days of trend data (30 + 30 previous), free gets 14 (7 + 7)
+  const trendDays = teamData.plan === 'pro' ? 60 : 14
+
+  const [team, vibeMetrics, vibeInsights, wowSessions, wowStats] = await Promise.all([
+    Promise.resolve(teamData),
+    getTeamMetrics(id, trendDays),
+    getTeamInsights(id, language),
+    getTeamSessions(id),
+    getPublicWowStats(id),
+  ])
 
   // Prepare team list for header selector
   const teamList = allTeams.map(t => ({ id: t.id, name: t.name, slug: t.slug }))

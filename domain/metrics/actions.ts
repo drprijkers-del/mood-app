@@ -296,8 +296,9 @@ function buildInsight(
 
 /**
  * Get comprehensive metrics for a team
+ * @param trendDays - Total days of history to fetch (default 14: 7 current + 7 previous)
  */
-export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null> {
+export async function getTeamMetrics(teamId: string, trendDays: number = 14): Promise<TeamMetrics | null> {
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
@@ -323,9 +324,10 @@ export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null
   // Use expected_team_size if set, otherwise fall back to actual participants
   const totalParticipants = team.expected_team_size || actualParticipants
 
-  // Get last 14 days of data for calculations
-  const { data: rawHistory } = await supabase
-    .rpc('get_team_trend', { p_team_id: teamId })
+  // Get history data for calculations (use extended function if available, fallback to default)
+  const { data: rawHistory } = trendDays > 14
+    ? await supabase.rpc('get_team_trend_extended', { p_team_id: teamId, p_days: trendDays })
+    : await supabase.rpc('get_team_trend', { p_team_id: teamId })
 
   const history: DailyVibe[] = (rawHistory || []).map((d: { date: string; average: number; count: number }) => ({
     date: d.date,
@@ -407,6 +409,7 @@ export async function getTeamMetrics(teamId: string): Promise<TeamMetrics | null
     },
     lastUpdated: new Date().toISOString(),
     hasEnoughData: hasMinimumData(last7Days.reduce((sum, d) => sum + d.count, 0)),
+    trendDays,
   }
 }
 

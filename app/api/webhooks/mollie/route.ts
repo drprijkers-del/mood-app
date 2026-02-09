@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, '')
         const subscription = await getMollieClient().customerSubscriptions.create({
           customerId,
-          amount: { currency: 'EUR', value: '19.00' },
+          amount: { currency: 'EUR', value: '9.99' },
           interval: '1 month',
           description: 'Pulse Labs Pro',
           webhookUrl: `${baseUrl}/api/webhooks/mollie`,

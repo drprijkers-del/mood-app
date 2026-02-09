@@ -73,6 +73,7 @@ export interface TeamMetrics {
   // Metadata
   lastUpdated: string            // ISO timestamp
   hasEnoughData: boolean         // Minimum threshold met
+  trendDays: number              // How many days of trend data (14 for free, 60 for pro)
 }
 
 // Daily data point for trends

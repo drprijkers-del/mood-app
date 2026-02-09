@@ -125,7 +125,7 @@ export async function startSubscription(teamId: string): Promise<{
     const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, '')
     const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')
     const payment = await getMollieClient().payments.create({
-      amount: { currency: 'EUR', value: '19.00' },
+      amount: { currency: 'EUR', value: '9.99' },
       customerId: mollieCustomerId,
       sequenceType: SequenceType.first,
       description: `Pulse Labs Pro - ${team.name}`,
@@ -144,7 +144,7 @@ export async function startSubscription(teamId: string): Promise<{
     await supabase.from('payments').insert({
       team_id: teamId,
       mollie_payment_id: payment.id,
-      amount_value: '19.00',
+      amount_value: '9.99',
       amount_currency: 'EUR',
       status: payment.status,
       description: payment.description,

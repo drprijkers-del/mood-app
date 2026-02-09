@@ -342,10 +342,10 @@ export async function createSession(
   const adminUser = await requireAdmin()
   const supabase = await createAdminClient()
 
-  // Verify team ownership and get wow level
+  // Verify team ownership and get wow level + plan
   const { data: team } = await supabase
     .from('teams')
-    .select('owner_id, wow_level')
+    .select('owner_id, wow_level, plan')
     .eq('id', teamId)
     .single()
 
@@ -355,6 +355,12 @@ export async function createSession(
 
   if (adminUser.role !== 'super_admin' && team.owner_id !== adminUser.id) {
     return { success: false, error: 'Access denied' }
+  }
+
+  // Check if the angle is available for the team's plan
+  const { isProAngle } = await import('./types')
+  if (isProAngle(angle) && team.plan !== 'pro') {
+    return { success: false, error: 'This angle requires a Pro subscription' }
   }
 
   // Generate session code
@@ -596,6 +602,18 @@ export async function getTeamWowLevel(teamId: string): Promise<WowLevel> {
     .single()
 
   return (data?.wow_level as WowLevel) || 'shu'
+}
+
+export async function getTeamPlan(teamId: string): Promise<'free' | 'pro'> {
+  const supabase = await createAdminClient()
+
+  const { data } = await supabase
+    .from('teams')
+    .select('plan')
+    .eq('id', teamId)
+    .single()
+
+  return (data?.plan as 'free' | 'pro') || 'free'
 }
 
 /**

@@ -96,15 +96,13 @@ export interface SynthesisResult {
 }
 
 // Angle metadata for UI
-// All angles are available at ALL levels - the level determines question depth, not angle availability
 export interface AngleInfo {
   id: WowAngle
   label: string
   description: string
 }
 
-// All wow angles - available at every Shu-Ha-Ri level
-// The statements for each angle vary by level (deeper questions as you progress)
+// All wow angles - the statements for each angle vary by level (deeper questions as you progress)
 export const ANGLES: AngleInfo[] = [
   { id: 'retro', label: 'Retro', description: 'Are we improving? Do actions lead to change?' },
   { id: 'planning', label: 'Planning', description: 'Is commitment realistic? Is the Sprint Goal clear?' },
@@ -117,15 +115,24 @@ export const ANGLES: AngleInfo[] = [
   { id: 'demo', label: 'Review', description: 'Are stakeholders engaged? Is feedback valuable?' },
 ]
 
+// Angles available on the Free plan — the essentials
+export const FREE_ANGLES: WowAngle[] = ['retro', 'planning', 'scrum', 'flow', 'collaboration']
+
+// Pro-only angles — require a Pro subscription
+export const PRO_ANGLES: WowAngle[] = ['refinement', 'ownership', 'technical_excellence', 'demo']
+
+// Check if an angle requires Pro
+export function isProAngle(angle: WowAngle): boolean {
+  return PRO_ANGLES.includes(angle)
+}
+
 // Get all angles (all angles are available at all levels now)
 export function getAnglesForLevel(_level: WowLevel): AngleInfo[] {
-  // All angles are available at all levels - the statements vary by level, not the angles
   return ANGLES
 }
 
 // Get all angles (kept for backwards compatibility)
 export function getAnglesGroupedByLevel(): Record<WowLevel, AngleInfo[]> {
-  // All angles available at all levels now
   return {
     shu: ANGLES,
     ha: ANGLES,
@@ -133,9 +140,10 @@ export function getAnglesGroupedByLevel(): Record<WowLevel, AngleInfo[]> {
   }
 }
 
-// Check if an angle is unlocked - always true now (all angles available at all levels)
-export function isAngleUnlocked(_angle: WowAngle, _teamLevel: WowLevel): boolean {
-  return true // All angles are available - the level determines question depth, not angle availability
+// Check if an angle is unlocked for a given team plan
+export function isAngleUnlocked(angle: WowAngle, _teamLevel: WowLevel, teamPlan: 'free' | 'pro' = 'pro'): boolean {
+  if (teamPlan === 'pro') return true
+  return FREE_ANGLES.includes(angle)
 }
 
 // Helper to get angle info
