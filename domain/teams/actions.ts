@@ -13,6 +13,7 @@ export interface Team {
   description: string | null
   owner_id: string | null
   expected_team_size: number | null // Optional: for accurate participation %
+  plan: 'free' | 'pro'
   created_at: string
   updated_at: string
 }
