@@ -89,3 +89,16 @@ body {
 .animate-flame {
   animation: flame 0.5s ease-in-out infinite;
 }
+
+/* Accordion expand/collapse animation */
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+}
+.accordion-content.accordion-open {
+  grid-template-rows: 1fr;
+}
+.accordion-content > div {
+  overflow: hidden;
+}

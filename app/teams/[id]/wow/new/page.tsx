@@ -21,7 +21,7 @@ export default function NewWowSessionPage() {
   const validAngles = ANGLES.map(a => a.id)
   const initialAngle = preSelectedAngle && validAngles.includes(preSelectedAngle) ? preSelectedAngle : null
 
-  const [selectedAngle, setSelectedAngle] = useState<WowAngle | null>(initialAngle)
+  const [selectedAngles, setSelectedAngles] = useState<WowAngle[]>(initialAngle ? [initialAngle] : [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [teamLevel, setTeamLevel] = useState<WowLevel>('shu')
@@ -42,20 +42,43 @@ export default function NewWowSessionPage() {
   }, [teamId])
 
   async function handleSubmit() {
-    if (!selectedAngle) return
+    if (selectedAngles.length === 0) return
 
     setLoading(true)
     setError(null)
 
-    const result = await createSession(teamId, selectedAngle)
+    // Single angle: navigate to session detail
+    if (selectedAngles.length === 1) {
+      const result = await createSession(teamId, selectedAngles[0])
+      if (!result.success) {
+        setError(result.error || 'Failed to create session')
+        setLoading(false)
+        return
+      }
+      router.push(`/wow/session/${result.sessionId}`)
+      return
+    }
 
-    if (!result.success) {
-      setError(result.error || 'Failed to create session')
+    // Multiple angles: create all, navigate to wow tab
+    const results = await Promise.all(
+      selectedAngles.map(angle => createSession(teamId, angle))
+    )
+    const failed = results.filter(r => !r.success)
+    if (failed.length > 0) {
+      setError(failed[0].error || 'Some sessions failed to create')
       setLoading(false)
       return
     }
 
-    router.push(`/wow/session/${result.sessionId}`)
+    router.push(`/teams/${teamId}?tab=wow`)
+  }
+
+  const toggleAngle = (angle: WowAngle) => {
+    setSelectedAngles(prev =>
+      prev.includes(angle)
+        ? prev.filter(a => a !== angle)
+        : [...prev, angle]
+    )
   }
 
   // Map angle IDs to translation keys
@@ -198,12 +221,12 @@ export default function NewWowSessionPage() {
         {/* Angles Grid - compact so info box stays visible */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           {ANGLES.map(angle => {
-            const isSelected = selectedAngle === angle.id
+            const isSelected = selectedAngles.includes(angle.id)
             const isLocked = isProAngle(angle.id) && teamPlan !== 'pro'
             return (
               <button
                 key={angle.id}
-                onClick={() => !isLocked && setSelectedAngle(angle.id)}
+                onClick={() => !isLocked && toggleAngle(angle.id)}
                 disabled={loading || isLocked}
                 className={`relative p-2 sm:p-3 rounded-xl border-2 transition-all ${
                   isLocked
@@ -244,20 +267,32 @@ export default function NewWowSessionPage() {
           })}
         </div>
 
-        {/* Selected angle description */}
-        {selectedAngle && (
-          <div className={`${colors.bg} ${colors.border} border rounded-xl p-4 mb-6`}>
-            <div className="flex items-start gap-3">
-              <div className={`w-8 h-8 rounded-lg ${colors.accent} flex items-center justify-center shrink-0`}>
-                <span className="text-sm font-bold text-white">{getAngleLabel(selectedAngle).charAt(0)}</span>
-              </div>
-              <div>
-                <div className={`font-medium ${colors.text}`}>{getAngleLabel(selectedAngle)}</div>
-                <div className="text-sm text-stone-600 dark:text-stone-400 mt-0.5">
-                  {getAngleDesc(selectedAngle)}
+        {/* Selected angle descriptions */}
+        {selectedAngles.length > 0 && (
+          <div className="space-y-2 mb-6">
+            {selectedAngles.map(angle => (
+              <div key={angle} className={`${colors.bg} ${colors.border} border rounded-xl p-3`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-7 h-7 rounded-lg ${colors.accent} flex items-center justify-center shrink-0`}>
+                    <span className="text-xs font-bold text-white">{getAngleLabel(angle).charAt(0)}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className={`font-medium text-sm ${colors.text}`}>{getAngleLabel(angle)}</div>
+                    <div className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+                      {getAngleDesc(angle)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleAngle(angle)}
+                    className="p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 shrink-0"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         )}
 
@@ -270,11 +305,13 @@ export default function NewWowSessionPage() {
           </Link>
           <Button
             onClick={handleSubmit}
-            disabled={!selectedAngle}
+            disabled={selectedAngles.length === 0}
             loading={loading}
             className="flex-1"
           >
-            {t('startSession')}
+            {selectedAngles.length > 1
+              ? t('startSessions').replace('{count}', String(selectedAngles.length))
+              : t('startSession')}
           </Button>
         </div>
       </main>

@@ -47,17 +47,17 @@ export function TeamsListContent({ teams, owners = [], userRole, currentUserId }
     return date.toLocaleDateString()
   }
 
-  // Shu-Ha-Ri level config for wow
+  // Shu-Ha-Ri level config for wow — matches report colors
   const shuHaRiConfig = {
-    shu: { kanji: '守', label: 'Shu', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700' },
-    ha: { kanji: '破', label: 'Ha', color: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 border border-cyan-300 dark:border-cyan-700' },
-    ri: { kanji: '離', label: 'Ri', color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-300 dark:border-purple-700' },
+    shu: { kanji: '守', label: 'Shu', bg: 'bg-amber-500' },
+    ha: { kanji: '破', label: 'Ha', bg: 'bg-cyan-500' },
+    ri: { kanji: '離', label: 'Ri', bg: 'bg-purple-500' },
   }
 
   return (
-    <div className="space-y-6">
-      {/* Filter buttons */}
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="space-y-8">
+      {/* Filter buttons + New team */}
+      <div className="flex flex-wrap items-center gap-3 pt-5 border-t border-stone-200 dark:border-stone-700">
         {filterButtons.map(({ key, label }) => (
           <button
             key={key}
@@ -402,196 +402,151 @@ export function TeamsListContent({ teams, owners = [], userRole, currentUserId }
         </div>
         )
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {filteredTeams.map(team => {
             const wowLevel = team.wow?.level as 'shu' | 'ha' | 'ri' | undefined
             const levelConfig = wowLevel ? shuHaRiConfig[wowLevel] : null
+            const effectiveSize = team.expected_team_size || team.vibe?.participant_count || 0
 
             return (
               <Link
                 key={team.id}
                 href={`/teams/${team.id}`}
-                className="block bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-4 hover:border-cyan-300 dark:hover:border-cyan-600 hover:shadow-sm transition-all group"
+                className={`relative block rounded-xl border border-stone-200 dark:border-stone-700 hover:border-cyan-300 dark:hover:border-cyan-600 hover:shadow-sm transition-all group overflow-hidden ${levelConfig ? levelConfig.bg : 'bg-white dark:bg-stone-800'}`}
               >
-                {/* Header: Name + attention indicator + settings gear */}
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-stone-900 dark:text-stone-100 truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                        {team.name}
-                      </h3>
-                      {/* Attention indicator - simple dot on mobile */}
-                      {team.needs_attention && (
-                        <span className="w-2 h-2 rounded-full bg-red-500 shrink-0 animate-pulse" />
-                      )}
-                      {/* Settings gear - stops propagation to prevent card click */}
-                      <span
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          window.location.href = `/teams/${team.id}?tab=settings`
-                        }}
-                        className="ml-auto p-1 rounded text-stone-300 dark:text-stone-600 hover:text-stone-500 dark:hover:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
-                        title="Settings"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </span>
-                    </div>
-                    {/* Tool labels */}
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {team.tools_enabled.includes('vibe') && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded">
-                          Vibe
-                        </span>
-                      )}
-                      {team.tools_enabled.includes('wow') && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded">
-                          <span className="sm:hidden">WoW</span>
-                          <span className="hidden sm:inline">Way of Work</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {/* Shu-Ha-Ri level badge */}
-                  {levelConfig && (
-                    <div className="flex items-center gap-1 shrink-0">
-                      <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 text-xs font-medium rounded ${levelConfig.color}`}>
-                        <span className="font-bold">{levelConfig.kanji}</span>
-                        <span className="hidden sm:inline">{levelConfig.label}</span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Score indicators - simplified for mobile */}
-                <div className="flex items-center gap-3 mb-3">
-                  {team.vibe?.average_score && (
-                    <div className="flex items-center gap-1">
-                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm ${
-                        team.vibe.average_score >= 4 ? 'bg-green-500' :
-                        team.vibe.average_score >= 3 ? 'bg-cyan-500' :
-                        team.vibe.average_score >= 2 ? 'bg-amber-500' :
-                        'bg-red-500'
-                      }`}>
-                        {team.vibe.average_score}
-                      </div>
-                      {/* Trend indicator */}
-                      {team.vibe.trend && (
-                        <div className={`flex items-center justify-center w-4 h-4 ${
-                          team.vibe.trend === 'up' ? 'text-green-500' :
-                          team.vibe.trend === 'down' ? 'text-red-500' :
-                          'text-stone-400 dark:text-stone-500'
-                        }`}>
-                          {team.vibe.trend === 'up' && (
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                            </svg>
-                          )}
-                          {team.vibe.trend === 'down' && (
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          )}
-                          {team.vibe.trend === 'stable' && (
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-                            </svg>
-                          )}
-                        </div>
-                      )}
-                      <span className="hidden sm:inline text-xs text-stone-400 dark:text-stone-500">Vibe</span>
-                    </div>
-                  )}
-                  {team.wow?.average_score && (
-                    <div className="flex items-center gap-1">
-                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm ${
-                        team.wow.average_score >= 4 ? 'bg-green-500' :
-                        team.wow.average_score >= 3 ? 'bg-cyan-500' :
-                        team.wow.average_score >= 2 ? 'bg-amber-500' :
-                        'bg-red-500'
-                      }`}>
-                        {team.wow.average_score}
-                      </div>
-                      {/* Trend indicator */}
-                      {team.wow.trend && (
-                        <div className={`flex items-center justify-center w-4 h-4 ${
-                          team.wow.trend === 'up' ? 'text-green-500' :
-                          team.wow.trend === 'down' ? 'text-red-500' :
-                          'text-stone-400 dark:text-stone-500'
-                        }`}>
-                          {team.wow.trend === 'up' && (
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                            </svg>
-                          )}
-                          {team.wow.trend === 'down' && (
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          )}
-                          {team.wow.trend === 'stable' && (
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-                            </svg>
-                          )}
-                        </div>
-                      )}
-                      <span className="hidden sm:inline text-xs text-stone-400 dark:text-stone-500">Way of Work</span>
-                    </div>
-                  )}
-                  {!team.vibe?.average_score && !team.wow?.average_score && (
-                    <span className="text-xs text-stone-400 dark:text-stone-500">{t('teamsNoData')}</span>
-                  )}
-                </div>
-
-                {/* Participation progress (Pulse only) */}
-                {team.vibe && (
-                  <div className="mb-3">
-                    {(() => {
-                      const effectiveSize = team.expected_team_size || team.vibe.participant_count || 1
-                      const todayCount = team.vibe.today_entries
-                      const percentage = effectiveSize > 0 ? Math.round((todayCount / effectiveSize) * 100) : 0
-                      const isComplete = percentage >= 80
-                      const isLow = percentage < 50 && effectiveSize > 0
-
-                      return (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-stone-500 dark:text-stone-400">{t('statsToday')}</span>
-                            <span className={`font-medium ${
-                              isComplete ? 'text-green-600 dark:text-green-400' :
-                              isLow ? 'text-amber-600 dark:text-amber-400' :
-                              'text-stone-600 dark:text-stone-300'
-                            }`}>
-                              {todayCount}/{effectiveSize}
-                            </span>
-                          </div>
-                          <div className="h-1 bg-stone-100 dark:bg-stone-700 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all ${
-                                isComplete ? 'bg-green-500' :
-                                isLow ? 'bg-amber-500' :
-                                'bg-cyan-500'
-                              }`}
-                              style={{ width: `${Math.min(100, percentage)}%` }}
-                            />
-                          </div>
-                        </div>
-                      )
-                    })()}
-                  </div>
+                {/* White overlay — gradual fade ending just behind text */}
+                {levelConfig && (
+                  <div
+                    className="absolute inset-0 bg-white dark:bg-stone-800"
+                    style={{
+                      maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 4%, rgba(0,0,0,0.2) 7%, rgba(0,0,0,0.45) 10%, rgba(0,0,0,0.7) 12%, rgba(0,0,0,0.9) 14%, rgba(0,0,0,1) 17%)',
+                      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 4%, rgba(0,0,0,0.2) 7%, rgba(0,0,0,0.45) 10%, rgba(0,0,0,0.7) 12%, rgba(0,0,0,0.9) 14%, rgba(0,0,0,1) 17%)',
+                    }}
+                  />
                 )}
 
-                {/* Footer: Last activity */}
-                <div className="text-xs text-stone-400 dark:text-stone-500 pt-2 border-t border-stone-100 dark:border-stone-700">
-                  {formatDate(team.last_updated)}
+                {/* Kanji watermark — big, upper-left, partially cropped */}
+                {levelConfig && (
+                  <span
+                    className="absolute -left-3 -top-4 text-white/30 select-none pointer-events-none"
+                    style={{ fontSize: '4.5rem', fontWeight: 900, lineHeight: 1 }}
+                  >
+                    {levelConfig.kanji}
+                  </span>
+                )}
+
+                {/* Content — starts at ~22% from left */}
+                <div className={`relative z-10 py-3 sm:py-4 pr-3 sm:pr-4 ${levelConfig ? 'pl-[20%]' : 'pl-3 sm:pl-4'}`}>
+                  {/* Team name */}
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <h3 className="text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100 truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                      {team.name}
+                    </h3>
+                    {team.needs_attention && (
+                      <span className="w-2 h-2 rounded-full bg-red-500 shrink-0 animate-pulse" />
+                    )}
+                  </div>
+
+                  {/* Scores + participation per tool */}
+                  <div className="space-y-1.5">
+                    {/* Vibe row */}
+                    {team.vibe && (
+                      <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-pink-500 shrink-0" viewBox="0 0 24 24" fill="none">
+                          <path d="M2 12h3l2-6 3 12 3-8 2 4h7" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span className="text-xs font-medium text-stone-500 dark:text-stone-400 w-8">Vibe</span>
+                        {team.vibe.average_score ? (
+                          <span className={`text-sm font-bold tabular-nums ${
+                            team.vibe.average_score >= 4 ? 'text-green-600 dark:text-green-400' :
+                            team.vibe.average_score >= 3 ? 'text-cyan-600 dark:text-cyan-400' :
+                            team.vibe.average_score >= 2 ? 'text-amber-600 dark:text-amber-400' :
+                            'text-red-600 dark:text-red-400'
+                          }`}>
+                            {team.vibe.average_score}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-stone-300 dark:text-stone-600">—</span>
+                        )}
+                        {team.vibe.trend && (
+                          <span className={`${
+                            team.vibe.trend === 'up' ? 'text-green-500' :
+                            team.vibe.trend === 'down' ? 'text-red-500' :
+                            'text-stone-400'
+                          }`}>
+                            {team.vibe.trend === 'up' && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>}
+                            {team.vibe.trend === 'down' && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>}
+                            {team.vibe.trend === 'stable' && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" /></svg>}
+                          </span>
+                        )}
+                        <span className="ml-auto text-xs text-stone-400 dark:text-stone-500 tabular-nums">
+                          {team.vibe.today_entries}/{effectiveSize || '?'}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* WoW row */}
+                    {team.wow && (
+                      <div className="flex items-center gap-2">
+                        <span className="w-4 h-4 flex items-center justify-center text-cyan-500 font-bold text-sm shrink-0 leading-none">Δ</span>
+                        <span className="text-xs font-medium text-stone-500 dark:text-stone-400 w-8">WoW</span>
+                        {team.wow.average_score ? (
+                          <span className={`text-sm font-bold tabular-nums ${
+                            team.wow.average_score >= 4 ? 'text-green-600 dark:text-green-400' :
+                            team.wow.average_score >= 3 ? 'text-cyan-600 dark:text-cyan-400' :
+                            team.wow.average_score >= 2 ? 'text-amber-600 dark:text-amber-400' :
+                            'text-red-600 dark:text-red-400'
+                          }`}>
+                            {team.wow.average_score}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-stone-300 dark:text-stone-600">—</span>
+                        )}
+                        {team.wow.trend && (
+                          <span className={`${
+                            team.wow.trend === 'up' ? 'text-green-500' :
+                            team.wow.trend === 'down' ? 'text-red-500' :
+                            'text-stone-400'
+                          }`}>
+                            {team.wow.trend === 'up' && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>}
+                            {team.wow.trend === 'down' && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>}
+                            {team.wow.trend === 'stable' && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" /></svg>}
+                          </span>
+                        )}
+                        <span className="ml-auto text-xs text-stone-400 dark:text-stone-500 tabular-nums">
+                          {team.wow.active_sessions > 0
+                            ? `${team.wow.active_sessions} ${team.wow.active_sessions === 1 ? t('wowSessionActive') : t('wowSessionsActive')}`
+                            : `${team.wow.closed_sessions} ${team.wow.closed_sessions === 1 ? t('wowSessionDone') : t('wowSessionsDone')}`}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* No tools active */}
+                    {!team.vibe && !team.wow && (
+                      <span className="text-xs text-stone-400 dark:text-stone-500">{t('teamsNoData')}</span>
+                    )}
+                  </div>
                 </div>
               </Link>
             )
           })}
+
+          {/* Ghost "new team" tile */}
+          <Link
+            href="/teams/new"
+            className="relative block rounded-xl border-2 border-dashed border-stone-200 dark:border-stone-700 hover:border-cyan-400 dark:hover:border-cyan-600 transition-all group bg-stone-50/50 dark:bg-stone-800/30 hover:bg-cyan-50/50 dark:hover:bg-cyan-900/10"
+          >
+            <div className="relative z-10 py-3 sm:py-4 px-3 sm:px-4 flex flex-col items-center justify-center text-center min-h-22">
+              <div className="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-700/50 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-900/30 flex items-center justify-center mb-2 transition-colors">
+                <svg className="w-4 h-4 text-stone-400 dark:text-stone-500 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-stone-400 dark:text-stone-500 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                {t('teamsNewTeam')}
+              </span>
+            </div>
+          </Link>
         </div>
       )}
 

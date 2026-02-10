@@ -152,42 +152,68 @@ function AdminHeaderInner({ currentTeam, allTeams = [], userEmail, userName, use
                     closeAllDropdowns()
                     setShowTeamSelector(next)
                   }}
-                  className="flex items-center gap-1.5 px-2 py-1 text-sm font-medium text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors"
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium rounded-lg transition-all ${
+                    showTeamSelector
+                      ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100'
+                      : 'text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+                  }`}
                 >
-                  <span className="text-stone-400 dark:text-stone-500">/</span>
-                  <span className="max-w-[120px] truncate">{currentTeam.name}</span>
-                  <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="max-w-[140px] truncate">{currentTeam.name}</span>
+                  <svg className={`w-3.5 h-3.5 text-stone-400 transition-transform ${showTeamSelector ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
                 {/* Team Dropdown */}
                 {showTeamSelector && allTeams.length > 0 && (
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-stone-800 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 py-1 z-50">
-                    <div className="px-3 py-2 text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">
-                      {t('switchTeam')}
+                  <div className="absolute top-full left-0 mt-1.5 w-64 bg-white dark:bg-stone-800 rounded-xl shadow-xl border border-stone-200 dark:border-stone-700 py-1 z-50">
+                    <div className="px-3 py-2 flex items-center justify-between">
+                      <span className="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">
+                        {t('switchTeam')}
+                      </span>
+                      <span className="text-[10px] text-stone-400 dark:text-stone-500 tabular-nums">
+                        {allTeams.length} {allTeams.length === 1 ? 'team' : 'teams'}
+                      </span>
                     </div>
-                    <div className="max-h-64 overflow-y-auto">
+                    <div className="max-h-64 overflow-y-auto px-1">
                       {allTeams.map((team) => (
                         <button
                           key={team.id}
                           onClick={() => switchTeam(team.id)}
-                          className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                          className={`w-full text-left px-3 py-2.5 text-sm rounded-lg transition-colors flex items-center gap-2.5 ${
                             team.id === currentTeam.id
                               ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400'
                               : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'
                           }`}
                         >
-                          {team.name}
+                          <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                            team.id === currentTeam.id
+                              ? 'bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 dark:text-cyan-400'
+                              : 'bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-400'
+                          }`}>
+                            {team.name.charAt(0).toUpperCase()}
+                          </span>
+                          <span className="truncate">{team.name}</span>
+                          {team.id === currentTeam.id && (
+                            <svg className="w-4 h-4 text-cyan-500 shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
                         </button>
                       ))}
                     </div>
-                    <div className="border-t border-stone-200 dark:border-stone-700 mt-1 pt-1">
+                    <div className="border-t border-stone-200 dark:border-stone-700 mt-1 pt-1 px-1">
                       <Link
                         href="/teams"
-                        className="block px-3 py-2 text-sm text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-700"
+                        className="flex items-center justify-between px-3 py-2.5 text-sm font-medium text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 rounded-lg transition-colors"
                       >
-                        {t('viewAllTeams')}
+                        <span>{t('viewAllTeams')}</span>
+                        <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </Link>
                     </div>
                   </div>
@@ -195,118 +221,7 @@ function AdminHeaderInner({ currentTeam, allTeams = [], userEmail, userName, use
               </div>
             )}
 
-            {/* Desktop: Mode Navigation (only on team pages) */}
-            {isOnTeamPage && currentTeam && (
-              <div className="hidden md:flex items-center gap-1 ml-4 border-l border-stone-200 dark:border-stone-700 pl-4">
-                {/* Primary tabs - always visible */}
-                {primaryModes.map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => navigateToMode(key)}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                      activeMode === key
-                        ? 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400'
-                        : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-
-                {/* More dropdown for secondary tabs - always visible */}
-                <div className="relative">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      const next = !showMoreMenu
-                      closeAllDropdowns()
-                      setShowMoreMenu(next)
-                    }}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-1 ${
-                      isSecondaryActive
-                        ? 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400'
-                        : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
-                    }`}
-                  >
-                    {isSecondaryActive ? secondaryModes.find(m => m.key === activeMode)?.label : t('more')}
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {showMoreMenu && (
-                    <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-stone-800 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 py-1 z-50">
-                      {secondaryModes.map(({ key, label }) => (
-                        <button
-                          key={key}
-                          onClick={() => {
-                            navigateToMode(key)
-                            setShowMoreMenu(false)
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                            activeMode === key
-                              ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400'
-                              : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                      {moreMenuExtras.length > 0 && (
-                        <div className="border-t border-stone-200 dark:border-stone-700 mt-1 pt-1">
-                          {moreMenuExtras.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setShowMoreMenu(false)}
-                              className="block w-full text-left px-3 py-2 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
-                            >
-                              {item.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Coming soon */}
-                      <div className="border-t border-stone-200 dark:border-stone-700 mt-1 pt-1">
-                        <div className="mx-3 my-2 p-3 bg-stone-50 dark:bg-stone-700/50 rounded-lg">
-                          <div className="text-xs font-medium text-cyan-600 dark:text-cyan-400 mb-2">
-                            {t('homeComingSoon')}
-                          </div>
-                          <button
-                            onClick={() => {
-                              setShowRemindersInfo(true)
-                              setShowMoreMenu(false)
-                            }}
-                            className="w-full text-left py-1 text-sm text-stone-600 dark:text-stone-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
-                          >
-                            {t('menuReminders')}
-                            <p className="text-[11px] text-stone-400 dark:text-stone-500 leading-tight">{t('menuRemindersDesc')}</p>
-                          </button>
-                          <div className="py-1 text-sm text-stone-600 dark:text-stone-300">
-                            {t('homeObeya')}
-                            <p className="text-[11px] text-stone-400 dark:text-stone-500 leading-tight">{t('menuObeyaDesc')}</p>
-                          </div>
-                          <div className="py-1 text-sm text-stone-600 dark:text-stone-300">
-                            {t('homeLeadership')}
-                            <p className="text-[11px] text-stone-400 dark:text-stone-500 leading-tight">{t('menuLeadershipDesc')}</p>
-                          </div>
-                          <div className="py-1 text-sm text-stone-600 dark:text-stone-300">
-                            {t('homePortfolio')}
-                            <p className="text-[11px] text-stone-400 dark:text-stone-500 leading-tight">{t('menuPortfolioDesc')}</p>
-                          </div>
-                          <div className="py-1 text-sm text-stone-600 dark:text-stone-300">
-                            {t('moduleWhiteLabel')}
-                            <p className="text-[11px] text-stone-400 dark:text-stone-500 leading-tight">{t('menuWhiteLabelDesc')}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* Desktop: Team page has no mode tabs — sections unfold inline on the dashboard */}
 
             {/* Desktop: Global Navigation (when not on team page) */}
             {!isOnTeamPage && (
@@ -354,7 +269,7 @@ function AdminHeaderInner({ currentTeam, allTeams = [], userEmail, userName, use
             <div className="hidden md:flex items-center gap-2">
               {/* Username display */}
               {username && (
-                <span className="text-sm text-stone-500 dark:text-stone-400">
+                <span className="text-sm font-semibold text-stone-700 dark:text-stone-300">
                   {username}
                 </span>
               )}
@@ -490,78 +405,9 @@ function AdminHeaderInner({ currentTeam, allTeams = [], userEmail, userName, use
         </nav>
       </header>
 
-      {/* Breadcrumb */}
-      <div className="bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-700">
-        <div className="max-w-6xl mx-auto px-4">
-          <nav className="flex items-center gap-1.5 text-xs text-stone-400 dark:text-stone-500 py-1.5" aria-label="Breadcrumb">
-            <Link href="/teams" className="hover:text-stone-600 dark:hover:text-stone-300 transition-colors">
-              Teams
-            </Link>
-            {isOnTeamPage && currentTeam && (
-              <>
-                <span>/</span>
-                <Link href={`/teams/${currentTeam.id}?tab=home`} className="hover:text-stone-600 dark:hover:text-stone-300 transition-colors truncate max-w-37.5">
-                  {currentTeam.name}
-                </Link>
-                {activeMode && activeMode !== 'home' && (
-                  <>
-                    <span>/</span>
-                    <span className="text-stone-600 dark:text-stone-300 font-medium">
-                      {[...primaryModes, ...secondaryModes].find(m => m.key === activeMode)?.label || activeMode}
-                    </span>
-                  </>
-                )}
-              </>
-            )}
-            {pathname === '/backlog' && (
-              <>
-                <span>/</span>
-                <span className="text-stone-600 dark:text-stone-300 font-medium">{t('backlogTab')}</span>
-              </>
-            )}
-            {pathname === '/account/billing' && (
-              <>
-                <span>/</span>
-                <span className="text-stone-600 dark:text-stone-300 font-medium">{t('accountBilling')}</span>
-              </>
-            )}
-          </nav>
-        </div>
-      </div>
+      {/* Breadcrumbs removed — team name is in OverallSignal, Pulse logo links to /teams */}
 
-      {/* Mobile: Scrollable tab bar (team pages only) */}
-      {isOnTeamPage && currentTeam && (
-        <div className="md:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 sticky top-14 z-30">
-          <div className="flex overflow-x-auto scrollbar-hide px-2 gap-1 py-1.5" style={{ WebkitOverflowScrolling: 'touch' }}>
-            {primaryModes.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => navigateToMode(key)}
-                className={`shrink-0 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
-                  activeMode === key
-                    ? 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400'
-                    : 'text-stone-500 dark:text-stone-400 active:bg-stone-100 dark:active:bg-stone-800'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-            {secondaryModes.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => navigateToMode(key)}
-                className={`shrink-0 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
-                  activeMode === key
-                    ? 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400'
-                    : 'text-stone-500 dark:text-stone-400 active:bg-stone-100 dark:active:bg-stone-800'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Mobile tab bar removed — sections unfold inline on the dashboard */}
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
@@ -584,30 +430,50 @@ function AdminHeaderInner({ currentTeam, allTeams = [], userEmail, userName, use
               </button>
             </div>
 
-            {/* Mode Navigation (if on team page) */}
-            {isOnTeamPage && currentTeam && (
+            {/* Team switcher (when on a team page) */}
+            {isOnTeamPage && currentTeam && allTeams.length > 0 && (
               <div className="p-2 border-b border-stone-200 dark:border-stone-700">
-                <div className="px-3 py-2 text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">
-                  {currentTeam.name}
+                <div className="px-3 py-1.5 text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">
+                  {t('switchTeam')}
                 </div>
-                {navModes.map(({ key, label }) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      navigateToMode(key)
-                      setMobileMenuOpen(false)
-                    }}
-                    className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors touch-manipulation active:bg-stone-200 dark:active:bg-stone-700 ${
-                      activeMode === key
-                        ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400'
-                        : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+                <div className="max-h-48 overflow-y-auto">
+                  {allTeams.map((team) => (
+                    <Link
+                      key={team.id}
+                      href={`/teams/${team.id}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors touch-manipulation ${
+                        team.id === currentTeam.id
+                          ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400'
+                          : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 active:bg-stone-100 dark:active:bg-stone-800'
+                      }`}
+                    >
+                      <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                        team.id === currentTeam.id
+                          ? 'bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 dark:text-cyan-400'
+                          : 'bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-400'
+                      }`}>
+                        {team.name.charAt(0).toUpperCase()}
+                      </span>
+                      <span className="truncate">{team.name}</span>
+                      {team.id === currentTeam.id && (
+                        <svg className="w-4 h-4 text-cyan-500 shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+                <Link
+                  href="/teams"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 mt-1 rounded-lg text-sm font-medium text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 active:bg-stone-100 dark:active:bg-stone-800 transition-colors touch-manipulation"
+                >
+                  <span>{t('viewAllTeams')}</span>
+                  <svg className="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
               </div>
             )}
 

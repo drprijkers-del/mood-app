@@ -25,10 +25,10 @@ const ANGLE_LABELS: Record<string, string> = {
   leadership: 'Leadership',
 }
 
-const LEVEL_INFO: Record<string, { kanji: string; label: string; color: string; gradient: string; subtitle: string; bannerKey: string }> = {
-  shu: { kanji: '守', label: 'Shu', color: 'bg-cyan-500', gradient: 'from-amber-500 to-orange-600', subtitle: 'shuDescription', bannerKey: 'levelBannerShu' },
-  ha: { kanji: '破', label: 'Ha', color: 'bg-amber-500', gradient: 'from-cyan-500 to-blue-600', subtitle: 'haDescription', bannerKey: 'levelBannerHa' },
-  ri: { kanji: '離', label: 'Ri', color: 'bg-purple-500', gradient: 'from-purple-500 to-indigo-600', subtitle: 'riDescription', bannerKey: 'levelBannerRi' },
+const LEVEL_INFO: Record<string, { kanji: string; label: string; color: string; gradient: string; subtitle: string; bannerKey: string; aboutKey: string; learnKey: string; growthKey: string }> = {
+  shu: { kanji: '守', label: 'Shu', color: 'bg-amber-500', gradient: 'from-amber-500 to-orange-600', subtitle: 'shuDescription', bannerKey: 'levelBannerShu', aboutKey: 'shuAbout', learnKey: 'shuLearnFocus', growthKey: 'shuGrowthHint' },
+  ha: { kanji: '破', label: 'Ha', color: 'bg-cyan-500', gradient: 'from-cyan-500 to-blue-600', subtitle: 'haDescription', bannerKey: 'levelBannerHa', aboutKey: 'haAbout', learnKey: 'haLearnFocus', growthKey: 'haGrowthHint' },
+  ri: { kanji: '離', label: 'Ri', color: 'bg-purple-500', gradient: 'from-purple-500 to-indigo-600', subtitle: 'riDescription', bannerKey: 'levelBannerRi', aboutKey: 'riAbout', learnKey: 'riLearnFocus', growthKey: 'riGrowthHint' },
 }
 
 interface TeamResultsViewProps {
@@ -194,17 +194,17 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 to-stone-100 dark:from-stone-900 dark:to-stone-800">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm border-b border-stone-200 dark:border-stone-700 sticky top-0 z-10">
+      <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 sticky top-0 z-10">
         <div className="max-w-lg md:max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
-            <h1 className="font-bold text-stone-900 dark:text-stone-100">{teamName}</h1>
-            <p className="text-xs text-stone-500 dark:text-stone-400">{t('resultsTitle')}</p>
+            <h1 className="font-semibold text-stone-700 dark:text-stone-200">{teamName}</h1>
+            <p className="text-xs text-stone-400 dark:text-stone-500">{t('resultsTitle')}</p>
           </div>
           <div className="flex items-center gap-1">
-            {/* Share button (admin only) */}
-            {teamId && (
-              <button
-                onClick={async () => {
+            {/* Share / Copy link button */}
+            <button
+              onClick={async () => {
+                if (teamId) {
                   setShareLoading(true)
                   const url = await getResultsShareUrl(teamId)
                   setShareLoading(false)
@@ -213,34 +213,34 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
                     setShareCopied(true)
                     setTimeout(() => setShareCopied(false), 2000)
                   }
-                }}
-                disabled={shareLoading}
-                className="p-2 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors"
-                title={t('shareCopy')}
-              >
-                {shareCopied ? (
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                ) : shareLoading ? (
-                  <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
-                )}
-              </button>
-            )}
-            {/* Check-in link */}
-            <Link
-              href={`/vibe/t/${teamSlug}`}
-              className="px-3 py-1.5 text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-lg transition-colors"
+                } else {
+                  navigator.clipboard.writeText(window.location.href)
+                  setShareCopied(true)
+                  setTimeout(() => setShareCopied(false), 2000)
+                }
+              }}
+              disabled={shareLoading}
+              className={`p-2 rounded-lg transition-colors ${
+                shareCopied
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                  : 'text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
             >
-              {t('resultsCheckin')}
-            </Link>
+              {shareCopied ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              ) : shareLoading ? (
+                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              )}
+            </button>
             {/* Close button - admin goes to team detail, others go to check-in */}
             <Link
               href={teamId ? `/teams/${teamId}` : `/vibe/t/${teamSlug}`}
@@ -256,26 +256,41 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
       </header>
 
       <main className="max-w-lg md:max-w-3xl mx-auto px-4 py-6 space-y-6">
-        {/* Shu/Ha/Ri Level Banner */}
+        {/* Shu/Ha/Ri Level Banner — same watermark style as OverallSignal */}
         {wow && (() => {
           const level = LEVEL_INFO[wow.level]
           if (!level) return null
+          const wmConfig = {
+            shu: { bg: 'bg-amber-500', darkBg: 'dark:bg-amber-600' },
+            ha: { bg: 'bg-cyan-500', darkBg: 'dark:bg-cyan-600' },
+            ri: { bg: 'bg-purple-500', darkBg: 'dark:bg-purple-600' },
+          }[wow.level]!
           return (
-            <div className={`relative overflow-hidden rounded-2xl bg-linear-to-br ${level.gradient} p-6 text-white shadow-lg`}>
-              {/* Large kanji background watermark */}
-              <div className="absolute -right-4 -top-4 text-[120px] font-bold leading-none opacity-15 select-none pointer-events-none">
-                {level.kanji}
+            <div className={`relative overflow-hidden rounded-2xl ${wmConfig.bg} ${wmConfig.darkBg}`}>
+              {/* White overlay with fade — matches OverallSignal */}
+              <div
+                className="absolute inset-0 bg-white dark:bg-stone-800"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.03) 6%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.18) 18%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 36%, rgba(0,0,0,1) 42%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.03) 6%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.18) 18%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 36%, rgba(0,0,0,1) 42%)',
+                }}
+              />
+              {/* Kanji watermark — left side */}
+              <div className="absolute -left-2 top-0 bottom-0 flex items-center justify-center w-20 select-none pointer-events-none" style={{ perspective: '200px' }}>
+                <span className="text-white/30" style={{ fontSize: '6rem', fontWeight: 900, lineHeight: 1, transform: 'rotateY(-20deg)', transformStyle: 'preserve-3d' }}>
+                  {level.kanji}
+                </span>
               </div>
-              <div className="relative">
-                <div className="text-xs font-medium uppercase tracking-widest opacity-80 mb-2">{t('levelBannerTitle')}</div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-4xl font-bold">{level.kanji}</span>
-                  <div>
-                    <div className="text-2xl font-bold">{level.label}</div>
-                    <div className="text-sm opacity-90">{t(level.subtitle as never)}</div>
+              {/* Content */}
+              <div className="relative z-10 p-5 pl-24">
+                <div className="text-xs font-medium uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-1">{t('levelBannerTitle')}</div>
+                <div className="flex items-end justify-between gap-4">
+                  <div className="text-2xl font-bold text-stone-900 dark:text-stone-100">{level.label}</div>
+                  <div className="text-right shrink-0">
+                    <div className="text-sm font-medium text-stone-600 dark:text-stone-300">{t(level.subtitle as never)}</div>
+                    <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">{t(level.bannerKey as never)}</p>
                   </div>
                 </div>
-                <p className="text-sm opacity-80 leading-relaxed mt-2">{t(level.bannerKey as never)}</p>
               </div>
             </div>
           )
@@ -324,23 +339,26 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
 
         {/* Week Pulse Card */}
         <div className="bg-white dark:bg-stone-800 rounded-2xl p-5 shadow-sm border border-stone-200 dark:border-stone-700">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('resultsWeekPulse')}</h2>
-            {metrics?.weekVibe.trend && (
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                metrics.weekVibe.trend === 'rising'
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                  : metrics.weekVibe.trend === 'declining'
-                  ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                  : 'bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400'
-              }`}>
-                {metrics.weekVibe.trend === 'rising' ? '↑' : metrics.weekVibe.trend === 'declining' ? '↓' : '→'} {
-                  metrics.weekVibe.trend === 'rising' ? t('resultsTrendRising') :
-                  metrics.weekVibe.trend === 'declining' ? t('resultsTrendDeclining') :
-                  t('resultsTrendStable')
-                }
-              </span>
-            )}
+          <div className="mb-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('resultsWeekPulse')}</h2>
+              {metrics?.weekVibe.trend && (
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${
+                  metrics.weekVibe.trend === 'rising'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                    : metrics.weekVibe.trend === 'declining'
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400'
+                }`}>
+                  {metrics.weekVibe.trend === 'rising' ? '↑' : metrics.weekVibe.trend === 'declining' ? '↓' : '→'} {
+                    metrics.weekVibe.trend === 'rising' ? t('resultsTrendRising') :
+                    metrics.weekVibe.trend === 'declining' ? t('resultsTrendDeclining') :
+                    t('resultsTrendStable')
+                  }
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">{t('resultsWeekPulseDesc')}</p>
           </div>
 
           <ZoneIndicator zone={metrics?.weekVibe.zone || null} value={metrics?.weekVibe.value || null} />
@@ -360,7 +378,8 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
 
         {/* Today's Pulse */}
         <div className="bg-white dark:bg-stone-800 rounded-2xl p-5 shadow-sm border border-stone-200 dark:border-stone-700">
-          <h2 className="font-semibold text-stone-900 dark:text-stone-100 mb-4">{t('resultsTodayPulse')}</h2>
+          <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('resultsTodayPulse')}</h2>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 mb-4 leading-relaxed">{t('resultsTodayPulseDesc')}</p>
 
           <div className="flex items-center justify-between">
             <ZoneIndicator zone={metrics?.liveVibe.zone || null} value={metrics?.liveVibe.value || null} />
@@ -373,12 +392,27 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
               <div className="text-sm text-stone-500 dark:text-stone-400">{t('resultsCheckins')}</div>
             </div>
           </div>
+
+          {/* Check-in CTA */}
+          <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
+            <p className="text-sm text-stone-500 dark:text-stone-400 mb-3">{t('resultsCheckinPrompt')}</p>
+            <Link
+              href={`/vibe/t/${teamSlug}`}
+              className="inline-flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-xl transition-colors text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              {t('resultsAddCheckin')}
+            </Link>
+          </div>
         </div>
 
         {/* Momentum */}
         {metrics?.momentum && metrics.hasEnoughData && (
           <div className="bg-white dark:bg-stone-800 rounded-2xl p-5 shadow-sm border border-stone-200 dark:border-stone-700">
-            <h2 className="font-semibold text-stone-900 dark:text-stone-100 mb-4">{t('resultsMomentum')}</h2>
+            <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('resultsMomentum')}</h2>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 mb-4 leading-relaxed">{t('resultsMomentumDesc')}</p>
 
             <div className="flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
@@ -446,7 +480,8 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
 
           return (
             <div className="bg-white dark:bg-stone-800 rounded-2xl p-5 shadow-sm border border-stone-200 dark:border-stone-700">
-              <h2 className="font-semibold text-stone-900 dark:text-stone-100 mb-3">{t('teamHealthRadar')}</h2>
+              <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('teamHealthRadar')}</h2>
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 mb-3 leading-relaxed">{t('resultsRadarDesc')}</p>
 
               {/* Strengths + Focus cards */}
               <div className="grid grid-cols-2 gap-2 mb-3">
@@ -484,32 +519,83 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
         {/* Way of Work Section */}
         {wow && (wow.closedSessions > 0 || wow.activeSessions.length > 0) && (
           <div className="bg-white dark:bg-stone-800 rounded-2xl p-5 shadow-sm border border-stone-200 dark:border-stone-700">
-            <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('resultsWow')}</h2>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 mb-4 leading-relaxed">{t('resultsWowDesc')}</p>
+
+            {/* Score + sessions count — same layout as Today's Pulse */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <h2 className="font-semibold text-stone-900 dark:text-stone-100">{t('resultsWow')}</h2>
-                {/* Shu-Ha-Ri Level Badge */}
-                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${LEVEL_INFO[wow.level].color} bg-opacity-20`}>
-                  <span className="text-sm font-bold">{LEVEL_INFO[wow.level].kanji}</span>
-                  <span className="text-xs font-medium">{LEVEL_INFO[wow.level].label}</span>
+                <div className={`w-3 h-3 rounded-full ${
+                  wow.averageScore === null ? 'bg-stone-300' :
+                  wow.averageScore >= 3.5 ? 'bg-green-500' :
+                  wow.averageScore >= 2.5 ? 'bg-cyan-500' :
+                  'bg-amber-500'
+                }`} />
+                <div>
+                  <div className="text-2xl font-bold tabular-nums text-stone-900 dark:text-stone-100">
+                    {wow.averageScore !== null ? wow.averageScore.toFixed(1) : '–'}
+                  </div>
+                  <div className="text-sm text-stone-500 dark:text-stone-400">
+                    {t('resultsWowAvg')}
+                  </div>
                 </div>
               </div>
-              {wow.closedSessions > 0 && (
-                <span className="text-xs text-stone-500 dark:text-stone-400">
-                  {wow.closedSessions} {t('resultsSessions')}
-                </span>
-              )}
+
+              <div className="text-right">
+                <div className="text-2xl font-bold text-stone-900 dark:text-stone-100">
+                  {wow.closedSessions}
+                  {wow.activeSessions.length > 0 && (
+                    <span className="text-sm font-normal text-stone-400"> +{wow.activeSessions.length}</span>
+                  )}
+                </div>
+                <div className="text-sm text-stone-500 dark:text-stone-400">{t('resultsSessions')}</div>
+              </div>
             </div>
+
+            {/* Shu-Ha-Ri Level — elaborate */}
+            {(() => {
+              const lvl = LEVEL_INFO[wow.level]
+              if (!lvl) return null
+              const lc = {
+                shu: { accent: 'text-amber-600 dark:text-amber-400', accentBg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800' },
+                ha: { accent: 'text-cyan-600 dark:text-cyan-400', accentBg: 'bg-cyan-50 dark:bg-cyan-900/20', border: 'border-cyan-200 dark:border-cyan-800' },
+                ri: { accent: 'text-purple-600 dark:text-purple-400', accentBg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800' },
+              }[wow.level]!
+              return (
+                <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${lvl.color} text-white text-xs`}>
+                      <span className="font-bold">{lvl.kanji}</span>
+                      <span className="font-medium">{lvl.label}</span>
+                    </div>
+                    <span className="text-xs font-medium text-stone-600 dark:text-stone-300">{t(lvl.subtitle as never)}</span>
+                  </div>
+
+                  <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed mb-3">{t(lvl.aboutKey as never)}</p>
+
+                  <div className={`rounded-lg ${lc.accentBg} border ${lc.border} p-3 mb-3`}>
+                    <div className={`text-[10px] uppercase tracking-wider font-semibold ${lc.accent} mb-1`}>{t('resultsWhatToLearn')}</div>
+                    <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">{t(lvl.learnKey as never)}</p>
+                  </div>
+
+                  <p className={`text-xs font-medium ${lc.accent} flex items-start gap-1.5`}>
+                    <span className="mt-px">→</span>
+                    <span>{t(lvl.growthKey as never)}</span>
+                  </p>
+                </div>
+              )
+            })()}
 
             {/* Active Sessions - Join CTA */}
             {wow.activeSessions.length > 0 && (
-              <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+              <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
                 <div className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-2">{t('resultsActiveSessions')}</div>
                 <div className="space-y-2">
                   {wow.activeSessions.map((session) => (
                     <a
                       key={session.id}
                       href={`/d/${session.sessionCode}`}
-                      className="flex items-center justify-between p-2 bg-white dark:bg-stone-800 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                      className="flex items-center justify-between p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/30 border border-amber-200 dark:border-amber-800 transition-colors"
                     >
                       <span className="text-sm font-medium text-stone-700 dark:text-stone-300">
                         {ANGLE_LABELS[session.angle] || session.angle}
@@ -523,28 +609,9 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
               </div>
             )}
 
-            {/* Average Score */}
-            {wow.averageScore !== null && (
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-3 h-3 rounded-full ${
-                  wow.averageScore >= 3.5 ? 'bg-green-500' :
-                  wow.averageScore >= 2.5 ? 'bg-cyan-500' :
-                  'bg-amber-500'
-                }`} />
-                <div>
-                  <div className="text-2xl font-bold tabular-nums text-stone-900 dark:text-stone-100">
-                    {wow.averageScore.toFixed(1)}
-                  </div>
-                  <div className="text-sm text-stone-500 dark:text-stone-400">
-                    {t('resultsWowAvg')}
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Recent Sessions */}
             {wow.recentSessions.length > 0 && (
-              <div className="space-y-2 pt-3 border-t border-stone-100 dark:border-stone-700">
+              <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700">
                 <div className="text-xs text-stone-400 mb-2">{t('resultsRecentSessions')}</div>
                 {wow.recentSessions.map((session, i) => (
                   <div key={i} className="flex items-center justify-between py-1.5">
@@ -576,8 +643,8 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
 
         {/* Data maturity info */}
         {!metrics?.hasEnoughData && (
-          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-            <div className="flex gap-3">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-5">
+            <div className="flex gap-3 mb-3">
               <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -588,21 +655,26 @@ export function TeamResultsView({ teamName, teamSlug, teamId }: TeamResultsViewP
                 </div>
               </div>
             </div>
+            <div className="space-y-2 pl-8">
+              <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
+                <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none">
+                  <path d="M2 12h3l2-6 3 12 3-8 2 4h7" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {t('resultsGatheringMomentum')}
+              </div>
+              <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
+                <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                {t('resultsGatheringRadar')}
+              </div>
+              <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
+                <span className="w-3.5 h-3.5 inline-flex items-center justify-center font-bold text-amber-400 text-[10px] shrink-0">Δ</span>
+                {t('resultsGatheringWow')}
+              </div>
+            </div>
           </div>
         )}
-
-        {/* Check-in CTA */}
-        <div className="text-center pt-4">
-          <Link
-            href={`/vibe/t/${teamSlug}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-xl transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            {t('resultsAddCheckin')}
-          </Link>
-        </div>
 
         {/* Footer */}
         <div className="text-center pt-4 pb-8">
