@@ -332,134 +332,171 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], wowSes
             </div>
           </div>
 
-          {/* Tool Cards — 5 compact tiles (sticky navigation) */}
-          <div className="sticky top-14 z-10 bg-stone-50 dark:bg-stone-900 pb-6 -mb-6 pt-6 -mt-6">
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {/* Tool Cards — list on mobile, 5 tiles on desktop */}
+          <div className="sticky top-14 z-10 bg-stone-50 dark:bg-stone-900 pb-4 sm:pb-6 -mb-4 sm:-mb-6 pt-4 sm:pt-6 -mt-4 sm:-mt-6">
+            <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-5 sm:gap-3">
             {/* Vibe */}
             <button
               onClick={() => toggleSection('vibe')}
-              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-3 text-left hover:shadow-md transition-all group cursor-pointer ${
+              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-2.5 sm:p-3 text-left hover:shadow-md transition-all group cursor-pointer touch-manipulation ${
                 openSection === 'vibe'
                   ? 'border-pink-400 dark:border-pink-600 shadow-md ring-1 ring-pink-200 dark:ring-pink-800'
                   : 'border-stone-200 dark:border-stone-700 hover:border-pink-300 dark:hover:border-pink-700'
               }`}
             >
-              {/* Connector triangle when active */}
               {openSection === 'vibe' && (
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-pink-400 dark:border-t-pink-600" />
+                <div className="hidden sm:block absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-pink-400 dark:border-t-pink-600" />
               )}
-              <div className="flex items-start justify-between mb-2">
-                <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <svg className="w-5 h-5 text-pink-600 dark:text-pink-400" viewBox="0 0 24 24" fill="none">
-                    <path d="M2 12h3l2-6 3 12 3-8 2 4h7" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+              {/* Mobile: horizontal row | Desktop: vertical card */}
+              <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-0">
+                <div className="flex items-center justify-between sm:w-full sm:mb-2">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-pink-600 dark:text-pink-400" viewBox="0 0 24 24" fill="none">
+                      <path d="M2 12h3l2-6 3 12 3-8 2 4h7" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <svg className={`hidden sm:block w-4 h-4 transition-all mt-1 ${
+                    openSection === 'vibe'
+                      ? 'text-pink-500 rotate-90'
+                      : 'text-stone-300 dark:text-stone-600 group-hover:text-pink-500 group-hover:translate-x-0.5'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
-                <svg className={`w-4 h-4 transition-all mt-1 ${
-                  openSection === 'vibe'
-                    ? 'text-pink-500 rotate-90'
-                    : 'text-stone-300 dark:text-stone-600 group-hover:text-pink-500 group-hover:translate-x-0.5'
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">Vibe</h3>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug sm:block hidden">{t('vibeCardDesc')}</p>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 sm:hidden">{t('vibeCardDesc')}</p>
+                </div>
+                <svg className={`sm:hidden w-4 h-4 shrink-0 transition-transform ${
+                  openSection === 'vibe' ? 'text-pink-500 rotate-90' : 'text-stone-300 dark:text-stone-600'
                 }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">Vibe</h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">{t('vibeCardDesc')}</p>
             </button>
 
             {/* Way of Work */}
             <button
               onClick={() => toggleSection('wow')}
-              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-3 text-left hover:shadow-md transition-all group cursor-pointer ${
+              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-2.5 sm:p-3 text-left hover:shadow-md transition-all group cursor-pointer touch-manipulation ${
                 openSection === 'wow'
                   ? 'border-cyan-400 dark:border-cyan-600 shadow-md ring-1 ring-cyan-200 dark:ring-cyan-800'
                   : 'border-stone-200 dark:border-stone-700 hover:border-cyan-300 dark:hover:border-cyan-700'
               }`}
             >
-              {/* Connector triangle when active */}
               {openSection === 'wow' && (
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-cyan-400 dark:border-t-cyan-600" />
+                <div className="hidden sm:block absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-cyan-400 dark:border-t-cyan-600" />
               )}
-              <div className="flex items-start justify-between mb-2">
-                <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <span className="text-xl font-bold text-cyan-600 dark:text-cyan-400">Δ</span>
+              <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-0">
+                <div className="flex items-center justify-between sm:w-full sm:mb-2">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <span className="text-lg sm:text-xl font-bold text-cyan-600 dark:text-cyan-400">Δ</span>
+                  </div>
+                  <svg className={`hidden sm:block w-4 h-4 transition-all mt-1 ${
+                    openSection === 'wow'
+                      ? 'text-cyan-500 rotate-90'
+                      : 'text-stone-300 dark:text-stone-600 group-hover:text-cyan-500 group-hover:translate-x-0.5'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
-                <svg className={`w-4 h-4 transition-all mt-1 ${
-                  openSection === 'wow'
-                    ? 'text-cyan-500 rotate-90'
-                    : 'text-stone-300 dark:text-stone-600 group-hover:text-cyan-500 group-hover:translate-x-0.5'
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">Way of Work</h3>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug sm:block hidden">{t('wowCardDesc')}</p>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 sm:hidden">{t('wowCardDesc')}</p>
+                </div>
+                <svg className={`sm:hidden w-4 h-4 shrink-0 transition-transform ${
+                  openSection === 'wow' ? 'text-cyan-500 rotate-90' : 'text-stone-300 dark:text-stone-600'
                 }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">Way of Work</h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">{t('wowCardDesc')}</p>
             </button>
 
             {/* Feedback */}
             <button
               onClick={() => toggleSection('feedback')}
-              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-3 text-left hover:shadow-md transition-all group cursor-pointer ${
+              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-2.5 sm:p-3 text-left hover:shadow-md transition-all group cursor-pointer touch-manipulation ${
                 openSection === 'feedback'
                   ? 'border-purple-400 dark:border-purple-600 shadow-md ring-1 ring-purple-200 dark:ring-purple-800'
                   : 'border-stone-200 dark:border-stone-700 hover:border-purple-300 dark:hover:border-purple-700'
               }`}
             >
-              {/* Connector triangle when active */}
               {openSection === 'feedback' && (
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-purple-400 dark:border-t-purple-600" />
+                <div className="hidden sm:block absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-purple-400 dark:border-t-purple-600" />
               )}
-              <div className="flex items-start justify-between mb-2">
-                <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-0">
+                <div className="flex items-center justify-between sm:w-full sm:mb-2">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <svg className={`hidden sm:block w-4 h-4 transition-all mt-1 ${
+                    openSection === 'feedback'
+                      ? 'text-purple-500 rotate-90'
+                      : 'text-stone-300 dark:text-stone-600 group-hover:text-purple-500 group-hover:translate-x-0.5'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
-                <svg className={`w-4 h-4 transition-all mt-1 ${
-                  openSection === 'feedback'
-                    ? 'text-purple-500 rotate-90'
-                    : 'text-stone-300 dark:text-stone-600 group-hover:text-purple-500 group-hover:translate-x-0.5'
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">{t('feedbackTitle')}</h3>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug sm:block hidden">{t('feedbackCardDesc')}</p>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 sm:hidden">{t('feedbackCardDesc')}</p>
+                </div>
+                <svg className={`sm:hidden w-4 h-4 shrink-0 transition-transform ${
+                  openSection === 'feedback' ? 'text-purple-500 rotate-90' : 'text-stone-300 dark:text-stone-600'
                 }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">{t('feedbackTitle')}</h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">{t('feedbackCardDesc')}</p>
             </button>
 
             {/* Preparation / Coach */}
             <button
               onClick={() => toggleSection('coach')}
-              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-3 text-left hover:shadow-md transition-all group cursor-pointer ${
+              className={`relative bg-white dark:bg-stone-800 rounded-xl border p-2.5 sm:p-3 text-left hover:shadow-md transition-all group cursor-pointer touch-manipulation ${
                 openSection === 'coach'
                   ? 'border-emerald-400 dark:border-emerald-600 shadow-md ring-1 ring-emerald-200 dark:ring-emerald-800'
                   : 'border-stone-200 dark:border-stone-700 hover:border-emerald-300 dark:hover:border-emerald-700'
               }`}
             >
-              {/* Connector triangle when active */}
               {openSection === 'coach' && (
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-emerald-400 dark:border-t-emerald-600" />
+                <div className="hidden sm:block absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-8 border-t-emerald-400 dark:border-t-emerald-600" />
               )}
-              <div className="flex items-start justify-between mb-2">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-0">
+                <div className="flex items-center justify-between sm:w-full sm:mb-2">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                    <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <svg className={`hidden sm:block w-4 h-4 transition-all mt-1 ${
+                    openSection === 'coach'
+                      ? 'text-emerald-500 rotate-90'
+                      : 'text-stone-300 dark:text-stone-600 group-hover:text-emerald-500 group-hover:translate-x-0.5'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
-                <svg className={`w-4 h-4 transition-all mt-1 ${
-                  openSection === 'coach'
-                    ? 'text-emerald-500 rotate-90'
-                    : 'text-stone-300 dark:text-stone-600 group-hover:text-emerald-500 group-hover:translate-x-0.5'
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">{t('coachQuestionsTab')}</h3>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug sm:block hidden">{t('coachCardDesc')}</p>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 sm:hidden">{t('coachCardDesc')}</p>
+                </div>
+                <svg className={`sm:hidden w-4 h-4 shrink-0 transition-transform ${
+                  openSection === 'coach' ? 'text-emerald-500 rotate-90' : 'text-stone-300 dark:text-stone-600'
                 }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-sm text-stone-900 dark:text-stone-100">{t('coachQuestionsTab')}</h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">{t('coachCardDesc')}</p>
             </button>
 
             {/* Share Results — opens external page */}
             <div
-              className={`relative rounded-xl border p-3 text-left transition-all group ${
+              className={`relative rounded-xl border p-2.5 sm:p-3 text-left transition-all group touch-manipulation ${
                 shareUrl
                   ? 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 hover:border-pink-300 dark:hover:border-pink-700 hover:shadow-md cursor-pointer'
                   : 'bg-stone-50 dark:bg-stone-800/50 border-dashed border-stone-300 dark:border-stone-600 opacity-60'
@@ -471,11 +508,47 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], wowSes
                 }
               }}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${shareUrl ? 'bg-pink-100 dark:bg-pink-900/50 group-hover:scale-105' : 'bg-stone-200 dark:bg-stone-700'} transition-transform`}>
-                  <svg className={`w-5 h-5 ${shareUrl ? 'text-pink-600 dark:text-pink-400' : 'text-stone-400 dark:text-stone-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
+              <div className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-0">
+                <div className="flex items-center justify-between sm:w-full sm:mb-2">
+                  <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 ${shareUrl ? 'bg-pink-100 dark:bg-pink-900/50 group-hover:scale-105' : 'bg-stone-200 dark:bg-stone-700'} transition-transform`}>
+                    <svg className={`w-4.5 h-4.5 sm:w-5 sm:h-5 ${shareUrl ? 'text-pink-600 dark:text-pink-400' : 'text-stone-400 dark:text-stone-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                  </div>
+                  {shareUrl && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const resultsUrl = shareUrl.replace('/vibe/t/', '/results/')
+                        navigator.clipboard.writeText(resultsUrl)
+                        setResultsCopied(true)
+                        setTimeout(() => setResultsCopied(false), 2000)
+                      }}
+                      className="hidden sm:block p-1 rounded-md text-stone-400 dark:text-stone-500 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors"
+                      title={t('shareCopy')}
+                    >
+                      {resultsCopied ? (
+                        <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                      )}
+                    </button>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className={`font-semibold text-sm ${shareUrl ? 'text-stone-900 dark:text-stone-100' : 'text-stone-500 dark:text-stone-400'}`}>
+                    {t('shareResultsTitle')}
+                  </h3>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug sm:block hidden">
+                    {shareUrl ? t('shareCardDesc') : t('shareResultsPlaceholder')}
+                  </p>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 sm:hidden">
+                    {shareUrl ? t('shareCardDesc') : t('shareResultsPlaceholder')}
+                  </p>
                 </div>
                 {shareUrl && (
                   <button
@@ -486,8 +559,7 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], wowSes
                       setResultsCopied(true)
                       setTimeout(() => setResultsCopied(false), 2000)
                     }}
-                    className="p-1 rounded-md text-stone-400 dark:text-stone-500 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors"
-                    title={t('shareCopy')}
+                    className="sm:hidden p-1 rounded-md text-stone-400 dark:text-stone-500 hover:text-pink-500 shrink-0"
                   >
                     {resultsCopied ? (
                       <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -495,18 +567,12 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], wowSes
                       </svg>
                     ) : (
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
                     )}
                   </button>
                 )}
               </div>
-              <h3 className={`font-semibold text-sm ${shareUrl ? 'text-stone-900 dark:text-stone-100' : 'text-stone-500 dark:text-stone-400'}`}>
-                {t('shareResultsTitle')}
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">
-                {shareUrl ? t('shareCardDesc') : t('shareResultsPlaceholder')}
-              </p>
             </div>
           </div>
           </div>
