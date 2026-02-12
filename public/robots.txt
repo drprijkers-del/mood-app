@@ -17,4 +17,4 @@ Allow: /d/
 Allow: /vibe/t/
 
 # Sitemap
-# Sitemap: https://teamlab.app/sitemap.xml
+Sitemap: https://teamlab.app/sitemap.xml
