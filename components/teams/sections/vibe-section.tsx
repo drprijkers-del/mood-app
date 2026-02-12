@@ -81,7 +81,7 @@ export function VibeSection({
             <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
               {t('vibeExplanation')}
             </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
           {steps.map((step, i) => (
             <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-2 sm:p-3 rounded-xl bg-rose-50 dark:bg-rose-900/20">
               <span className="w-5 h-5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">

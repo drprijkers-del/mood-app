@@ -145,9 +145,9 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
                 ? 'Dit anonieme feedback-instrument helpt je team open te delen wat helpt en wat soms in de weg staat. Het geeft jou als facilitator context voor diepere gesprekken tijdens retrospectives of één-op-één sessies. Gebruik de inzichten niet als harde conclusies, maar als startpunt voor dialoog.'
                 : 'This anonymous feedback tool helps your team openly share what helps and what sometimes gets in the way. It gives you as facilitator context for deeper conversations during retrospectives or one-on-one sessions. Don\'t use the insights as hard conclusions, but as a starting point for dialogue.'}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
               {facilitatorSteps.map((step, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-stone-50 dark:bg-stone-700/30">
+                <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-2 sm:p-3 rounded-xl bg-stone-50 dark:bg-stone-700/30">
                   <span className="w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                     {i + 1}
                   </span>
@@ -179,22 +179,22 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-3 sm:p-4 space-y-3">
+              <div className="flex items-start gap-2.5 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-purple-500 flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
-                <div className="min-w-0">
-                  <div className="font-medium text-stone-900 dark:text-stone-100">{t('feedbackLinkReady')}</div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400">{language === 'nl' ? 'Team leden delen feedback anoniem — link versturen via Slack of email' : 'Team members share feedback anonymously — send link via Slack or email'}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm sm:text-base text-stone-900 dark:text-stone-100">{t('feedbackLinkReady')}</div>
+                  <div className="hidden sm:block text-xs text-stone-500 dark:text-stone-400">{language === 'nl' ? 'Team leden delen feedback anoniem — link versturen via Slack of email' : 'Team members share feedback anonymously — send link via Slack or email'}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0 ml-3">
+              <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
                 <button
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-600 text-stone-400 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
+                  className="text-[11px] font-medium px-2.5 py-1.5 sm:py-1 rounded-full bg-stone-100 dark:bg-stone-600 text-stone-400 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition-colors touch-manipulation"
                 >
                   <svg className="w-3 h-3 inline-block -mt-px mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -210,13 +210,13 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
                       setTimeout(() => setCopied(false), 2000)
                     }
                   }}
-                  className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-600 text-stone-400 dark:text-stone-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                  className="text-[11px] font-medium px-2.5 py-1.5 sm:py-1 rounded-full bg-stone-100 dark:bg-stone-600 text-stone-400 dark:text-stone-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400 transition-colors touch-manipulation"
                 >
                   {copied ? t('shareCopied') : t('shareCopy')}
                 </button>
                 <button
                   onClick={() => shareUrl && window.open(shareUrl, '_blank')}
-                  className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-600 text-stone-400 dark:text-stone-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                  className="text-[11px] font-medium px-2.5 py-1.5 sm:py-1 rounded-full bg-stone-100 dark:bg-stone-600 text-stone-400 dark:text-stone-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400 transition-colors touch-manipulation"
                 >
                   {t('shareOpen')}
                 </button>
@@ -229,23 +229,23 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
         {showAdvanced && shareUrl && (
           <div className="border-t border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-900/10">
             {/* Advanced header */}
-            <div className="p-4 border-b border-purple-200/50 dark:border-purple-800/50">
+            <div className="p-3 sm:p-4 border-b border-purple-200/50 dark:border-purple-800/50">
               <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-300 mb-1">{t('shareAdvanced')}</h3>
               <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">{language === 'nl' ? 'Reset voor verse links, of deactiveer wanneer delen moet stoppen' : 'Reset to generate fresh links, or deactivate when sharing needs to stop'}</p>
             </div>
 
             <div className="divide-y divide-purple-200/50 dark:divide-purple-800/50">
             {/* Reset row */}
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center justify-between p-3 sm:p-4">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('feedbackResetTitle')}</div>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('feedbackResetInfo')}</p>
+                  <p className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('feedbackResetInfo')}</p>
                 </div>
               </div>
               <button
@@ -261,16 +261,16 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
             </div>
 
             {/* Pause/Deactivate row */}
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center justify-between p-3 sm:p-4">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                   </svg>
                 </div>
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-stone-900 dark:text-stone-100">{t('feedbackPauseTitle')}</div>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('feedbackPauseInfo')}</p>
+                  <p className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 mt-0.5">{t('feedbackPauseInfo')}</p>
                 </div>
               </div>
               <button
@@ -287,10 +287,10 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
 
       {/* Collected Feedback Display */}
       <div className="bg-stone-50 dark:bg-stone-700/30 rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-stone-100 dark:border-stone-700">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
-              <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center justify-between p-3 sm:p-4 border-b border-stone-100 dark:border-stone-700">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
@@ -315,11 +315,11 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
         </div>
 
         {feedbackLoading ? (
-          <div className="p-8 text-center text-stone-400">
+          <div className="p-4 sm:p-8 text-center text-stone-400">
             {t('loading')}
           </div>
         ) : totalFeedbackCount === 0 ? (
-          <div className="p-8 text-center">
+          <div className="p-4 sm:p-8 text-center">
             <div className="text-stone-300 dark:text-stone-600 mb-3">
               <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -343,7 +343,7 @@ export function FeedbackTool({ teamId, teamName }: FeedbackToolProps) {
                 }
 
                 return (
-                  <div key={key} className="p-4">
+                  <div key={key} className="p-3 sm:p-4">
                     {/* Category header */}
                     <div className="flex items-center gap-2 mb-3">
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm font-medium border ${colorStyles[label.color as keyof typeof colorStyles]}`}>

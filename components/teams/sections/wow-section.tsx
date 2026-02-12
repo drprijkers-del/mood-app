@@ -106,7 +106,7 @@ export function WowSection({ teamId, teamName, teamPlan, wowStats, wowSessions, 
             <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
               {t('wowFlowExplanation')}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
               {[t('wowStep1'), t('wowStep2'), t('wowStep3'), t('wowStep4')].map((step, i) => (
                 <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-2 sm:p-3 rounded-xl bg-cyan-50 dark:bg-cyan-900/20">
                   <span className="w-5 h-5 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
