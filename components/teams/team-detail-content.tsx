@@ -567,6 +567,8 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], wowSes
                     return effectiveSize > 0 ? Math.round((todayCount / effectiveSize) * 100) : 0
                   })()}
                   wowSessions={wowSessions}
+                  onNavigateToVibe={() => toggleSection('vibe')}
+                  onNavigateToWow={() => toggleSection('wow')}
                 />
               )}
             </div>
