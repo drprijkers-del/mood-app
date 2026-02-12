@@ -116,7 +116,7 @@ export function TeamDetailContent({ team, vibeMetrics, vibeInsights = [], wowSes
       setOpenSection(urlTab as SectionType)
     } else {
       setActiveTab('home')
-      if (!urlTab) setOpenSection(null)
+      if (!urlTab) setOpenSection('vibe')
     }
   }, [searchParams])
 

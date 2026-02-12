@@ -1,5 +1,5 @@
-# Team Lab - Robots.txt
-# https://teamlab.app
+# Pulse Labs - Robots.txt
+# https://pulse-labs.io
 
 User-agent: *
 Allow: /
@@ -17,4 +17,4 @@ Allow: /d/
 Allow: /vibe/t/
 
 # Sitemap
-Sitemap: https://teamlab.app/sitemap.xml
+Sitemap: https://pulse-labs.io/sitemap.xml

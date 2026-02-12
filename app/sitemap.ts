@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = 'https://teamlab.app'
+const BASE_URL = 'https://pulse-labs.io'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

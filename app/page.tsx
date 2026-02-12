@@ -10,7 +10,7 @@ export default async function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'SoftwareApplication',
             name: 'Pulse Labs',
-            url: 'https://teamlab.app',
+            url: 'https://pulse-labs.io',
             applicationCategory: 'BusinessApplication',
             operatingSystem: 'Web',
             description: 'Team health tools for agile coaches and scrum masters. Vibe Check, Way of Work, Team Feedback & AI Coach Preparation.',

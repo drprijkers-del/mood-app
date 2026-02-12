@@ -11,7 +11,7 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
-const BASE_URL = 'https://teamlab.app'
+const BASE_URL = 'https://pulse-labs.io'
 
 export const metadata: Metadata = {
   title: {
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     'daily check-in', 'team insights', 'agile tools', 'shu ha ri',
   ],
   verification: {
-    google: '4silc--5zyxhws3nX_4xB4aywoS_mjhCE0kJ5ynmU4w',
+    google: 'doVuCE0qz274-upzXCdEbadJGmeZxKRpJ6uKm7ITA2I',
   },
 };
 

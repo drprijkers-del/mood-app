@@ -105,7 +105,7 @@ export default function OGImage() {
             fontSize: 18,
           }}
         >
-          teamlab.app
+          pulse-labs.io
         </div>
       </div>
     ),
