@@ -108,7 +108,7 @@ export function WowSection({ teamId, teamName, teamPlan, wowStats, wowSessions, 
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[t('wowStep1'), t('wowStep2'), t('wowStep3'), t('wowStep4')].map((step, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-3 rounded-xl bg-cyan-50 dark:bg-cyan-900/20">
+                <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-2 sm:p-3 rounded-xl bg-cyan-50 dark:bg-cyan-900/20">
                   <span className="w-5 h-5 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                     {i + 1}
                   </span>
@@ -136,7 +136,7 @@ export function WowSection({ teamId, teamName, teamPlan, wowStats, wowSessions, 
                 key={tab.id}
                 onClick={() => !tab.locked && setSessionsLevelTab(tab.id)}
                 disabled={tab.locked}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors ${
                   isActive
                     ? colorClasses[tab.color as keyof typeof colorClasses]
                     : tab.locked
@@ -215,7 +215,7 @@ export function WowSection({ teamId, teamName, teamPlan, wowStats, wowSessions, 
 
       {/* Team Radar Chart */}
       {showRadar && (
-        <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-5">
+        <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 p-3 sm:p-5">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Left: title + scores */}
             <div className="sm:w-52 shrink-0 flex flex-col">
@@ -254,13 +254,24 @@ export function WowSection({ teamId, teamName, teamPlan, wowStats, wowSessions, 
 
             {/* Right: radar chart centered */}
             <div className="flex-1 flex items-center justify-center">
-              <RadarChart
-                axes={radarAxes}
-                size={400}
-                teamName={teamName}
-                tier={subscriptionTier}
-                chartTitle="Way of Work Radar"
-              />
+              <div className="hidden sm:block">
+                <RadarChart
+                  axes={radarAxes}
+                  size={400}
+                  teamName={teamName}
+                  tier={subscriptionTier}
+                  chartTitle="Way of Work Radar"
+                />
+              </div>
+              <div className="sm:hidden w-full flex justify-center">
+                <RadarChart
+                  axes={radarAxes}
+                  size={260}
+                  teamName={teamName}
+                  tier={subscriptionTier}
+                  chartTitle="Way of Work Radar"
+                />
+              </div>
             </div>
           </div>
         </div>

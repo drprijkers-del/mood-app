@@ -84,7 +84,7 @@ export function CoachSection({
 
           {/* Empty state: not enough data */}
           {!hasAnyData && (
-            <div className="rounded-xl border-2 border-dashed border-stone-200 dark:border-stone-700 p-8 text-center space-y-4">
+            <div className="rounded-xl border-2 border-dashed border-stone-200 dark:border-stone-700 p-4 sm:p-8 text-center space-y-4">
               <div className="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mx-auto">
                 <svg className="w-6 h-6 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -94,11 +94,11 @@ export function CoachSection({
                 <h3 className="font-medium text-stone-700 dark:text-stone-300 text-sm">{t('coachEmptyTitle')}</h3>
                 <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 max-w-sm mx-auto">{t('coachEmptyDesc')}</p>
               </div>
-              <div className="flex gap-3 justify-center">
-                <button onClick={onNavigateToVibe} className="text-xs font-medium px-4 py-2 rounded-lg bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
+                <button onClick={onNavigateToVibe} className="text-xs font-medium px-4 py-2.5 sm:py-2 rounded-lg bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors touch-manipulation">
                   {t('coachGoToVibe')}
                 </button>
-                <button onClick={onNavigateToWow} className="text-xs font-medium px-4 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
+                <button onClick={onNavigateToWow} className="text-xs font-medium px-4 py-2.5 sm:py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors touch-manipulation">
                   {t('coachGoToWow')}
                 </button>
               </div>
@@ -147,7 +147,7 @@ export function CoachSection({
               {preparation && (
                 <div className="space-y-4">
                   {/* 1. Signal Summary */}
-                  <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 p-4 space-y-3">
+                  <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 p-3 sm:p-4 space-y-3">
                     <h3 className="text-sm font-semibold text-stone-800 dark:text-stone-200">
                       {t('coachSignalSummaryTitle')}
                     </h3>
@@ -164,7 +164,7 @@ export function CoachSection({
                   </div>
 
                   {/* 2. Primary Theme */}
-                  <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4 space-y-2">
+                  <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-3 sm:p-4 space-y-2">
                     <h3 className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
                       {t('coachPrimaryThemeTitle')}
                     </h3>
@@ -173,7 +173,7 @@ export function CoachSection({
                   </div>
 
                   {/* 3. Conversation Questions */}
-                  <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 p-4 space-y-3">
+                  <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 p-3 sm:p-4 space-y-3">
                     <h3 className="text-sm font-semibold text-stone-800 dark:text-stone-200">
                       {t('coachQuestionsTitle')}
                     </h3>
@@ -197,7 +197,7 @@ export function CoachSection({
                   </div>
 
                   {/* 4. Suggested Intervention */}
-                  <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 border-l-4 border-emerald-500 p-4 space-y-3">
+                  <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 border-l-4 border-emerald-500 p-3 sm:p-4 space-y-3">
                     <h3 className="text-sm font-semibold text-stone-800 dark:text-stone-200">
                       {t('coachInterventionTitle')}
                     </h3>

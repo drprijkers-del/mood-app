@@ -288,7 +288,7 @@ export function VibeMetrics({ metrics, insights }: VibeMetricsProps) {
 
       {/* Primary metric card - single focus */}
       <Card className="overflow-hidden">
-        <CardContent className="py-8">
+        <CardContent className="py-5 sm:py-8">
           <div className="text-center">
             {/* Time label */}
             <div className="flex items-center justify-center gap-2 mb-4">
@@ -303,15 +303,15 @@ export function VibeMetrics({ metrics, insights }: VibeMetricsProps) {
             {active.metric.value !== null ? (
               <>
                 {/* Zone badge - primary focus */}
-                <div className={`inline-block px-6 py-3 rounded-2xl mb-4 ${getZoneColor(active.metric.zone)}`}>
-                  <span className="text-xl font-bold">
+                <div className={`inline-block px-4 sm:px-6 py-2 sm:py-3 rounded-2xl mb-4 ${getZoneColor(active.metric.zone)}`}>
+                  <span className="text-lg sm:text-xl font-bold">
                     {getZoneLabel(active.metric.zone, language)}
                   </span>
                 </div>
 
                 {/* Trend - prominent */}
                 <div className={`flex items-center justify-center gap-2 mb-2 ${getTrendColor(active.metric.trend)}`}>
-                  <span className="text-3xl font-bold">{getTrendArrow(active.metric.trend)}</span>
+                  <span className="text-2xl sm:text-3xl font-bold">{getTrendArrow(active.metric.trend)}</span>
                   {active.metric.delta !== 0 && (
                     <span className="text-lg font-medium">
                       {active.metric.delta > 0 ? '+' : ''}{active.metric.delta.toFixed(1)}
