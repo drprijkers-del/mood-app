@@ -4,10 +4,11 @@ let _client: MollieClient | null = null
 
 export function getMollieClient(): MollieClient {
   if (!_client) {
-    if (!process.env.MOLLIE_API_KEY) {
+    const apiKey = process.env.MOLLIE_API_KEY?.trim()
+    if (!apiKey) {
       throw new Error('MOLLIE_API_KEY environment variable is required')
     }
-    _client = createMollieClient({ apiKey: process.env.MOLLIE_API_KEY })
+    _client = createMollieClient({ apiKey })
   }
   return _client
 }

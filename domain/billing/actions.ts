@@ -292,8 +292,9 @@ export async function startAccountSubscription(tier: SubscriptionTier, returnUrl
       checkoutUrl: checkoutUrl ?? undefined,
     }
   } catch (error) {
-    console.error('startAccountSubscription error:', error)
-    return { success: false, error: 'Failed to create checkout' }
+    const errMsg = error instanceof Error ? error.message : String(error)
+    console.error('startAccountSubscription error:', errMsg, error)
+    return { success: false, error: `Checkout failed: ${errMsg}` }
   }
 }
 
