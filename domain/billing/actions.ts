@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth/admin'
 import { getMollieClient } from '@/lib/mollie/client'
-import { SequenceType } from '@mollie/api-client'
+import { PaymentMethod, SequenceType } from '@mollie/api-client'
 import { revalidatePath } from 'next/cache'
 import { type SubscriptionTier, TIERS, isPaidTier } from './tiers'
 
@@ -261,6 +261,7 @@ export async function startAccountSubscription(tier: SubscriptionTier, returnUrl
       amount: { currency: 'EUR', value: tierConfig.price },
       customerId: mollieCustomerId,
       sequenceType: SequenceType.first,
+      method: PaymentMethod.ideal,
       description: tierConfig.mollieDesc,
       redirectUrl: `${baseUrl}/account/billing?status=pending${returnUrl ? `&returnUrl=${encodeURIComponent(returnUrl)}` : ''}`,
       ...(!isLocalhost && { webhookUrl: `${baseUrl}/api/webhooks/mollie` }),
